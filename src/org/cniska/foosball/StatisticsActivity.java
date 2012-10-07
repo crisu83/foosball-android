@@ -17,13 +17,13 @@ public class StatisticsActivity extends Activity {
 	private static final int LAYOUT_WEIGHT_LOSSES = 10;
 	private static final int LAYOUT_WEIGHT_RATIO = 15;
 
-	private PlayerDataSource data;
+	private SQLitePlayerDataSource data;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.statistics);
 
-		data = new PlayerDataSource(this);
+		data = new SQLitePlayerDataSource(this);
 		data.open();
 
 		List<Player> players = data.findAllPlayers();

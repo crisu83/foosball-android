@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DbHelper extends SQLiteOpenHelper {
+public class SQLiteDbHelper extends SQLiteOpenHelper {
 
 	// Static variables
 	// ----------------------------------------
@@ -35,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 * Creates a new database helper.
 	 * @param context
 	 */
-	public DbHelper(Context context) {
+	public SQLiteDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 

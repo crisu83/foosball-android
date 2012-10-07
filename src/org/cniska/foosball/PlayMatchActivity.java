@@ -44,7 +44,7 @@ public class PlayMatchActivity extends Activity {
 	private int numGoalsPlayer3 = 0;
 	private int numGoalsPlayer4 = 0;
 
-	private PlayerDataSource data;
+	private SQLitePlayerDataSource data;
 
 	private Player player1;
 	private Player player2;
@@ -66,7 +66,7 @@ public class PlayMatchActivity extends Activity {
 
 		history = new ArrayList<PlayerType>();
 
-		data = new PlayerDataSource(this);
+		data = new SQLitePlayerDataSource(this);
 		data.open();
 
 		// Restore member variables if state has changed.

@@ -22,7 +22,7 @@ public class NewMatchActivity extends Activity {
 	// Member variables
 	// ----------------------------------------
 
-	private PlayerDataSource data;
+	private SQLitePlayerDataSource data;
 
 	private AutoCompleteTextView fieldPlayer1;
 	private AutoCompleteTextView fieldPlayer2;
@@ -38,7 +38,7 @@ public class NewMatchActivity extends Activity {
 
 		setContentView(R.layout.new_match);
 
-		data = new PlayerDataSource(this);
+		data = new SQLitePlayerDataSource(this);
 		data.open();
 
 		List<Player> players = data.findAllPlayers();

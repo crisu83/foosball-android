@@ -16,10 +16,8 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Remove the title bar.
+		// Remove the title bar and set app to full-screen mode.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		// Set app full screen.
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.main);
@@ -32,6 +30,7 @@ public class MainActivity extends Activity {
 	 * @param view
 	 */
 	public void startNewMatch(View view) {
+		Logger.info(getClass().getName(), "Sending intent to start NewMatchActivity.");
 		Intent intent = new Intent(this, NewMatchActivity.class);
 		startActivity(intent);
 	}
@@ -41,6 +40,7 @@ public class MainActivity extends Activity {
 	 * @param view
 	 */
 	public void openStatistics(View view) {
+		Logger.info(getClass().getName(), "Sending intent to start StatisticsActivity.");
 		Intent intent = new Intent(this, StatisticsActivity.class);
 		startActivity(intent);
 	}

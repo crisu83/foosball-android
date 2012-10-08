@@ -388,19 +388,22 @@ public class PlayMatchActivity extends Activity {
 
 		Logger.info(getClass().getName(), "Updating player records.");
 
-		player1 = updatePlayer(player1, numGoalsPlayer1, teamType == TeamType.RED);
+		int goalsAgainstRed = activePlayer3 ? blueTeamGoals() / 2 : blueTeamGoals();
+		int goalsAgainstBlue = activePlayer4 ? redTeamGoals() / 2 : redTeamGoals();
+
+		player1 = updatePlayer(player1, numGoalsPlayer1, goalsAgainstRed, teamType == TeamType.RED);
 		data.updatePlayer(player1);
 
-		player2 = updatePlayer(player2, numGoalsPlayer2, teamType == TeamType.BLUE);
+		player2 = updatePlayer(player2, numGoalsPlayer2, goalsAgainstBlue, teamType == TeamType.BLUE);
 		data.updatePlayer(player2);
 
 		if (player3 != null) {
-			player3 = updatePlayer(player3, numGoalsPlayer3, teamType == TeamType.RED);
+			player3 = updatePlayer(player3, numGoalsPlayer3, goalsAgainstRed, teamType == TeamType.RED);
 			data.updatePlayer(player3);
 		}
 
 		if (player4 != null) {
-			player4 = updatePlayer(player4, numGoalsPlayer4, teamType == TeamType.BLUE);
+			player4 = updatePlayer(player4, numGoalsPlayer4, goalsAgainstBlue, teamType == TeamType.BLUE);
 			data.updatePlayer(player4);
 		}
 
@@ -456,8 +459,9 @@ public class PlayMatchActivity extends Activity {
 	 * @param won Whether the player won the match.
 	 * @return The player.
 	 */
-	private Player updatePlayer(Player player, int goals, boolean won) {
+	private Player updatePlayer(Player player, int goals, int goalsAgainst, boolean won) {
 		player.addGoals(goals);
+		player.addGoalsAgainst(goalsAgainst);
 
 		if (won) {
 			player.addWin();

@@ -7,56 +7,6 @@
 	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:id="@+id/table_statistics"
 			android:layout_height="wrap_content"
-			android:layout_width="fill_parent">
-
-		<TableRow>
-
-			<TextView android:id="@+id/table_header_player"
-					android:layout_height="wrap_content"
-					android:layout_width="0dp"
-					android:padding="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:text="@string/table_header_player" />
-
-			<TextView android:id="@+id/table_header_goals"
-					android:layout_height="wrap_content"
-					android:layout_width="0dp"
-					android:gravity="center"
-					android:padding="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:text="@string/table_header_goals" />
-
-			<TextView android:id="@+id/table_header_wins"
-					android:layout_height="wrap_content"
-					android:layout_width="0dp"
-					android:gravity="center"
-					android:padding="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:text="@string/table_header_wins" />
-
-			<TextView android:id="@+id/table_header_losses"
-					android:layout_height="wrap_content"
-					android:layout_width="0dp"
-					android:gravity="center"
-					android:padding="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:text="@string/table_header_losses" />
-
-			<TextView android:id="@+id/table_header_ratio"
-					android:layout_height="wrap_content"
-					android:layout_width="0dp"
-					android:gravity="center"
-					android:padding="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:text="@string/table_header_ratio" />
-
-		</TableRow>
-
-	</TableLayout>
+			android:layout_width="fill_parent" />
 
 </ScrollView>

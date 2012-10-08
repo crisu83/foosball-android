@@ -20,14 +20,18 @@
 
 	<string name="label_score_to_win">Score to win</string>
 
-	<string name="menu_undo"> Undo</string>
-	<string name="menu_quit"> Quit</string>
+	<string name="menu_back">Back</string>
+	<string name="menu_quit">Quit</string>
+	<string name="menu_undo">Undo</string>
 
 	<string name="table_header_player">Player</string>
 	<string name="table_header_goals">G</string>
+	<string name="table_header_goals_against">A</string>
+	<string name="table_header_goals_goals_against_ratio">G:A</string>
 	<string name="table_header_wins">W</string>
 	<string name="table_header_losses">L</string>
-	<string name="table_header_ratio">W:L</string>
+	<string name="table_header_win_loss_ratio">W:L</string>
+	<string name="table_header_matches">P</string>
 
 	<string name="team_red">Team Red</string>
 	<string name="team_blue">Team Blue</string>

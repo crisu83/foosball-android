@@ -8,6 +8,7 @@ public class Player {
 	private long id;
 	private String name;
 	private int goals;
+	private int goalsAgainst;
 	private int wins;
 	private int losses;
 
@@ -20,6 +21,14 @@ public class Player {
 	 */
 	public void addGoals(int amount) {
 		goals += amount;
+	}
+
+	/**
+	 * Adds goals against the player.
+	 * @param amount Amount of goals to add.
+	 */
+	public void addGoalsAgainst(int amount) {
+		goalsAgainst += amount;
 	}
 
 	/**
@@ -45,10 +54,26 @@ public class Player {
 	}
 
 	/**
-	 * Calculates the player's ratio (wins/losses).
-	 * @return The ratio.
+	 * Calculates the player's goals/goals against ratio.
+	 * @return The result.
 	 */
-	public float calcRatio() {
+	public float goalGoalAgainstRatio() {
+		float ratio;
+		if (goals > 0 && goalsAgainst > 0) {
+			ratio = ((float) goals) / goalsAgainst;
+		} else if (goals > 0 && goalsAgainst == 0) {
+			ratio = goals;
+		} else {
+			ratio = 0;
+		}
+		return ratio;
+	}
+
+	/**
+	 * Calculates the player's win/loss ratio.
+	 * @return The result.
+	 */
+	public float winLossRatio() {
 		float ratio;
 		if (wins > 0 && losses > 0) {
 			ratio = ((float) wins) / losses;
@@ -85,6 +110,14 @@ public class Player {
 
 	public void setGoals(int goals) {
 		this.goals = goals;
+	}
+
+	public int getGoalsAgainst() {
+		return goalsAgainst;
+	}
+
+	public void setGoalsAgainst(int goalsAgainst) {
+		this.goalsAgainst = goalsAgainst;
 	}
 
 	public int getWins() {

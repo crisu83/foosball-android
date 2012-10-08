@@ -17,6 +17,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		SQLiteHelper.COLUMN_CREATED,
 		SQLiteHelper.COLUMN_NAME,
 		SQLiteHelper.COLUMN_GOALS,
+		SQLiteHelper.COLUMN_GOALS_AGAINST,
 		SQLiteHelper.COLUMN_WINS,
 		SQLiteHelper.COLUMN_LOSSES,
 	};
@@ -56,6 +57,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		ContentValues values = new ContentValues();
 		values.put(SQLiteHelper.COLUMN_NAME, player.getName());
 		values.put(SQLiteHelper.COLUMN_GOALS, player.getGoals());
+		values.put(SQLiteHelper.COLUMN_GOALS_AGAINST, player.getGoalsAgainst());
 		values.put(SQLiteHelper.COLUMN_WINS, player.getWins());
 		values.put(SQLiteHelper.COLUMN_LOSSES, player.getLosses());
 		String[] whereArgs = new String[] { String.valueOf(player.getId()) };
@@ -103,8 +105,9 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		player.setId(cursor.getLong(0));
 		player.setName(cursor.getString(2));
 		player.setGoals(cursor.getInt(3));
-		player.setWins(cursor.getInt(4));
-		player.setLosses(cursor.getInt(5));
+		player.setGoalsAgainst(cursor.getInt(4));
+		player.setWins(cursor.getInt(5));
+		player.setLosses(cursor.getInt(6));
 		return player;
 	}
 }

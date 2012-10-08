@@ -73,7 +73,7 @@ public class NewMatchActivity extends Activity {
 	 * Starts the match.
 	 * @param view
 	 */
-	public void startMatch(View view) {
+	public void start(View view) {
 		// Resolve the radio value.
 		RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.score_to_win);
 		int checkedRadioId = scoresToWin.getCheckedRadioButtonId();
@@ -83,10 +83,10 @@ public class NewMatchActivity extends Activity {
 		if (validate()) {
 			Logger.info(getClass().getName(), "Sending intent to start PlayMatchActivity.");
 			Intent intent = new Intent(this, PlayMatchActivity.class);
-			intent.putExtra(EXTRA_PLAYER1, fieldPlayer1.getText().toString());
-			intent.putExtra(EXTRA_PLAYER2, fieldPlayer2.getText().toString());
-			intent.putExtra(EXTRA_PLAYER3, fieldPlayer3.getText().toString());
-			intent.putExtra(EXTRA_PLAYER4, fieldPlayer4.getText().toString());
+			intent.putExtra(EXTRA_PLAYER1, fieldPlayer1.getText().toString().trim());
+			intent.putExtra(EXTRA_PLAYER2, fieldPlayer2.getText().toString().trim());
+			intent.putExtra(EXTRA_PLAYER3, fieldPlayer3.getText().toString().trim());
+			intent.putExtra(EXTRA_PLAYER4, fieldPlayer4.getText().toString().trim());
 			intent.putExtra(EXTRA_SCORES_TO_WIN, checkedRadio.getText().toString());
 			startActivity(intent);
 		}

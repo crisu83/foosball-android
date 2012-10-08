@@ -14,7 +14,7 @@
 			android:layout_width="wrap_content"
 			android:layout_gravity="center"
 			android:layout_marginBottom="10dp"
-			android:textSize="30dp"
+			android:textSize="40dp"
 			android:text="@string/title_main" />
 
 	<Button android:id="@+id/button_new_match"
@@ -22,6 +22,8 @@
 			android:layout_height="wrap_content"
 			android:layout_below="@id/title_main"
 			android:layout_gravity="center"
+			android:padding="10dp"
+			android:textSize="20dp"
 			android:text="@string/button_new_match"
 			android:onClick="startNewMatch" />
 
@@ -30,6 +32,8 @@
 			android:layout_height="wrap_content"
 			android:layout_below="@id/button_new_match"
 			android:layout_gravity="center"
+			android:padding="10dp"
+			android:textSize="20dp"
 			android:text="@string/button_statistics"
 			android:onClick="openStatistics" />
 

@@ -28,7 +28,9 @@
 			<TextView android:id="@+id/team_red"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:layout_marginBottom="10dp"
+					android:layout_marginBottom="5dp"
+					android:textAllCaps="true"
+					android:textStyle="bold"
 					android:textSize="15dp"
 					android:text="@string/team_red" />
 
@@ -71,7 +73,9 @@
 			<TextView android:id="@+id/team_blue"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:layout_marginBottom="10dp"
+					android:layout_marginBottom="5dp"
+					android:textAllCaps="true"
+					android:textStyle="bold"
 					android:textSize="15dp"
 					android:text="@string/team_blue" />
 
@@ -114,11 +118,13 @@
 
 			</RadioGroup>
 
-			<Button android:id="@+id/button_start_match"
+			<Button android:id="@+id/button_start"
 					android:layout_height="wrap_content"
 					android:layout_width="fill_parent"
-					android:text="@string/button_start_match"
-					android:onClick="startMatch" />
+					android:padding="10dp"
+					android:textSize="20dp"
+					android:text="@string/button_start"
+					android:onClick="start" />
 
 		</LinearLayout>
 

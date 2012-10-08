@@ -37,6 +37,14 @@ public class Player {
 	}
 
 	/**
+	 * Returns the amount of matches the player has played.
+	 * @return The amount.
+	 */
+	public int matchesPlayed() {
+		return wins + losses;
+	}
+
+	/**
 	 * Calculates the player's ratio (wins/losses).
 	 * @return The ratio.
 	 */

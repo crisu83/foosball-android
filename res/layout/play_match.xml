@@ -39,6 +39,11 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"
 					android:layout_marginBottom="10dp"
+					android:paddingLeft="10dp"
+					android:paddingTop="20dp"
+					android:paddingRight="10dp"
+					android:paddingBottom="20dp"
+					android:textSize="25dp"
 					android:onClick="addGoalPlayer1" />
 
 			<Button android:id="@+id/button_add_goal_player3"
@@ -46,6 +51,11 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"
 					android:layout_marginBottom="10dp"
+					android:paddingLeft="10dp"
+					android:paddingTop="20dp"
+					android:paddingRight="10dp"
+					android:paddingBottom="20dp"
+					android:textSize="25dp"
 					android:onClick="addGoalPlayer3" />
 
 		</LinearLayout>
@@ -85,6 +95,11 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"
 					android:layout_marginBottom="10dp"
+					android:paddingLeft="10dp"
+					android:paddingTop="20dp"
+					android:paddingRight="10dp"
+					android:paddingBottom="20dp"
+					android:textSize="25dp"
 					android:onClick="addGoalPlayer2" />
 
 			<Button android:id="@+id/button_add_goal_player4"
@@ -92,6 +107,11 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"
 					android:layout_marginBottom="10dp"
+					android:paddingLeft="10dp"
+					android:paddingTop="20dp"
+					android:paddingRight="10dp"
+					android:paddingBottom="20dp"
+					android:textSize="25dp"
 					android:onClick="addGoalPlayer4" />
 
 		</LinearLayout>

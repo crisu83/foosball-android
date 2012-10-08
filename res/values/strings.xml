@@ -6,7 +6,7 @@
 	<string name="app_name">Foosball</string>
 
 	<string name="button_new_match">New match</string>
-	<string name="button_start_match">Start match</string>
+	<string name="button_start">Start</string>
 	<string name="button_statistics">Statistics</string>
 
 	<string name="dialog_button_no">No</string>
@@ -29,8 +29,8 @@
 	<string name="table_header_losses">L</string>
 	<string name="table_header_ratio">W:L</string>
 
-	<string name="team_red">Team red</string>
-	<string name="team_blue">Team blue</string>
+	<string name="team_red">Team Red</string>
+	<string name="team_blue">Team Blue</string>
 
 	<string name="title_new_match">New match</string>
 	<string name="title_main">Foosball</string>

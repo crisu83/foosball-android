@@ -7,6 +7,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class StatisticsActivity extends Activity {
@@ -21,12 +24,15 @@ public class StatisticsActivity extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.statistics);
 
 		data = new SQLitePlayerDataSource(this);
 		data.open();
 
+		// Find all players and sort them according to their ratio.
 		List<Player> players = data.findAllPlayers();
+		Collections.sort(players, new PlayerRatioComparator());
 
 		TableLayout layout = (TableLayout) findViewById(R.id.table_statistics);
 
@@ -89,5 +95,21 @@ public class StatisticsActivity extends Activity {
 		column.setGravity(gravity);
 		column.setText(text);
 		return column;
+	}
+
+	private class PlayerRatioComparator implements Comparator<Player> {
+
+		@Override
+		public int compare(Player p1, Player p2) {
+			float r1 = p1.calcRatio();
+			float r2 = p2.calcRatio();
+			if (r1 < r2) {
+				return 11;
+			} else if (r1 > r2) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
 	}
 }

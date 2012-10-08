@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +25,7 @@ public class PlayMatchActivity extends Activity {
 	public enum TeamType { RED, BLUE };
 	public enum PlayerType { PLAYER1, PLAYER2, PLAYER3, PLAYER4 };
 
-	// Member variables
+	// Static variables
 	// ----------------------------------------
 
 	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.NUM_GOALS_TO_WIN";
@@ -32,6 +33,11 @@ public class PlayMatchActivity extends Activity {
 	private static final String STATE_NUM_GOALS_PLAYER2 = "org.cniska.foosball.NUM_GOALS_PLAYER2";
 	private static final String STATE_NUM_GOALS_PLAYER3 = "org.cniska.foosball.NUM_GOALS_PLAYER3";
 	private static final String STATE_NUM_GOALS_PLAYER4 = "org.cniska.foosball.NUM_GOALS_PLAYER4";
+
+	// Member variables
+	// ----------------------------------------
+
+	PowerManager.WakeLock wakeLock;
 
 	private String namePlayer1;
 	private String namePlayer2;
@@ -65,6 +71,9 @@ public class PlayMatchActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		history = new ArrayList<PlayerType>();
+
+		PowerManager powerManager = (PowerManager) getSystemService(this.POWER_SERVICE);
+		wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName());
 
 		data = new SQLitePlayerDataSource(this);
 		data.open();
@@ -163,6 +172,7 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	protected void onResume() {
 		data.open();
+		wakeLock.acquire();
 		Logger.info(getClass().getName(), "Activity resumed.");
 		super.onResume();
 	}
@@ -170,6 +180,7 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	protected void onPause() {
 		data.close();
+		wakeLock.release();
 		Logger.info(getClass().getName(), "Activity paused.");
 		super.onPause();
 	}
@@ -420,7 +431,7 @@ public class PlayMatchActivity extends Activity {
 			player3 = data.findPlayerByName(namePlayer3);
 
 			// Create a new record for player 3 if none was found.
-			if (player3 != null) {
+			if (player3 == null) {
 				player3 = data.createPlayer(namePlayer3);
 			}
 		}

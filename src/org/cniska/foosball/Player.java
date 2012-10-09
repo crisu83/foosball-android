@@ -11,9 +11,19 @@ public class Player {
 	private int goalsAgainst;
 	private int wins;
 	private int losses;
+	private int rating;
 
 	// Methods
 	// ----------------------------------------
+
+
+	public Player() {
+		goals = 0;
+		goalsAgainst = 0;
+		wins = 0;
+		losses = 0;
+		rating = EloRatingSystem.INITIAL_RATING;
+	}
 
 	/**
 	 * Adds goals for the player.
@@ -54,22 +64,6 @@ public class Player {
 	}
 
 	/**
-	 * Calculates the player's goals/goals against ratio.
-	 * @return The result.
-	 */
-	public float goalGoalAgainstRatio() {
-		float ratio;
-		if (goals > 0 && goalsAgainst > 0) {
-			ratio = ((float) goals) / goalsAgainst;
-		} else if (goals > 0 && goalsAgainst == 0) {
-			ratio = goals;
-		} else {
-			ratio = 0;
-		}
-		return ratio;
-	}
-
-	/**
 	 * Calculates the player's win/loss ratio.
 	 * @return The result.
 	 */
@@ -83,6 +77,10 @@ public class Player {
 			ratio = 0;
 		}
 		return ratio;
+	}
+
+	public String toString() {
+		return getName();
 	}
 
 	// Getters and setters
@@ -136,7 +134,11 @@ public class Player {
 		this.losses = losses;
 	}
 
-	public String toString() {
-		return name;
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
 	}
 }

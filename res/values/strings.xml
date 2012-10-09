@@ -24,14 +24,17 @@
 	<string name="menu_quit">Quit</string>
 	<string name="menu_undo">Undo</string>
 
-	<string name="table_header_player">Player</string>
+	<string name="position_defense">Defense</string>
+	<string name="position_offense">Offense</string>
+
+	<string name="table_header_player">PLAYER</string>
 	<string name="table_header_goals">G</string>
 	<string name="table_header_goals_against">A</string>
-	<string name="table_header_goals_goals_against_ratio">G:A</string>
 	<string name="table_header_wins">W</string>
 	<string name="table_header_losses">L</string>
 	<string name="table_header_win_loss_ratio">W:L</string>
 	<string name="table_header_matches">P</string>
+	<string name="table_header_rating">RATING</string>
 
 	<string name="team_red">Team Red</string>
 	<string name="team_blue">Team Blue</string>

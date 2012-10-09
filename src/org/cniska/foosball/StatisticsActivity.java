@@ -24,8 +24,8 @@ public class StatisticsActivity extends Activity {
 		GOALS_AGAINST,
 		WINS,
 		LOSSES,
-		GOALS_GOALS_AGAINST_RATIO,
-		WIN_LOSS_RATIO
+		WIN_LOSS_RATIO,
+		RATING
 	}
 
 	public enum SortDirection {
@@ -36,13 +36,13 @@ public class StatisticsActivity extends Activity {
 	// Static variables
 	// ----------------------------------------
 
-	private static final int LAYOUT_WEIGHT_PLAYER = 40;
+	private static final int LAYOUT_WEIGHT_PLAYER = 30;
 	private static final int LAYOUT_WEIGHT_GOALS = 10;
 	private static final int LAYOUT_WEIGHT_GOALS_AGAINST = 10;
-	private static final int LAYOUT_WEIGHT_GOALS_GOALS_AGAINST_RATIO = 10;
 	private static final int LAYOUT_WEIGHT_WINS = 10;
 	private static final int LAYOUT_WEIGHT_LOSSES = 10;
 	private static final int LAYOUT_WEIGHT_WIN_LOSS_RATIO = 10;
+	private static final int LAYOUT_WEIGHT_RATING = 20;
 
 	// Member variables
 	// ----------------------------------------
@@ -102,7 +102,7 @@ public class StatisticsActivity extends Activity {
 		});
 		row.addView(headerPlayer);
 
-		TextView headerGoals = createTableHeaderCell(getResources().getString(R.string.table_header_goals), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 5);
+		TextView headerGoals = createTableHeaderCell(getResources().getString(R.string.table_header_goals), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10);
 		headerGoals.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -138,15 +138,6 @@ public class StatisticsActivity extends Activity {
 		});
 		row.addView(headerLosses);
 
-		TextView headerGoalsGoalsAgainstRatio = createTableHeaderCell(getResources().getString(R.string.table_header_goals_goals_against_ratio), LAYOUT_WEIGHT_GOALS_GOALS_AGAINST_RATIO, Gravity.CENTER, 10);
-		headerGoalsGoalsAgainstRatio.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sortByColumn(SortColumn.GOALS_GOALS_AGAINST_RATIO);
-			}
-		});
-		row.addView(headerGoalsGoalsAgainstRatio);
-
 		TextView headerWinLossRatio = createTableHeaderCell(getResources().getString(R.string.table_header_win_loss_ratio), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 10);
 		headerWinLossRatio.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -155,6 +146,15 @@ public class StatisticsActivity extends Activity {
 			}
 		});
 		row.addView(headerWinLossRatio);
+
+		TextView headerRating = createTableHeaderCell(getResources().getString(R.string.table_header_rating), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 10);
+		headerRating.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortByColumn(SortColumn.RATING);
+			}
+		});
+		row.addView(headerRating);
 
 		layout.addView(row);
 	}
@@ -175,8 +175,8 @@ public class StatisticsActivity extends Activity {
 				row.addView(createTableCell(String.valueOf(player.getGoalsAgainst()), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getWins()), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.format("%2.01f", player.goalGoalAgainstRatio()), LAYOUT_WEIGHT_GOALS_GOALS_AGAINST_RATIO, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.format("%2.01f", player.winLossRatio()), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 10));
+				row.addView(createTableCell(String.valueOf(player.getRating()), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 10));
 				layout.addView(row);
 			}
 		}
@@ -192,7 +192,6 @@ public class StatisticsActivity extends Activity {
 	 */
 	private TextView createTableHeaderCell(String text, float weight, int gravity, int padding) {
 		TextView cell = createTableCell(text, weight, gravity, padding);
-		cell.setAllCaps(true);
 		cell.setTypeface(null, Typeface.BOLD);
 		return cell;
 	}
@@ -219,11 +218,11 @@ public class StatisticsActivity extends Activity {
 	 * @param column Sort column type.
 	 */
 	private void sortByColumn(SortColumn column) {
+		comparator.sortColumn(column);
+		Collections.sort(players, comparator);
 		layout.removeAllViews();
 		addTableHeaderRow(layout);
 		addTablePlayerRows(layout);
-		comparator.sortColumn(column);
-		Collections.sort(players, comparator);
 		layout.invalidate();
 	}
 
@@ -244,10 +243,10 @@ public class StatisticsActivity extends Activity {
 						return compareInt(p1.getWins(), p2.getWins());
 					case LOSSES:
 						return compareInt(p1.getLosses(), p2.getLosses());
-					case GOALS_GOALS_AGAINST_RATIO:
-						return compareFloat(p1.goalGoalAgainstRatio(), p2.goalGoalAgainstRatio());
 					case WIN_LOSS_RATIO:
 						return compareFloat(p1.winLossRatio(), p2.winLossRatio());
+					case RATING:
+						return compareInt(p1.getRating(), p2.getRating());
 					case PLAYER:
 					default:
 						return compareString(p1.getName(), p2.getName());

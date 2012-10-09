@@ -50,6 +50,7 @@ public class PlayMatchActivity extends Activity {
 	private int numGoalsPlayer3 = 0;
 	private int numGoalsPlayer4 = 0;
 
+	private EloRatingSystem ratingSystem;
 	private SQLitePlayerDataSource data;
 
 	private Player player1;
@@ -75,6 +76,7 @@ public class PlayMatchActivity extends Activity {
 		PowerManager powerManager = (PowerManager) getSystemService(this.POWER_SERVICE);
 		wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName());
 
+		ratingSystem = new EloRatingSystem();
 		data = new SQLitePlayerDataSource(this);
 		data.open();
 
@@ -292,6 +294,22 @@ public class PlayMatchActivity extends Activity {
 	}
 
 	/**
+	 * Returns the red team rating.
+	 * @return The rating.
+	 */
+	private int redTeamRating() {
+		return player3 != null ? (player1.getRating() + player3.getRating()) / 2 : player1.getRating();
+	}
+
+	/**
+	 * Returns the blue team rating.
+	 * @return The rating.
+	 */
+	private int blueTeamRating() {
+		return player4 != null ? (player2.getRating() + player4.getRating()) / 2 : player2.getRating();
+	}
+
+	/**
 	 * Takes back the most recent action preformed.
 	 * Called when the undo menu item is pressed.
 	 */
@@ -388,22 +406,23 @@ public class PlayMatchActivity extends Activity {
 
 		Logger.info(getClass().getName(), "Updating player records.");
 
-		int goalsAgainstRed = activePlayer3 ? blueTeamGoals() / 2 : blueTeamGoals();
-		int goalsAgainstBlue = activePlayer4 ? redTeamGoals() / 2 : redTeamGoals();
+		if (player1 != null) {
+			player1 = updatePlayer(player1, numGoalsPlayer1, player3 == null ? blueTeamGoals() : 0, blueTeamRating(), teamType == TeamType.RED);
+			data.updatePlayer(player1);
+		}
 
-		player1 = updatePlayer(player1, numGoalsPlayer1, goalsAgainstRed, teamType == TeamType.RED);
-		data.updatePlayer(player1);
-
-		player2 = updatePlayer(player2, numGoalsPlayer2, goalsAgainstBlue, teamType == TeamType.BLUE);
-		data.updatePlayer(player2);
+		if (player2 != null) {
+			player2 = updatePlayer(player2, numGoalsPlayer2, player4 == null ? redTeamGoals() : 0, redTeamRating(), teamType == TeamType.BLUE);
+			data.updatePlayer(player2);
+		}
 
 		if (player3 != null) {
-			player3 = updatePlayer(player3, numGoalsPlayer3, goalsAgainstRed, teamType == TeamType.RED);
+			player3 = updatePlayer(player3, numGoalsPlayer3, blueTeamGoals(), blueTeamRating(), teamType == TeamType.RED);
 			data.updatePlayer(player3);
 		}
 
 		if (player4 != null) {
-			player4 = updatePlayer(player4, numGoalsPlayer4, goalsAgainstBlue, teamType == TeamType.BLUE);
+			player4 = updatePlayer(player4, numGoalsPlayer4, redTeamGoals(), redTeamRating(), teamType == TeamType.BLUE);
 			data.updatePlayer(player4);
 		}
 
@@ -459,9 +478,11 @@ public class PlayMatchActivity extends Activity {
 	 * @param won Whether the player won the match.
 	 * @return The player.
 	 */
-	private Player updatePlayer(Player player, int goals, int goalsAgainst, boolean won) {
+	private Player updatePlayer(Player player, int goals, int goalsAgainst, int opponentRating, boolean won) {
 		player.addGoals(goals);
 		player.addGoalsAgainst(goalsAgainst);
+		int newRating = ratingSystem.newRating(player.getRating(), opponentRating, won ? EloRatingSystem.SCORE_WIN : EloRatingSystem.SCORE_LOSS);
+		player.setRating(newRating);
 
 		if (won) {
 			player.addWin();

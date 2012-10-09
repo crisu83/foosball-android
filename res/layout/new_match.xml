@@ -41,7 +41,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/field_player2"
 					android:singleLine="true"
-					android:hint="@string/hint_player1" />
+					android:hint="@string/hint_player1" android:text="Foo"/>
 
 			<AutoCompleteTextView android:id="@+id/field_player3"
 					android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/field_player4"
 					android:singleLine="true"
-					android:hint="@string/hint_player3" />
+					android:hint="@string/hint_player3" android:text="Var"/>
 
 			<TextView android:id="@+id/text_scores_to_win"
 					android:layout_height="40dp"
@@ -86,7 +86,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/field_player3"
 					android:singleLine="true"
-					android:hint="@string/hint_player2" />
+					android:hint="@string/hint_player2" android:text="Bar"/>
 
 			<AutoCompleteTextView android:id="@+id/field_player4"
 					android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
 					android:imeOptions="actionDone"
 					android:inputType="textCapSentences"
 					android:singleLine="true"
-					android:hint="@string/hint_player4" />
+					android:hint="@string/hint_player4" android:text="Char"/>
 
 			<RadioGroup android:id="@+id/score_to_win"
 					android:layout_height="wrap_content"

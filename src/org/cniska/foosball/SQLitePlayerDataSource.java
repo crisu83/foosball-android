@@ -20,6 +20,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		SQLiteHelper.COLUMN_GOALS_AGAINST,
 		SQLiteHelper.COLUMN_WINS,
 		SQLiteHelper.COLUMN_LOSSES,
+		SQLiteHelper.COLUMN_RATING
 	};
 
 	// Methods
@@ -39,6 +40,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		ContentValues values = new ContentValues();
 		values.put(SQLiteHelper.COLUMN_CREATED, currentUnixTime());
 		values.put(SQLiteHelper.COLUMN_NAME, name);
+		values.put(SQLiteHelper.COLUMN_RATING, EloRatingSystem.INITIAL_RATING);
 		long insertId = db.insert(SQLiteHelper.TABLE_PLAYER, null, values);
 		String[] selectionArgs = new String[] { String.valueOf(insertId) };
 		Cursor cursor = db.query(SQLiteHelper.TABLE_PLAYER, columns, SQLiteHelper.COLUMN_ID + "=?", selectionArgs, null, null, null);
@@ -60,6 +62,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		values.put(SQLiteHelper.COLUMN_GOALS_AGAINST, player.getGoalsAgainst());
 		values.put(SQLiteHelper.COLUMN_WINS, player.getWins());
 		values.put(SQLiteHelper.COLUMN_LOSSES, player.getLosses());
+		values.put(SQLiteHelper.COLUMN_RATING, player.getRating());
 		String[] whereArgs = new String[] { String.valueOf(player.getId()) };
 		return db.update(SQLiteHelper.TABLE_PLAYER, values, SQLiteHelper.COLUMN_ID + "=?", whereArgs);
 	}
@@ -108,6 +111,7 @@ public class SQLitePlayerDataSource extends SQLiteDataSource implements PlayerDa
 		player.setGoalsAgainst(cursor.getInt(4));
 		player.setWins(cursor.getInt(5));
 		player.setLosses(cursor.getInt(6));
+		player.setRating(cursor.getInt(7));
 		return player;
 	}
 }

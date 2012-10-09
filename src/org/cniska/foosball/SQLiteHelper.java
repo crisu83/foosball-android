@@ -10,7 +10,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	// ----------------------------------------
 
 	private static final String DATABASE_NAME = "foosball.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 1;
 
 	public static final String TABLE_PLAYER = "player";
 	public static final String TABLE_MATCH = "match";
@@ -24,6 +24,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_GOALS_AGAINST = "goals_against";
 	public static final String COLUMN_WINS = "wins";
 	public static final String COLUMN_LOSSES = "losses";
+	public static final String COLUMN_RATING = "rating";
 
 	public static final String COLUMN_RED_SCORE = "red_score";
 	public static final String COLUMN_BLUE_SCORE = "blue_score";
@@ -40,7 +41,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			COLUMN_GOALS + " INTEGER NOT NULL DEFAULT '0', " +
 			COLUMN_GOALS_AGAINST + " INTEGER NOT NULL DEFAULT '0', " +
 			COLUMN_WINS + " INTEGER NOT NULL DEFAULT '0', " +
-			COLUMN_LOSSES + " INTEGER NOT NULL DEFAULT '0'); " +
+			COLUMN_LOSSES + " INTEGER NOT NULL DEFAULT '0', " +
+			COLUMN_RATING + " INTEGER NOT NULL); "/* +
 
 			"CREATE TABLE " + TABLE_MATCH + " (" +
 			COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -51,7 +53,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			"CREATE TABLE " + TABLE_MATCH_PLAYER + " (" +
 			COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			COLUMN_MATCH_ID + " INTEGER NOT NULL, " +
-			COLUMN_PLAYER_ID + " INTEGER NOT NULL);";
+			COLUMN_PLAYER_ID + " INTEGER NOT NULL);"*/;
 
 
 	// Methods

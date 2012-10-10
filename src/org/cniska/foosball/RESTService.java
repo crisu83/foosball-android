@@ -24,19 +24,30 @@ import java.util.List;
 
 public class RESTService extends IntentService {
 
+	// Static variables
+	// ----------------------------------------
+
 	public static final String TAG = RESTService.class.getName();
 
+	// Http verbs
 	public static final int GET = 1;
 	public static final int POST = 2;
 	public static final int PUT = 3;
 	public static final int DELETE = 4;
 
+	// Extras
 	public static final String EXTRA_HTTP_VERB = "org.cniska.foosball.EXTRA_HTTP_VERB";
 	public static final String EXTRA_PARAMS = "org.cniska.foosball.EXTRA_PARAMS";
 	public static final String EXTRA_RESULT_RECEIVER = "org.cniska.foosball.EXTRA_RESULT_RECEIVER";
 
 	public static final String REST_RESULT = "org.cniska.foosball.REST_RESULT";
 
+	// Methods
+	// ----------------------------------------
+
+	/**
+	 * Creates a new service.
+	 */
 	public RESTService() {
 		super(TAG);
 	}
@@ -78,15 +89,17 @@ public class RESTService extends IntentService {
 
 				case DELETE:
 					request = new HttpDelete();
-					attachUriWithQuery(request, action, params);
+					setURIWithParams(request, action, params);
 					break;
 
 				case GET:
 				default:
 					request = new HttpGet();
-					attachUriWithQuery(request, action, params);
+					setURIWithParams(request, action, params);
 					break;
 			}
+
+			Logger.debug(TAG, "Executing request: " + verbToString(verb) + ": " + action.toString() + ".");
 
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(request);
@@ -101,16 +114,26 @@ public class RESTService extends IntentService {
 			} else {
 				receiver.send(statusCode, null);
 			}
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			Logger.error(TAG, "Failed to handle intent. (URI syntax is incorrect).");
+			receiver.send(0, null);
+		} catch (ClientProtocolException e) {
+			Logger.error(TAG, "Failed to handle intent.");
+			receiver.send(0, null);
+		} catch (IOException e) {
+			Logger.error(TAG, "Failed to handle intent.");
+			receiver.send(0, null);
 		}
 	}
 
-	private void attachUriWithQuery(HttpRequestBase request, Uri uri, Bundle params) throws URISyntaxException {
+	/**
+	 * Adds the query string to the given Http request.
+	 * @param request Http request.
+	 * @param uri Uri reference.
+	 * @param params Query parameters.
+	 * @throws URISyntaxException
+	 */
+	private void setURIWithParams(HttpRequestBase request, Uri uri, Bundle params) throws URISyntaxException {
 		if (params != null) {
 			Uri.Builder builder = uri.buildUpon();
 
@@ -123,6 +146,11 @@ public class RESTService extends IntentService {
 		request.setURI(new URI(uri.toString()));
 	}
 
+	/**
+	 * Converts the given parameter bundle to a list.
+	 * @param params Parameter bundle.
+	 * @return The list.
+	 */
 	private List<BasicNameValuePair> paramsToList(Bundle params) {
 		int numParams = params.size();
 		ArrayList<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>(numParams);
@@ -137,22 +165,18 @@ public class RESTService extends IntentService {
 		return list;
 	}
 
+	/**
+	 * Returns the given HTTP verb constant as a string.
+	 * @param verb Verb constant.
+	 * @return The verb.
+	 */
 	private static String verbToString(int verb) {
 		switch (verb) {
-			case GET:
-				return "GET";
-
-			case POST:
-				return "POST";
-
-			case PUT:
-				return "PUT";
-
-			case DELETE:
-				return "DELETE";
-
-			default:
-				return null;
+			case GET:		return "GET";
+			case POST:		return "POST";
+			case PUT:		return "PUT";
+			case DELETE:	return "DELETE";
+			default:		return null;
 		}
 	}
 }

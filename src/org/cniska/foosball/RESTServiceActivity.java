@@ -7,7 +7,13 @@ import android.os.Bundle;
 
 public class RESTServiceActivity extends Activity {
 
+	// Static variables
+	// ----------------------------------------
+
 	public static final String TAG_RESPONDER = RESTResponderFragment.class.getName();
+
+	// Methods
+	// ----------------------------------------
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

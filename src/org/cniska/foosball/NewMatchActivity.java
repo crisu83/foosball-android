@@ -3,6 +3,9 @@ package org.cniska.foosball;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
@@ -12,6 +15,8 @@ public class NewMatchActivity extends Activity {
 
 	// Static variables
 	// ----------------------------------------
+
+	public static final String TAG = NewMatchActivity.class.getName();
 
 	public static final String EXTRA_PLAYER1 = "org.cniska.foosball.PLAYER1";
 	public static final String EXTRA_PLAYER2 = "org.cniska.foosball.PLAYER2";
@@ -66,7 +71,25 @@ public class NewMatchActivity extends Activity {
 		fieldPlayer3.setAdapter(adapter);
 		fieldPlayer4.setAdapter(adapter);
 
-		Logger.info(getClass().getName(), "Activity created.");
+		Logger.info(TAG, "Activity created.");
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.new_match_activity, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_back:
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**
@@ -81,7 +104,7 @@ public class NewMatchActivity extends Activity {
 
 		// Make sure that there weren't any validation errors before continuing.
 		if (validate()) {
-			Logger.info(getClass().getName(), "Sending intent to start PlayMatchActivity.");
+			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 			Intent intent = new Intent(this, PlayMatchActivity.class);
 			intent.putExtra(EXTRA_PLAYER1, fieldPlayer1.getText().toString().trim());
 			intent.putExtra(EXTRA_PLAYER2, fieldPlayer2.getText().toString().trim());
@@ -95,14 +118,14 @@ public class NewMatchActivity extends Activity {
 	@Override
 	protected void onResume() {
 		data.open();
-		Logger.info(getClass().getName(), "Activity resumed.");
+		Logger.info(TAG, "Activity resumed.");
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		data.close();
-		Logger.info(getClass().getName(), "Activity paused.");
+		Logger.info(TAG, "Activity paused.");
 		super.onPause();
 	}
 

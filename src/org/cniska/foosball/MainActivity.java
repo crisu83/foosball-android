@@ -9,6 +9,8 @@ import android.view.WindowManager;
 
 public class MainActivity extends Activity {
 
+	public static final String TAG = MainActivity.class.getName();
+	
 	// Methods
 	// ----------------------------------------
 
@@ -22,7 +24,7 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.main);
 
-		Logger.info(getClass().getName(), "Activity created.");
+		Logger.info(TAG, "Activity created.");
 	}
 
 	/**
@@ -30,7 +32,7 @@ public class MainActivity extends Activity {
 	 * @param view
 	 */
 	public void startNewMatch(View view) {
-		Logger.info(getClass().getName(), "Sending intent to start NewMatchActivity.");
+		Logger.info(TAG, "Sending intent to start NewMatchActivity.");
 		Intent intent = new Intent(this, NewMatchActivity.class);
 		startActivity(intent);
 	}
@@ -40,7 +42,7 @@ public class MainActivity extends Activity {
 	 * @param view
 	 */
 	public void openStatistics(View view) {
-		Logger.info(getClass().getName(), "Sending intent to start StatisticsActivity.");
+		Logger.info(TAG, "Sending intent to start StatisticsActivity.");
 		Intent intent = new Intent(this, StatisticsActivity.class);
 		startActivity(intent);
 	}

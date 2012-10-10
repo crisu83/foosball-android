@@ -3,8 +3,7 @@ package org.cniska.foosball;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
+import android.view.*;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -72,6 +71,24 @@ public class StatisticsActivity extends Activity {
 		addTablePlayerRows(layout);
 
 		sortByColumn(SortColumn.PLAYER);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.statistics_activity, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_back:
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override

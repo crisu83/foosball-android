@@ -28,6 +28,8 @@ public class PlayMatchActivity extends Activity {
 	// Static variables
 	// ----------------------------------------
 
+	private static final String TAG =  PlayMatchActivity.class.getName();
+
 	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.NUM_GOALS_TO_WIN";
 	private static final String STATE_NUM_GOALS_PLAYER1 = "org.cniska.foosball.NUM_GOALS_PLAYER1";
 	private static final String STATE_NUM_GOALS_PLAYER2 = "org.cniska.foosball.NUM_GOALS_PLAYER2";
@@ -134,7 +136,7 @@ public class PlayMatchActivity extends Activity {
 			layoutTeamBlue.removeView(buttonPlayer4);
 		}
 
-		Logger.info(getClass().getName(), "Activity created.");
+		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
@@ -168,14 +170,14 @@ public class PlayMatchActivity extends Activity {
 		state.putInt(STATE_NUM_GOALS_PLAYER3, numGoalsPlayer3);
 		state.putInt(STATE_NUM_GOALS_PLAYER4, numGoalsPlayer4);
 
-		Logger.info(getClass().getName(), "Activity state saved.");
+		Logger.info(TAG, "Activity state saved.");
 	}
 
 	@Override
 	protected void onResume() {
 		data.open();
 		wakeLock.acquire();
-		Logger.info(getClass().getName(), "Activity resumed.");
+		Logger.info(TAG, "Activity resumed.");
 		super.onResume();
 	}
 
@@ -183,7 +185,7 @@ public class PlayMatchActivity extends Activity {
 	protected void onPause() {
 		data.close();
 		wakeLock.release();
-		Logger.info(getClass().getName(), "Activity paused.");
+		Logger.info(TAG, "Activity paused.");
 		super.onPause();
 	}
 
@@ -195,10 +197,10 @@ public class PlayMatchActivity extends Activity {
 		if (!ended) {
 			numGoalsPlayer1++;
 			history.add(PlayerType.PLAYER1);
-			Logger.info(getClass().getName(), "Goal logged for player 1.");
+			Logger.info(TAG, "Goal logged for player 1.");
 			updateRedTeamScore();
 		} else {
-			Logger.error(getClass().getName(), "Failed to log goal for player 1 (match has ended).");
+			Logger.error(TAG, "Failed to log goal for player 1 (match has ended).");
 		}
 	}
 
@@ -210,10 +212,10 @@ public class PlayMatchActivity extends Activity {
 		if (!ended) {
 			numGoalsPlayer2++;
 			history.add(PlayerType.PLAYER2);
-			Logger.info(getClass().getName(), "Goal logged for player 2.");
+			Logger.info(TAG, "Goal logged for player 2.");
 			updateBlueTeamScore();
 		} else {
-			Logger.error(getClass().getName(), "Failed to log goal for player 2 (match has ended).");
+			Logger.error(TAG, "Failed to log goal for player 2 (match has ended).");
 		}
 	}
 
@@ -226,13 +228,13 @@ public class PlayMatchActivity extends Activity {
 			if (activePlayer3) {
 				numGoalsPlayer3++;
 				history.add(PlayerType.PLAYER3);
-				Logger.info(getClass().getName(), "Goal logged for player 3.");
+				Logger.info(TAG, "Goal logged for player 3.");
 				updateRedTeamScore();
 			} else {
-				Logger.error(getClass().getName(), "Failed to log goal for player 3 (player not playing).");
+				Logger.error(TAG, "Failed to log goal for player 3 (player not playing).");
 			}
 		} else {
-			Logger.error(getClass().getName(), "Failed to log goal for player 3 (match has ended).");
+			Logger.error(TAG, "Failed to log goal for player 3 (match has ended).");
 		}
 	}
 
@@ -245,13 +247,13 @@ public class PlayMatchActivity extends Activity {
 			if (activePlayer4) {
 				numGoalsPlayer4++;
 				history.add(PlayerType.PLAYER4);
-				Logger.info(getClass().getName(), "Goal logged for player 4.");
+				Logger.info(TAG, "Goal logged for player 4.");
 				updateBlueTeamScore();
 			} else {
-				Logger.error(getClass().getName(), "Failed to log goal for player 4 (player not playing).");
+				Logger.error(TAG, "Failed to log goal for player 4 (player not playing).");
 			}
 		} else {
-			Logger.error(getClass().getName(), "Failed to log goal for player 4 (match has ended).");
+			Logger.error(TAG, "Failed to log goal for player 4 (match has ended).");
 		}
 	}
 
@@ -322,26 +324,26 @@ public class PlayMatchActivity extends Activity {
 			switch (playerType) {
 				case PLAYER1:
 					numGoalsPlayer1--;
-					Logger.info(getClass().getName(), "Score removed from player 1.");
+					Logger.info(TAG, "Score removed from player 1.");
 					updateRedTeamScore();
 					break;
 				case PLAYER2:
 					numGoalsPlayer2--;
-					Logger.info(getClass().getName(), "Score removed from player 2.");
+					Logger.info(TAG, "Score removed from player 2.");
 					updateBlueTeamScore();
 					break;
 				case PLAYER3:
 					numGoalsPlayer3--;
-					Logger.info(getClass().getName(), "Score removed from player 3.");
+					Logger.info(TAG, "Score removed from player 3.");
 					updateRedTeamScore();
 					break;
 				case PLAYER4:
 					numGoalsPlayer4--;
-					Logger.info(getClass().getName(), "Score removed from player 4.");
+					Logger.info(TAG, "Score removed from player 4.");
 					updateBlueTeamScore();
 					break;
 				default:
-					Logger.error(this.getClass().getName(), "Failed to undo action (type unknown).");
+					Logger.error(this.TAG, "Failed to undo action (type unknown).");
 			}
 		}
 	}
@@ -374,7 +376,7 @@ public class PlayMatchActivity extends Activity {
 	 * Quits the match without saving.
 	 */
 	private void quit() {
-		Logger.info(getClass().getName(), "Sending intent to start MainActivity.");
+		Logger.info(TAG, "Sending intent to start MainActivity.");
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 	}
@@ -404,7 +406,7 @@ public class PlayMatchActivity extends Activity {
 
 		loadPlayers();
 
-		Logger.info(getClass().getName(), "Updating player records.");
+		Logger.info(TAG, "Updating player records.");
 
 		if (player1 != null) {
 			player1 = updatePlayer(player1, numGoalsPlayer1, player3 == null ? blueTeamGoals() : 0, blueTeamRating(),
@@ -435,7 +437,7 @@ public class PlayMatchActivity extends Activity {
 	 * Loads the player records from the data source.
 	 */
 	private void loadPlayers() {
-		Logger.info(getClass().getName(), "Loading player records.");
+		Logger.info(TAG, "Loading player records.");
 
 		player1 = data.findPlayerByName(namePlayer1);
 		player2 = data.findPlayerByName(namePlayer2);
@@ -470,7 +472,7 @@ public class PlayMatchActivity extends Activity {
 			}
 		}
 
-		Logger.info(getClass().getName(), "Player records loaded.");
+		Logger.info(TAG, "Player records loaded.");
 	}
 
 	/**

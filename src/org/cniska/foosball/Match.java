@@ -5,6 +5,11 @@ import java.util.List;
 
 public class Match {
 
+	// Static variables
+	// ----------------------------------------
+
+	public static final String TAG = Match.class.getName();
+
 	// Member variables
 	// ----------------------------------------
 
@@ -30,7 +35,7 @@ public class Match {
 		if (players.size() < 4) {
 			players.add(player);
 		} else {
-			Logger.error(getClass().getName(), "Failed to add player (Limit exceeded).");
+			Logger.error(TAG, "Failed to add player (Limit exceeded).");
 		}
 	}
 

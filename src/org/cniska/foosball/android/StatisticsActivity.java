@@ -55,6 +55,8 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	// Member variables
 	// ----------------------------------------
 
+	//private CursorAdapter mAdapter;
+
 	private List<Player> mPlayers;
 	private PlayerComparator mComparator;
 	private TableLayout mLayout;
@@ -172,33 +174,26 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mPlayers = new ArrayList<Player>();
+		mComparator = new PlayerComparator();
+		mLayout = (TableLayout) findViewById(R.id.table_statistics);
+
 		setContentView(R.layout.statistics);
 
-		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
-		mPlayers = new ArrayList<Player>();
+		/*
+		String[] from = { Player.NAME, Player.GOALS, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
+		int[] to = new int[] { R.id.column_name, R.id.column_goals, R.id.column_goals_against, R.id.column_wins, R.id.column_losses, R.id.column_rating };
+		mAdapter = new SimpleCursorAdapter(this, R.layout.statistics_item, null, from, to, 0);
+		setListAdapter(mAdapter);
+		*/
 
-		if (cursor.moveToFirst()) {
-			int i = 0;
-			while (!cursor.isAfterLast()) {
-				mPlayers.add(cursorToPlayer(cursor));
-				cursor.moveToNext();
-				i++;
-			}
-		}
-
-		mComparator = new PlayerComparator();
-
-		mLayout = (TableLayout) findViewById(R.id.table_statistics);
-		addTableHeaderRow(mLayout);
-		addTablePlayerRows(mLayout);
-
-		sortByColumn(SortColumn.PLAYER);
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.statistics_activity, menu);
+		inflater.inflate(R.menu.statistics, menu);
 		return true;
 	}
 
@@ -215,26 +210,43 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
+		String[] projection = { Player._ID, Player.NAME, Player.GOALS, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
+		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, projection, null, null, null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		//mAdapter.swapCursor(data);
+
+		if (data.moveToFirst()) {
+			int i = 0;
+			while (!data.isAfterLast()) {
+				mPlayers.add(cursorToPlayer(data));
+				data.moveToNext();
+				i++;
+			}
+		}
+
+		addTableHeaderRow(mLayout);
+		addTablePlayerRows(mLayout);
+
+		sortByColumn(SortColumn.PLAYER);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
+		//mAdapter.swapCursor(null);
 	}
 
 	private Player cursorToPlayer(Cursor cursor) {
 		Player player = new Player();
 		player.setId(cursor.getLong(0));
-		player.setName(cursor.getString(4));
-		player.setGoals(cursor.getInt(5));
-		player.setGoalsAgainst(cursor.getInt(6));
-		player.setWins(cursor.getInt(7));
-		player.setLosses(cursor.getInt(8));
-		player.setRating(cursor.getInt(9));
+		player.setName(cursor.getString(1));
+		player.setGoals(cursor.getInt(2));
+		player.setGoalsAgainst(cursor.getInt(3));
+		player.setWins(cursor.getInt(4));
+		player.setLosses(cursor.getInt(5));
+		player.setRating(cursor.getInt(6));
 		return player;
 	}
 
@@ -316,10 +328,10 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	 * @param layout The table layout.
 	 */
 	private void addTablePlayerRows(TableLayout layout) {
-		int playerCount = mPlayers.size();
+		int numPlayers = mPlayers.size();
 
-		if (playerCount > 0) {
-			for (int i = 0; i < playerCount; i++) {
+		if (numPlayers > 0) {
+			for (int i = 0; i < numPlayers; i++) {
 				Player player = mPlayers.get(i);
 				TableRow row = new TableRow(this);
 				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 10));

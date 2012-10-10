@@ -6,7 +6,7 @@
 		android:orientation="vertical"
 		android:padding="20dp">
 
-	<TextView android:id="@+id/new_game_title"
+	<TextView android:id="title_new_match"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:layout_marginBottom="10dp"
@@ -25,7 +25,7 @@
 				android:layout_marginRight="20dp"
 				android:orientation="vertical">
 
-			<TextView android:id="@+id/team_red"
+			<TextView android:id="@+id/text_team_red"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:layout_marginBottom="5dp"
@@ -41,7 +41,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player2"
 					android:singleLine="true"
-					android:hint="@string/hint_player1" android:text="Foo"/>
+					android:hint="@string/hint_player1"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player3"
 					android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player4"
 					android:singleLine="true"
-					android:hint="@string/hint_player3" android:text="Var"/>
+					android:hint="@string/hint_player3"/>
 
 			<TextView android:id="@+id/text_scores_to_win"
 					android:layout_height="40dp"
@@ -70,7 +70,7 @@
 				android:layout_weight="50"
 				android:orientation="vertical">
 
-			<TextView android:id="@+id/team_blue"
+			<TextView android:id="@+id/text_team_blue"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:layout_marginBottom="5dp"
@@ -86,7 +86,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player3"
 					android:singleLine="true"
-					android:hint="@string/hint_player2" android:text="Bar"/>
+					android:hint="@string/hint_player2"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player4"
 					android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
 					android:imeOptions="actionDone"
 					android:inputType="textCapSentences"
 					android:singleLine="true"
-					android:hint="@string/hint_player4" android:text="Char"/>
+					android:hint="@string/hint_player4"/>
 
 			<RadioGroup android:id="@+id/radio_group_score_to_win"
 					android:layout_height="wrap_content"

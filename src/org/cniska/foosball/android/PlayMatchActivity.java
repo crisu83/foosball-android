@@ -2,8 +2,9 @@ package org.cniska.foosball.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
-import android.content.*;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * This activity handles match logging.
  */
-public class PlayMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PlayMatchActivity extends Activity {
 
 	// Enumerables
 	// ----------------------------------------
@@ -35,8 +36,6 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	// ----------------------------------------
 
 	private static final String TAG =  PlayMatchActivity.class.getName();
-
-	private static final int PLAYER_LOADER = 0x01;
 
 	private static final String STATE_NUM_PLAYER_GOALS = "org.cniska.foosball.android.STATE_NUM_PLAYERS_GOALS";
 	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.STATE_NuM_GOALS_TO_WIN";
@@ -70,8 +69,6 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 		mPlayerGoals = new int[4];
 		mPlayers = new Player[4];
 		mHistory = new ArrayList<Integer>();
-
-		getLoaderManager().initLoader(PLAYER_LOADER, null, this);
 
 		PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
 		mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName());
@@ -133,7 +130,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.play_match_activity, menu);
+		inflater.inflate(R.menu.play_match, menu);
 		return true;
 	}
 
@@ -171,19 +168,6 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 		mWakeLock.release();
 		Logger.info(TAG, "Activity paused.");
 		super.onPause();
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
 	}
 
 	/**
@@ -395,7 +379,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	 * Renders the red team score.
 	 */
 	private void renderRedScore() {
-		TextView redTeamScore = (TextView) findViewById(R.id.team_red_score);
+		TextView redTeamScore = (TextView) findViewById(R.id.text_team_red_score);
 		redTeamScore.setText(String.valueOf(redTeamGoals()));
 	}
 
@@ -403,7 +387,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	 * Renders the blue team score.
 	 */
 	private void renderBlueScore() {
-		TextView blueTeamScore = (TextView) findViewById(R.id.team_blue_score);
+		TextView blueTeamScore = (TextView) findViewById(R.id.text_team_blue_score);
 		blueTeamScore.setText(String.valueOf(blueTeamGoals()));
 	}
 

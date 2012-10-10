@@ -1,10 +1,7 @@
 package org.cniska.foosball.android;
 
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,14 +17,12 @@ import org.cniska.foosball.R;
 /**
  * This activity handles match creation.
  */
-public class NewMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class NewMatchActivity extends Activity {
 
 	// Static variables
 	// ----------------------------------------
 
 	public static final String TAG = NewMatchActivity.class.getName();
-
-	private static final int PLAYER_LOADER = 0x01;
 
 	public static final String EXTRA_NAME_PLAYER1 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER1";
 	public static final String EXTRA_NAME_PLAYER2 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER2";
@@ -51,8 +46,6 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.new_match);
-
-		getLoaderManager().initLoader(PLAYER_LOADER, null, this);
 
 		String[] projection = { Player.NAME };
 		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, projection, null, null, null);
@@ -91,7 +84,7 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.activity_new_match, menu);
+		inflater.inflate(R.menu.new_match, menu);
 		return true;
 	}
 
@@ -139,19 +132,6 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 	protected void onPause() {
 		Logger.info(TAG, "Activity paused.");
 		super.onPause();
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
 	}
 
 	/**

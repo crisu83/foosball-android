@@ -1,4 +1,4 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.util.Log;
 

@@ -34,24 +34,24 @@
 					android:textSize="15dp"
 					android:text="@string/team_red" />
 
-			<AutoCompleteTextView android:id="@+id/field_player1"
+			<AutoCompleteTextView android:id="@+id/edit_text_player1"
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
 					android:imeOptions="actionNext"
 					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/field_player2"
+					android:nextFocusDown="@+id/edit_text_player2"
 					android:singleLine="true"
-					android:hint="@string/hint_player1"/>
+					android:hint="@string/hint_player1" android:text="Foo"/>
 
-			<AutoCompleteTextView android:id="@+id/field_player3"
+			<AutoCompleteTextView android:id="@+id/edit_text_player3"
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
 					android:layout_marginBottom="10dp"
 					android:imeOptions="actionNext"
 					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/field_player4"
+					android:nextFocusDown="@+id/edit_text_player4"
 					android:singleLine="true"
-					android:hint="@string/hint_player3"/>
+					android:hint="@string/hint_player3" android:text="Var"/>
 
 			<TextView android:id="@+id/text_scores_to_win"
 					android:layout_height="40dp"
@@ -79,25 +79,25 @@
 					android:textSize="15dp"
 					android:text="@string/team_blue" />
 
-			<AutoCompleteTextView android:id="@+id/field_player2"
+			<AutoCompleteTextView android:id="@+id/edit_text_player2"
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
 					android:imeOptions="actionNext"
 					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/field_player3"
+					android:nextFocusDown="@+id/edit_text_player3"
 					android:singleLine="true"
-					android:hint="@string/hint_player2"/>
+					android:hint="@string/hint_player2" android:text="Bar"/>
 
-			<AutoCompleteTextView android:id="@+id/field_player4"
+			<AutoCompleteTextView android:id="@+id/edit_text_player4"
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
 					android:layout_marginBottom="10dp"
 					android:imeOptions="actionDone"
 					android:inputType="textCapSentences"
 					android:singleLine="true"
-					android:hint="@string/hint_player4"/>
+					android:hint="@string/hint_player4" android:text="Char"/>
 
-			<RadioGroup android:id="@+id/score_to_win"
+			<RadioGroup android:id="@+id/radio_group_score_to_win"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:layout_marginBottom="10dp"

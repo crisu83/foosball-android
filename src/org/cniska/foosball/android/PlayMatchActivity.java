@@ -1,11 +1,14 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.app.LoaderManager;
+import android.content.*;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,58 +16,49 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.cniska.foosball.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayMatchActivity extends Activity {
+public class PlayMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
 	// ----------------------------------------
 
 	public enum TeamType { RED, BLUE };
-	public enum PlayerType { PLAYER1, PLAYER2, PLAYER3, PLAYER4 };
 
 	// Static variables
 	// ----------------------------------------
 
 	private static final String TAG =  PlayMatchActivity.class.getName();
 
-	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.NUM_GOALS_TO_WIN";
-	private static final String STATE_NUM_GOALS_PLAYER1 = "org.cniska.foosball.NUM_GOALS_PLAYER1";
-	private static final String STATE_NUM_GOALS_PLAYER2 = "org.cniska.foosball.NUM_GOALS_PLAYER2";
-	private static final String STATE_NUM_GOALS_PLAYER3 = "org.cniska.foosball.NUM_GOALS_PLAYER3";
-	private static final String STATE_NUM_GOALS_PLAYER4 = "org.cniska.foosball.NUM_GOALS_PLAYER4";
+	private static final int PLAYER_LOADER = 0x01;
+
+	private static final String STATE_PLAYERS = "org.cniska.foosball.players";
+	private static final String STATE_NUM_PLAYER_GOALS = "org.cniska.foosball.numPlayerGoals";
+	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.numGoalsToWin";
+
+	private static final int PLAYER1 = 0;
+	private static final int PLAYER2 = 1;
+	private static final int PLAYER3 = 2;
+	private static final int PLAYER4 = 3;
 
 	// Member variables
 	// ----------------------------------------
 
-	PowerManager.WakeLock wakeLock;
+	PowerManager.WakeLock mWakeLock;
 
-	private String namePlayer1;
-	private String namePlayer2;
-	private String namePlayer3;
-	private String namePlayer4;
+	private Player[] mPlayers;
+	private String[] mPlayerNames;
+	private int[] mPlayerGoals;
 
-	private int numGoalsToWin;
-	private int numGoalsPlayer1 = 0;
-	private int numGoalsPlayer2 = 0;
-	private int numGoalsPlayer3 = 0;
-	private int numGoalsPlayer4 = 0;
+	private int mNumGoalsToWin;
 
-	private EloRatingSystem ratingSystem;
-	private SQLitePlayerDataSource data;
+	private EloRatingSystem mRatingSystem;
+	private List<Integer> mHistory;
 
-	private Player player1;
-	private Player player2;
-	private Player player3;
-	private Player player4;
-
-	private List<PlayerType> history;
-
-	private boolean activePlayer3 = false;
-	private boolean activePlayer4 = false;
-	private boolean ended = false;
+	private boolean mEnded = false;
 
 	// Methods
 	// ----------------------------------------
@@ -73,31 +67,31 @@ public class PlayMatchActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		history = new ArrayList<PlayerType>();
+		mPlayerNames = new String[4];
+		mPlayerGoals = new int[4];
+		mPlayers = new Player[4];
+		mHistory = new ArrayList<Integer>();
 
-		PowerManager powerManager = (PowerManager) getSystemService(this.POWER_SERVICE);
-		wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName());
+		getLoaderManager().initLoader(PLAYER_LOADER, null, this);
 
-		ratingSystem = new EloRatingSystem();
-		data = new SQLitePlayerDataSource(this);
-		data.open();
+		PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+		mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName());
+
+		mRatingSystem = new EloRatingSystem();
 
 		// Restore member variables if state has changed.
 		if (savedInstanceState != null) {
-			numGoalsToWin = savedInstanceState.getInt(STATE_NUM_GOALS_TO_WIN);
-			numGoalsPlayer1 = savedInstanceState.getInt(STATE_NUM_GOALS_PLAYER1);
-			numGoalsPlayer2 = savedInstanceState.getInt(STATE_NUM_GOALS_PLAYER2);
-			numGoalsPlayer3 = savedInstanceState.getInt(STATE_NUM_GOALS_PLAYER3);
-			numGoalsPlayer4 = savedInstanceState.getInt(STATE_NUM_GOALS_PLAYER4);
+			mNumGoalsToWin = savedInstanceState.getInt(STATE_NUM_GOALS_TO_WIN);
+			mPlayerGoals = savedInstanceState.getIntArray(STATE_NUM_PLAYER_GOALS);
 		}
 
 		// Process intent data.
 		Intent intent = getIntent();
-		namePlayer1 = intent.getStringExtra(NewMatchActivity.EXTRA_PLAYER1);
-		namePlayer2 = intent.getStringExtra(NewMatchActivity.EXTRA_PLAYER2);
-		namePlayer3 = intent.getStringExtra(NewMatchActivity.EXTRA_PLAYER3);
-		namePlayer4 = intent.getStringExtra(NewMatchActivity.EXTRA_PLAYER4);
-		numGoalsToWin = Integer.parseInt(intent.getStringExtra(NewMatchActivity.EXTRA_SCORES_TO_WIN));
+		mPlayerNames[PLAYER1] = intent.getStringExtra(NewMatchActivity.EXTRA_NAME_PLAYER1);
+		mPlayerNames[PLAYER2] = intent.getStringExtra(NewMatchActivity.EXTRA_NAME_PLAYER2);
+		mPlayerNames[PLAYER3] = intent.getStringExtra(NewMatchActivity.EXTRA_NAME_PLAYER3);
+		mPlayerNames[PLAYER4] = intent.getStringExtra(NewMatchActivity.EXTRA_NAME_PLAYER4);
+		mNumGoalsToWin = Integer.parseInt(intent.getStringExtra(NewMatchActivity.EXTRA_SCORES_TO_WIN));
 
 		// Set the view.
 		setContentView(R.layout.play_match);
@@ -113,13 +107,12 @@ public class PlayMatchActivity extends Activity {
 		Button buttonPlayer4 = (Button) findViewById(R.id.button_add_goal_player4);
 
 		// Update button texts.
-		buttonPlayer1.setText(namePlayer1);
-		buttonPlayer2.setText(namePlayer2);
+		buttonPlayer1.setText(mPlayerNames[PLAYER1]);
+		buttonPlayer2.setText(mPlayerNames[PLAYER2]);
 
 		// Check whether player 3 is playing.
-		if (!namePlayer3.isEmpty()) {
-			buttonPlayer3.setText(namePlayer3);
-			activePlayer3 = true;
+		if (isPlayerPlaying(PLAYER3)) {
+			buttonPlayer3.setText(mPlayerNames[PLAYER3]);
 		} else {
 			// Player 3 is not playing, remove the corresponding button.
 			LinearLayout layoutTeamRed = (LinearLayout) findViewById(R.id.layout_team_red);
@@ -127,9 +120,8 @@ public class PlayMatchActivity extends Activity {
 		}
 
 		// Check whether player 4 is playing.
-		if (!namePlayer4.isEmpty()) {
-			buttonPlayer4.setText(namePlayer4);
-			activePlayer4 = true;
+		if (isPlayerPlaying(PLAYER4)) {
+			buttonPlayer4.setText(mPlayerNames[PLAYER4]);
 		} else {
 			// Player 4 is not playing, remove the corresponding button.
 			LinearLayout layoutTeamBlue = (LinearLayout) findViewById(R.id.layout_team_blue);
@@ -163,30 +155,36 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	protected void onSaveInstanceState(Bundle state) {
 		super.onSaveInstanceState(state);
-
-		state.putInt(STATE_NUM_GOALS_TO_WIN, numGoalsToWin);
-		state.putInt(STATE_NUM_GOALS_PLAYER1, numGoalsPlayer1);
-		state.putInt(STATE_NUM_GOALS_PLAYER2, numGoalsPlayer2);
-		state.putInt(STATE_NUM_GOALS_PLAYER3, numGoalsPlayer3);
-		state.putInt(STATE_NUM_GOALS_PLAYER4, numGoalsPlayer4);
-
+		state.putInt(STATE_NUM_GOALS_TO_WIN, mNumGoalsToWin);
+		state.putIntArray(STATE_NUM_PLAYER_GOALS, mPlayerGoals);
 		Logger.info(TAG, "Activity state saved.");
 	}
 
 	@Override
 	protected void onResume() {
-		data.open();
-		wakeLock.acquire();
+		mWakeLock.acquire();
 		Logger.info(TAG, "Activity resumed.");
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		data.close();
-		wakeLock.release();
+		mWakeLock.release();
 		Logger.info(TAG, "Activity paused.");
 		super.onPause();
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
 	}
 
 	/**
@@ -194,9 +192,9 @@ public class PlayMatchActivity extends Activity {
 	 * @param view
 	 */
 	public void addGoalPlayer1(View view) {
-		if (!ended) {
-			numGoalsPlayer1++;
-			history.add(PlayerType.PLAYER1);
+		if (!mEnded) {
+			mPlayerGoals[PLAYER1]++;
+			mHistory.add(PLAYER1);
 			Logger.info(TAG, "Goal logged for player 1.");
 			updateRedTeamScore();
 		} else {
@@ -209,9 +207,9 @@ public class PlayMatchActivity extends Activity {
 	 * @param view
 	 */
 	public void addGoalPlayer2(View view) {
-		if (!ended) {
-			numGoalsPlayer2++;
-			history.add(PlayerType.PLAYER2);
+		if (!mEnded) {
+			mPlayerGoals[PLAYER2]++;
+			mHistory.add(PLAYER2);
 			Logger.info(TAG, "Goal logged for player 2.");
 			updateBlueTeamScore();
 		} else {
@@ -224,10 +222,10 @@ public class PlayMatchActivity extends Activity {
 	 * @param view
 	 */
 	public void addGoalPlayer3(View view) {
-		if (!ended) {
-			if (activePlayer3) {
-				numGoalsPlayer3++;
-				history.add(PlayerType.PLAYER3);
+		if (!mEnded) {
+			if (isPlayerPlaying(PLAYER3)) {
+				mPlayerGoals[PLAYER3]++;
+				mHistory.add(PLAYER3);
 				Logger.info(TAG, "Goal logged for player 3.");
 				updateRedTeamScore();
 			} else {
@@ -243,10 +241,10 @@ public class PlayMatchActivity extends Activity {
 	 * @param view
 	 */
 	public void addGoalPlayer4(View view) {
-		if (!ended) {
-			if (activePlayer4) {
-				numGoalsPlayer4++;
-				history.add(PlayerType.PLAYER4);
+		if (!mEnded) {
+			if (isPlayerPlaying(PLAYER4)) {
+				mPlayerGoals[PLAYER4]++;
+				mHistory.add(PLAYER4);
 				Logger.info(TAG, "Goal logged for player 4.");
 				updateBlueTeamScore();
 			} else {
@@ -263,7 +261,7 @@ public class PlayMatchActivity extends Activity {
 	private void updateRedTeamScore() {
 		renderRedScore();
 
-		if (redTeamGoals() >= numGoalsToWin) {
+		if (redTeamGoals() >= mNumGoalsToWin) {
 			end(TeamType.RED);
 		}
 	}
@@ -274,9 +272,18 @@ public class PlayMatchActivity extends Activity {
 	private void updateBlueTeamScore() {
 		renderBlueScore();
 
-		if (blueTeamGoals() >= numGoalsToWin) {
+		if (blueTeamGoals() >= mNumGoalsToWin) {
 			end(TeamType.BLUE);
 		}
+	}
+
+	/**
+	 * Returns whether the player with the given index is playing.
+	 * @param index Player index (0 = p1, 1 = p2, 2 = p3, 3 = p4).
+	 * @return The result.
+	 */
+	private boolean isPlayerPlaying(int index) {
+		return !TextUtils.isEmpty(mPlayerNames[index]);
 	}
 
 	/**
@@ -284,7 +291,7 @@ public class PlayMatchActivity extends Activity {
 	 * @return The amount.
 	 */
 	private int redTeamGoals() {
-		return numGoalsPlayer1 + numGoalsPlayer3;
+		return mPlayerGoals[PLAYER1] + mPlayerGoals[PLAYER3];
 	}
 
 	/**
@@ -292,7 +299,7 @@ public class PlayMatchActivity extends Activity {
 	 * @return The amount.
 	 */
 	private int blueTeamGoals() {
-		return numGoalsPlayer2 + numGoalsPlayer4;
+		return mPlayerGoals[PLAYER2] + mPlayerGoals[PLAYER4];
 	}
 
 	/**
@@ -300,7 +307,9 @@ public class PlayMatchActivity extends Activity {
 	 * @return The rating.
 	 */
 	private int redTeamRating() {
-		return player3 != null ? (player1.getRating() + player3.getRating()) / 2 : player1.getRating();
+		return mPlayers[PLAYER3] != null
+				? (mPlayers[PLAYER1].getRating() + mPlayers[PLAYER3].getRating()) / 2
+				: mPlayers[PLAYER1].getRating();
 	}
 
 	/**
@@ -308,7 +317,9 @@ public class PlayMatchActivity extends Activity {
 	 * @return The rating.
 	 */
 	private int blueTeamRating() {
-		return player4 != null ? (player2.getRating() + player4.getRating()) / 2 : player2.getRating();
+		return mPlayers[PLAYER4] != null
+				? (mPlayers[PLAYER2].getRating() + mPlayers[PLAYER4].getRating()) / 2
+				: mPlayers[PLAYER2].getRating();
 	}
 
 	/**
@@ -316,29 +327,29 @@ public class PlayMatchActivity extends Activity {
 	 * Called when the undo menu item is pressed.
 	 */
 	private void undoAction() {
-		int historyLength = history.size();
+		int historyLength = mHistory.size();
 
 		if (historyLength > 0) {
-			PlayerType playerType = history.remove(historyLength - 1);
+			int historyItem = mHistory.remove(historyLength - 1);
 
-			switch (playerType) {
+			switch (historyItem) {
 				case PLAYER1:
-					numGoalsPlayer1--;
+					mPlayerGoals[PLAYER1]--;
 					Logger.info(TAG, "Score removed from player 1.");
 					updateRedTeamScore();
 					break;
 				case PLAYER2:
-					numGoalsPlayer2--;
+					mPlayerGoals[PLAYER2]--;
 					Logger.info(TAG, "Score removed from player 2.");
 					updateBlueTeamScore();
 					break;
 				case PLAYER3:
-					numGoalsPlayer3--;
+					mPlayerGoals[PLAYER3]--;
 					Logger.info(TAG, "Score removed from player 3.");
 					updateRedTeamScore();
 					break;
 				case PLAYER4:
-					numGoalsPlayer4--;
+					mPlayerGoals[PLAYER4]--;
 					Logger.info(TAG, "Score removed from player 4.");
 					updateBlueTeamScore();
 					break;
@@ -386,7 +397,7 @@ public class PlayMatchActivity extends Activity {
 	 */
 	private void renderRedScore() {
 		TextView redTeamScore = (TextView) findViewById(R.id.team_red_score);
-		redTeamScore.setText(String.valueOf(numGoalsPlayer1 + numGoalsPlayer3));
+		redTeamScore.setText(String.valueOf(redTeamGoals()));
 	}
 
 	/**
@@ -394,7 +405,7 @@ public class PlayMatchActivity extends Activity {
 	 */
 	private void renderBlueScore() {
 		TextView blueTeamScore = (TextView) findViewById(R.id.team_blue_score);
-		blueTeamScore.setText(String.valueOf(numGoalsPlayer2 + numGoalsPlayer4));
+		blueTeamScore.setText(String.valueOf(blueTeamGoals()));
 	}
 
 	/**
@@ -402,77 +413,84 @@ public class PlayMatchActivity extends Activity {
 	 * @param teamType Winning team.
 	 */
 	private void end(TeamType teamType) {
-		ended = true;
+		mEnded = true;
 
 		loadPlayers();
 
 		Logger.info(TAG, "Updating player records.");
 
-		if (player1 != null) {
-			player1 = updatePlayer(player1, numGoalsPlayer1, player3 == null ? blueTeamGoals() : 0, blueTeamRating(),
-					teamType == TeamType.RED);
-			data.updatePlayer(player1);
+		if (mPlayers[PLAYER1] != null) {
+			updatePlayer(mPlayers[PLAYER1], mPlayerGoals[PLAYER1], mPlayers[PLAYER3] == null ? blueTeamGoals() : 0,
+					blueTeamRating(), teamType == TeamType.RED);
 		}
 
-		if (player2 != null) {
-			player2 = updatePlayer(player2, numGoalsPlayer2, player4 == null ? redTeamGoals() : 0, redTeamRating(),
-					teamType == TeamType.BLUE);
-			data.updatePlayer(player2);
+		if (mPlayers[PLAYER2] != null) {
+			updatePlayer(mPlayers[PLAYER2], mPlayerGoals[PLAYER2], mPlayers[PLAYER4] == null ? redTeamGoals() : 0,
+					redTeamRating(), teamType == TeamType.BLUE);
 		}
 
-		if (player3 != null) {
-			player3 = updatePlayer(player3, numGoalsPlayer3, blueTeamGoals(), blueTeamRating(), teamType == TeamType.RED);
-			data.updatePlayer(player3);
+		if (mPlayers[PLAYER3] != null) {
+			updatePlayer(mPlayers[PLAYER3], mPlayerGoals[PLAYER3], blueTeamGoals(),
+					blueTeamRating(), teamType == TeamType.RED);
 		}
 
-		if (player4 != null) {
-			player4 = updatePlayer(player4, numGoalsPlayer4, redTeamGoals(), redTeamRating(), teamType == TeamType.BLUE);
-			data.updatePlayer(player4);
+		if (mPlayers[PLAYER4] != null) {
+			updatePlayer(mPlayers[PLAYER4], mPlayerGoals[PLAYER4], redTeamGoals(),
+					redTeamRating(), teamType == TeamType.BLUE);
 		}
 
 		quit();
 	}
 
+
 	/**
-	 * Loads the player records from the data source.
+	 * Loads the player records from the database.
 	 */
 	private void loadPlayers() {
 		Logger.info(TAG, "Loading player records.");
 
-		player1 = data.findPlayerByName(namePlayer1);
-		player2 = data.findPlayerByName(namePlayer2);
+		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
 
-		// Create a new record for player 1 if none was found.
-		if (player1 == null) {
-			player1 = data.createPlayer(namePlayer1);
-		}
-
-		// Create a new record for player 2 if none was found.
-		if (player2 == null) {
-			player2 = data.createPlayer(namePlayer2);
-		}
-
-		// Check whether player 3 is playing.
-		if (!namePlayer3.isEmpty()) {
-			player3 = data.findPlayerByName(namePlayer3);
-
-			// Create a new record for player 3 if none was found.
-			if (player3 == null) {
-				player3 = data.createPlayer(namePlayer3);
+		if (cursor.moveToFirst()) {
+			int i = 0;
+			while (!cursor.isAfterLast()) {
+				mPlayers[i] = cursorToPlayer(cursor);
+				cursor.moveToNext();
+				i++;
 			}
 		}
 
-		// Check whether player 4 is playing.
-		if (!namePlayer4.isEmpty()) {
-			player4 = data.findPlayerByName(namePlayer4);
-
-			// Create a new record for player 4 if none was found.
-			if (player4 == null) {
-				player4 = data.createPlayer(namePlayer4);
+		for (int i = 0; i < 4; i++) {
+			if (mPlayers[i] == null && !TextUtils.isEmpty(mPlayerNames[i])) {
+				mPlayers[i] = createPlayer(mPlayerNames[i]);
 			}
 		}
 
 		Logger.info(TAG, "Player records loaded.");
+	}
+
+	private Player cursorToPlayer(Cursor cursor) {
+		Player player = new Player();
+		player.setId(cursor.getLong(0));
+		player.setName(cursor.getString(4));
+		player.setGoals(cursor.getInt(5));
+		player.setGoalsAgainst(cursor.getInt(6));
+		player.setWins(cursor.getInt(7));
+		player.setLosses(cursor.getInt(8));
+		player.setRating(cursor.getInt(9));
+		return player;
+	}
+
+	private Player createPlayer(String name) {
+		ContentValues values = new ContentValues();
+		values.put(Player.NAME, name);
+		Uri uri = getContentResolver().insert(Player.CONTENT_URI, values);
+		Cursor cursor = getContentResolver().query(uri, PlayerProvider.projectionArray, null, null, null);
+		Player player = null;
+		if (cursor.moveToFirst()) {
+			player = cursorToPlayer(cursor);
+		}
+		return player;
 	}
 
 	/**
@@ -484,11 +502,18 @@ public class PlayMatchActivity extends Activity {
 	 * @return The player.
 	 */
 	private Player updatePlayer(Player player, int goals, int goalsAgainst, int opponentRating, boolean won) {
-		player.addGoals(goals);
-		player.addGoalsAgainst(goalsAgainst);
+		if (goals > 0) {
+			player.addGoals(goals);
+		}
+
+		if (goalsAgainst > 0) {
+			player.addGoalsAgainst(goalsAgainst);
+		}
 
 		// Adjust the player's rating.
-		int newRating = ratingSystem.newRating(player.getRating(), opponentRating,
+		int newRating = mRatingSystem.newRating(
+				player.getRating(),
+				opponentRating,
 				won ? EloRatingSystem.SCORE_WIN : EloRatingSystem.SCORE_LOSS);
 		player.setRating(newRating);
 
@@ -496,6 +521,23 @@ public class PlayMatchActivity extends Activity {
 			player.addWin();
 		} else {
 			player.addLoss();
+		}
+
+		ContentValues values = new ContentValues();
+		values.put(Player.NAME, player.getName());
+		values.put(Player.GOALS, player.getGoals());
+		values.put(Player.GOALS_AGAINST, player.getGoalsAgainst());
+		values.put(Player.WINS, player.getWins());
+		values.put(Player.LOSSES, player.getLosses());
+		values.put(Player.RATING, player.getRating());
+		int numAffectedRows = getContentResolver().update(
+				Uri.withAppendedPath(Player.CONTENT_URI, String.valueOf(player.getId())),
+				values,
+				null,
+				null);
+
+		if (numAffectedRows == 0) {
+			Logger.error(TAG, "Failed to update player #" + player.getId() + " (player not found).");
 		}
 
 		return player;

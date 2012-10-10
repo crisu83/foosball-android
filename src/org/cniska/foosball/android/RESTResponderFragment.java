@@ -1,11 +1,11 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
-public abstract class RESTResponderFragment extends Fragment {
+public class RESTResponderFragment extends Fragment {
 
 	// Member variables
 	// ----------------------------------------
@@ -43,7 +43,8 @@ public abstract class RESTResponderFragment extends Fragment {
 	 * @param statusCode Http status code.
 	 * @param result Result string.
 	 */
-	public abstract void onRESTResult(int statusCode, String result);
+	public void onRESTResult(int statusCode, String result) {
+	}
 
 	// Getters and setters
 	// ----------------------------------------

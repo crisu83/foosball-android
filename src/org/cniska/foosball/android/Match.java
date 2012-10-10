@@ -1,4 +1,4 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import java.util.ArrayList;
 import java.util.List;

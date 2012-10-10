@@ -1,18 +1,24 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import org.cniska.foosball.R;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class StatisticsActivity extends Activity {
+public class StatisticsActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
 	// ----------------------------------------
@@ -46,10 +52,115 @@ public class StatisticsActivity extends Activity {
 	// Member variables
 	// ----------------------------------------
 
-	private SQLitePlayerDataSource data;
 	private List<Player> players;
 	private PlayerComparator comparator;
 	private TableLayout layout;
+
+	// Inner classes
+	// ----------------------------------------
+
+	private class PlayerComparator implements Comparator<Player> {
+
+		private SortColumn column;
+		private SortDirection direction;
+
+		@Override
+		public int compare(Player p1, Player p2) {
+			if (column != null) {
+				switch (column) {
+					case GOALS:
+						return compareInt(p1.getGoals(), p2.getGoals());
+					case GOALS_AGAINST:
+						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
+					case WINS:
+						return compareInt(p1.getWins(), p2.getWins());
+					case LOSSES:
+						return compareInt(p1.getLosses(), p2.getLosses());
+					case WIN_LOSS_RATIO:
+						return compareFloat(p1.winLossRatio(), p2.winLossRatio());
+					case RATING:
+						return compareInt(p1.getRating(), p2.getRating());
+					case PLAYER:
+					default:
+						return compareString(p1.getName(), p2.getName());
+				}
+			} else {
+				return 0;
+			}
+		}
+
+		/**
+		 * Compares two strings and returns the result.
+		 * @param value1 String 1.
+		 * @param value2 String 2.
+		 * @return The result.
+		 */
+		private int compareString(String value1, String value2) {
+			if (direction == SortDirection.ASCENDING) {
+				return value1.compareTo(value2);
+			} else {
+				return value2.compareTo(value1);
+			}
+		}
+
+		/**
+		 * Compares two integers and returns the result.
+		 * @param value1 Integer 1.
+		 * @param value2 Integer 2.
+		 * @return The result.
+		 */
+		private int compareInt(int value1, int value2) {
+			return compareFloat(value1, value2);
+		}
+
+		/**
+		 * Compares two floats and returns the result.
+		 * @param value1 Float 1.
+		 * @param value2 Float 2.
+		 * @return The result.
+		 */
+		private int compareFloat(float value1, float value2) {
+			if (direction == SortDirection.ASCENDING && (value1 < value2)
+					|| direction == SortDirection.DESCENDING && (value2 < value1)) {
+				return 1;
+			} else if (direction == SortDirection.ASCENDING && (value1 > value2)
+					|| direction == SortDirection.DESCENDING && (value2 > value1)) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+
+		/**
+		 * Changes the sorting order for the comparator.
+		 * @param column Sort column type.
+		 */
+		public void sortColumn(SortColumn column) {
+			if (direction != null && column == this.column) {
+				direction = oppositeDirection();
+			} else {
+				direction = defaultDirection();
+			}
+
+			this.column = column;
+		}
+
+		/**
+		 * Returns the opposite sorting direction to the current.
+		 * @return The direction.
+		 */
+		private SortDirection oppositeDirection() {
+			return direction == SortDirection.ASCENDING ? SortDirection.DESCENDING : SortDirection.ASCENDING;
+		}
+
+		/**
+		 * Returns the default sorting direction.
+		 * @return The direction.
+		 */
+		public SortDirection defaultDirection() {
+			return SortDirection.ASCENDING;
+		}
+	}
 
 	// Methods
 	// ----------------------------------------
@@ -60,10 +171,19 @@ public class StatisticsActivity extends Activity {
 
 		setContentView(R.layout.statistics);
 
-		data = new SQLitePlayerDataSource(this);
-		data.open();
 
-		players = data.findAllPlayers();
+		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+		players = new ArrayList<Player>();
+
+		if (cursor.moveToFirst()) {
+			int i = 0;
+			while (!cursor.isAfterLast()) {
+				players.add(cursorToPlayer(cursor));
+				cursor.moveToNext();
+				i++;
+			}
+		}
+
 		comparator = new PlayerComparator();
 
 		layout = (TableLayout) findViewById(R.id.table_statistics);
@@ -92,15 +212,28 @@ public class StatisticsActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
-		data.open();
-		super.onResume();
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
 	}
 
 	@Override
-	protected void onPause() {
-		data.close();
-		super.onPause();
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+	}
+
+	private Player cursorToPlayer(Cursor cursor) {
+		Player player = new Player();
+		player.setId(cursor.getLong(0));
+		player.setName(cursor.getString(4));
+		player.setGoals(cursor.getInt(5));
+		player.setGoalsAgainst(cursor.getInt(6));
+		player.setWins(cursor.getInt(7));
+		player.setLosses(cursor.getInt(8));
+		player.setRating(cursor.getInt(9));
+		return player;
 	}
 
 	/**
@@ -241,108 +374,5 @@ public class StatisticsActivity extends Activity {
 		addTableHeaderRow(layout);
 		addTablePlayerRows(layout);
 		layout.invalidate();
-	}
-
-	private class PlayerComparator implements Comparator<Player> {
-
-		private SortColumn column;
-		private SortDirection direction;
-
-		@Override
-		public int compare(Player p1, Player p2) {
-			if (column != null) {
-				switch (column) {
-					case GOALS:
-						return compareInt(p1.getGoals(), p2.getGoals());
-					case GOALS_AGAINST:
-						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
-					case WINS:
-						return compareInt(p1.getWins(), p2.getWins());
-					case LOSSES:
-						return compareInt(p1.getLosses(), p2.getLosses());
-					case WIN_LOSS_RATIO:
-						return compareFloat(p1.winLossRatio(), p2.winLossRatio());
-					case RATING:
-						return compareInt(p1.getRating(), p2.getRating());
-					case PLAYER:
-					default:
-						return compareString(p1.getName(), p2.getName());
-				}
-			} else {
-				return 0;
-			}
-		}
-
-		/**
-		 * Compares two strings and returns the result.
-		 * @param value1 String 1.
-		 * @param value2 String 2.
-		 * @return The result.
-		 */
-		private int compareString(String value1, String value2) {
-			if (direction == SortDirection.ASCENDING) {
-				return value1.compareTo(value2);
-			} else {
-				return value2.compareTo(value1);
-			}
-		}
-
-		/**
-		 * Compares two integers and returns the result.
-		 * @param value1 Integer 1.
-		 * @param value2 Integer 2.
-		 * @return The result.
-		 */
-		private int compareInt(int value1, int value2) {
-			return compareFloat(value1, value2);
-		}
-
-		/**
-		 * Compares two floats and returns the result.
-		 * @param value1 Float 1.
-		 * @param value2 Float 2.
-		 * @return The result.
-		 */
-		private int compareFloat(float value1, float value2) {
-			if (direction == SortDirection.ASCENDING && (value1 < value2)
-					|| direction == SortDirection.DESCENDING && (value2 < value1)) {
-				return 1;
-			} else if (direction == SortDirection.ASCENDING && (value1 > value2)
-					|| direction == SortDirection.DESCENDING && (value2 > value1)) {
-				return -1;
-			} else {
-				return 0;
-			}
-		}
-
-		/**
-		 * Changes the sorting order for the comparator.
-		 * @param column Sort column type.
-		 */
-		public void sortColumn(SortColumn column) {
-			if (direction != null && column == this.column) {
-				direction = oppositeDirection();
-			} else {
-				direction = defaultDirection();
-			}
-
-			this.column = column;
-		}
-
-		/**
-		 * Returns the opposite sorting direction to the current.
-		 * @return The direction.
-		 */
-		private SortDirection oppositeDirection() {
-			return direction == SortDirection.ASCENDING ? SortDirection.DESCENDING : SortDirection.ASCENDING;
-		}
-
-		/**
-		 * Returns the default sorting direction.
-		 * @return The direction.
-		 */
-		public SortDirection defaultDirection() {
-			return SortDirection.ASCENDING;
-		}
 	}
 }

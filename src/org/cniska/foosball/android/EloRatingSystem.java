@@ -1,5 +1,8 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
+/**
+ * This class handles the player Elo rating system calculations.
+ */
 public class EloRatingSystem {
 
 	// Static variables

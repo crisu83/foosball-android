@@ -1,4 +1,4 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import org.cniska.foosball.R;
 
+/**
+ * This class is the application's main activity.
+ */
 public class MainActivity extends Activity {
 
 	public static final String TAG = MainActivity.class.getName();

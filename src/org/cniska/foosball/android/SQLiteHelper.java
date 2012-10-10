@@ -1,4 +1,4 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +9,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	// Static variables
 	// ----------------------------------------
 
-	private static final String DATABASE_NAME = "foosball.db";
+	private static final String DATABASE_NAME = "foosball_old.db";
 	private static final int DATABASE_VERSION = 1;
 
 	public static final String TABLE_PLAYER = "player";
@@ -18,6 +18,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_CREATED = "created";
+	public static final String COLUMN_STATUS = "status";
+	public static final String COLUMN_RESULT = "result";
 
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_GOALS = "goals";
@@ -31,6 +33,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	public static final String COLUMN_MATCH_ID = "match_id";
 	public static final String COLUMN_PLAYER_ID = "player_id";
+
+	public static final int STATE_POSTING = 1;
+	public static final int STATE_UPDATING = 2;
+	public static final int STATE_DELETING = 3;
 
 	// Database creation statement
 	private static final String DATABASE_CREATE =

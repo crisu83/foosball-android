@@ -1,4 +1,4 @@
-package org.cniska.foosball;
+package org.cniska.foosball.android;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -99,7 +99,7 @@ public class RESTService extends IntentService {
 					break;
 			}
 
-			Logger.debug(TAG, "Executing request: " + verbToString(verb) + ": " + action.toString() + ".");
+			Logger.debug(TAG, "Executing request " + verbToString(verb) + ":" + action.toString());
 
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(request);

@@ -176,9 +176,10 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 
 		mPlayers = new ArrayList<Player>();
 		mComparator = new PlayerComparator();
-		mLayout = (TableLayout) findViewById(R.id.table_statistics);
 
 		setContentView(R.layout.statistics);
+
+		mLayout = (TableLayout) findViewById(R.id.table_statistics);
 
 		/*
 		String[] from = { Player.NAME, Player.GOALS, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
@@ -320,7 +321,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		});
 		row.addView(headerRating);
 
-		layout.addView(row);
+		mLayout.addView(row);
 	}
 
 	/**
@@ -341,7 +342,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.format("%2.01f", player.winLossRatio()), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getRating()), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 10));
-				layout.addView(row);
+				mLayout.addView(row);
 			}
 		}
 	}

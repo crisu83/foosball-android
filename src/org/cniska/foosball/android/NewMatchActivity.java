@@ -1,7 +1,10 @@
 package org.cniska.foosball.android;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,7 +20,7 @@ import org.cniska.foosball.R;
 /**
  * This activity handles match creation.
  */
-public class NewMatchActivity extends Activity {
+public class NewMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Static variables
 	// ----------------------------------------
@@ -33,10 +36,7 @@ public class NewMatchActivity extends Activity {
 	// Member variables
 	// ----------------------------------------
 
-	private AutoCompleteTextView mTextViewPlayer1;
-	private AutoCompleteTextView mTextViewPlayer2;
-	private AutoCompleteTextView mTextViewPlayer3;
-	private AutoCompleteTextView mTextViewPlayer4;
+	private AutoCompleteTextView[] mEditTexts;
 
 	// Methods
 	// ----------------------------------------
@@ -45,38 +45,16 @@ public class NewMatchActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mEditTexts = new AutoCompleteTextView[4];
+
 		setContentView(R.layout.new_match);
 
-		String[] projection = { Player.NAME };
-		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, projection, null, null, null);
+		mEditTexts[0] = (AutoCompleteTextView) findViewById(R.id.edit_text_player1);
+		mEditTexts[1] = (AutoCompleteTextView) findViewById(R.id.edit_text_player2);
+		mEditTexts[2] = (AutoCompleteTextView) findViewById(R.id.edit_text_player3);
+		mEditTexts[3] = (AutoCompleteTextView) findViewById(R.id.edit_text_player4);
 
-		String[] playerNames = new String[cursor.getCount()];
-		if (cursor.moveToNext()) {
-			int i = 0;
-			while (!cursor.isAfterLast()) {
-				playerNames[i] = cursor.getString(0);
-				cursor.moveToNext();
-				i++;
-			}
-		}
-
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-				this, android.R.layout.simple_spinner_dropdown_item, playerNames);
-
-		mTextViewPlayer1 = (AutoCompleteTextView) findViewById(R.id.edit_text_player1);
-		mTextViewPlayer2 = (AutoCompleteTextView) findViewById(R.id.edit_text_player2);
-		mTextViewPlayer3 = (AutoCompleteTextView) findViewById(R.id.edit_text_player3);
-		mTextViewPlayer4 = (AutoCompleteTextView) findViewById(R.id.edit_text_player4);
-
-		mTextViewPlayer1.setThreshold(1);
-		mTextViewPlayer2.setThreshold(1);
-		mTextViewPlayer3.setThreshold(1);
-		mTextViewPlayer4.setThreshold(1);
-
-		mTextViewPlayer1.setAdapter(adapter);
-		mTextViewPlayer2.setAdapter(adapter);
-		mTextViewPlayer3.setAdapter(adapter);
-		mTextViewPlayer4.setAdapter(adapter);
+		getLoaderManager().initLoader(0, null, this);
 
 		Logger.info(TAG, "Activity created.");
 	}
@@ -113,10 +91,10 @@ public class NewMatchActivity extends Activity {
 		if (validate()) {
 			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 			Intent intent = new Intent(this, PlayMatchActivity.class);
-			intent.putExtra(EXTRA_NAME_PLAYER1, mTextViewPlayer1.getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER2, mTextViewPlayer2.getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER3, mTextViewPlayer3.getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER4, mTextViewPlayer4.getText().toString().trim());
+			intent.putExtra(EXTRA_NAME_PLAYER1, mEditTexts[0].getText().toString().trim());
+			intent.putExtra(EXTRA_NAME_PLAYER2, mEditTexts[1].getText().toString().trim());
+			intent.putExtra(EXTRA_NAME_PLAYER3, mEditTexts[2].getText().toString().trim());
+			intent.putExtra(EXTRA_NAME_PLAYER4, mEditTexts[3].getText().toString().trim());
 			intent.putExtra(EXTRA_SCORES_TO_WIN, checkedRadio.getText().toString());
 			startActivity(intent);
 		}
@@ -134,20 +112,51 @@ public class NewMatchActivity extends Activity {
 		super.onPause();
 	}
 
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] projection = { Player.NAME };
+		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, projection, null, null, null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		String[] playerNames = new String[data.getCount()];
+		if (data.moveToNext()) {
+			int i = 0;
+			while (!data.isAfterLast()) {
+				playerNames[i] = data.getString(0);
+				data.moveToNext();
+				i++;
+			}
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+				this, android.R.layout.simple_spinner_dropdown_item, playerNames);
+
+		for (int i = 0; i < 4; i++) {
+			mEditTexts[i].setThreshold(1);
+			mEditTexts[i].setAdapter(adapter);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+	}
+
 	/**
 	 * Validates the form.
 	 * @return Whether the form is valid.
 	 */
 	private boolean validate() {
 		// Make sure that player 1 is given.
-		if (mTextViewPlayer1.getText().toString().isEmpty()) {
-			mTextViewPlayer1.setError("Player 1 is required");
+		if (mEditTexts[0].getText().toString().isEmpty()) {
+			mEditTexts[0].setError("Player 1 is required");
 			return false;
 		}
 
 		// Make sure that player 2 is given.
-		if (mTextViewPlayer2.getText().toString().isEmpty()) {
-			mTextViewPlayer2.setError("Player 2 is required");
+		if (mEditTexts[1].getText().toString().isEmpty()) {
+			mEditTexts[1].setError("Player 2 is required");
 			return false;
 		}
 

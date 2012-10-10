@@ -11,23 +11,26 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This content provider provides access to the player records.
+ */
 public class PlayerProvider extends ContentProvider {
+
+	// Static variables
+	// ----------------------------------------
 
 	private static final String TAG = PlayerProvider.class.getName();
 
-	private DatabaseHelper databaseHelper;
-
 	private static final int PLAYERS = 1;
 	private static final int PLAYER_ID = 2;
-	private static final int PLAYER_FILTER = 3;
 
 	public static final String AUTHORITY ="org.cniska.foosball.android.PlayerProvider";
 	public static final String BASE_PATH = "players";
 
-	private static UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-	private static Map<String, String> projectionMap;
+	private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+	private static Map<String, String> sProjectionMap;
 
-	public static String[] projectionArray = {
+	public static String[] sProjectionArray = {
 		Player._ID,
 		Player.CREATED,
 		Player.STATUS,
@@ -41,25 +44,33 @@ public class PlayerProvider extends ContentProvider {
 	};
 
 	static {
-		uriMatcher.addURI(AUTHORITY, BASE_PATH, PLAYERS);
-		uriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PLAYER_ID);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH, PLAYERS);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PLAYER_ID);
 
-		projectionMap = new HashMap<String, String>();
-		projectionMap.put(Player._ID, Player._ID);
-		projectionMap.put(Player.CREATED, Player.CREATED);
-		projectionMap.put(Player.STATUS, Player.STATUS);
-		projectionMap.put(Player.RESULT, Player.RESULT);
-		projectionMap.put(Player.NAME, Player.NAME);
-		projectionMap.put(Player.GOALS, Player.GOALS);
-		projectionMap.put(Player.GOALS_AGAINST, Player.GOALS_AGAINST);
-		projectionMap.put(Player.WINS, Player.WINS);
-		projectionMap.put(Player.LOSSES, Player.LOSSES);
-		projectionMap.put(Player.RATING, Player.RATING);
+		sProjectionMap = new HashMap<String, String>();
+		sProjectionMap.put(Player._ID, Player._ID);
+		sProjectionMap.put(Player.CREATED, Player.CREATED);
+		sProjectionMap.put(Player.STATUS, Player.STATUS);
+		sProjectionMap.put(Player.RESULT, Player.RESULT);
+		sProjectionMap.put(Player.NAME, Player.NAME);
+		sProjectionMap.put(Player.GOALS, Player.GOALS);
+		sProjectionMap.put(Player.GOALS_AGAINST, Player.GOALS_AGAINST);
+		sProjectionMap.put(Player.WINS, Player.WINS);
+		sProjectionMap.put(Player.LOSSES, Player.LOSSES);
+		sProjectionMap.put(Player.RATING, Player.RATING);
 	}
+
+	// Member variables
+	// ----------------------------------------
+
+	private DatabaseHelper mDatabaseHelper;
+
+	// Methods
+	// ----------------------------------------
 
 	@Override
 	public boolean onCreate() {
-		databaseHelper = new DatabaseHelper(getContext());
+		mDatabaseHelper = new DatabaseHelper(getContext());
 		return true;
 	}
 
@@ -67,9 +78,9 @@ public class PlayerProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
 		builder.setTables(DatabaseHelper.TABLE_PLAYER);
-		builder.setProjectionMap(projectionMap);
+		builder.setProjectionMap(sProjectionMap);
 
-		switch (uriMatcher.match(uri)) {
+		switch (sUriMatcher.match(uri)) {
 			// Find by _id
 			case PLAYER_ID:
 				builder.appendWhere(Player._ID + "=" + uri.getLastPathSegment());
@@ -83,7 +94,7 @@ public class PlayerProvider extends ContentProvider {
 				throwUnknownUriException(uri);
 		}
 
-		SQLiteDatabase db = databaseHelper.getReadableDatabase();
+		SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
 		Cursor cursor = builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;
@@ -91,7 +102,7 @@ public class PlayerProvider extends ContentProvider {
 
 	@Override
 	public String getType(Uri uri) {
-		switch (uriMatcher.match(uri)) {
+		switch (sUriMatcher.match(uri)) {
 			case PLAYER_ID:
 				return Player.CONTENT_ITEM_TYPE;
 
@@ -107,7 +118,7 @@ public class PlayerProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		if (uriMatcher.match(uri) != PLAYERS) {
+		if (sUriMatcher.match(uri) != PLAYERS) {
 			throwUnknownUriException(uri);
 		}
 
@@ -115,7 +126,7 @@ public class PlayerProvider extends ContentProvider {
 			values.put(Player.CREATED, System.currentTimeMillis() / 1000L); // current unix time
 		}
 
-		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
 
 		long insertId = db.insert(DatabaseHelper.TABLE_PLAYER, null, values);
 
@@ -130,9 +141,9 @@ public class PlayerProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
 
-		switch (uriMatcher.match(uri)) {
+		switch (sUriMatcher.match(uri)) {
 			case PLAYERS:
 				break;
 
@@ -156,7 +167,7 @@ public class PlayerProvider extends ContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		switch(uriMatcher.match(uri)) {
+		switch(sUriMatcher.match(uri)) {
 			case PLAYERS:
 				break;
 
@@ -173,7 +184,7 @@ public class PlayerProvider extends ContentProvider {
 				throwUnknownUriException(uri);
 		}
 
-		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
 		int numAffectedRows = db.update(DatabaseHelper.TABLE_PLAYER, values, selection, selectionArgs);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return numAffectedRows;

@@ -21,6 +21,9 @@ import org.cniska.foosball.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This activity handles match logging.
+ */
 public class PlayMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
@@ -35,9 +38,8 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 
 	private static final int PLAYER_LOADER = 0x01;
 
-	private static final String STATE_PLAYERS = "org.cniska.foosball.players";
-	private static final String STATE_NUM_PLAYER_GOALS = "org.cniska.foosball.numPlayerGoals";
-	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.numGoalsToWin";
+	private static final String STATE_NUM_PLAYER_GOALS = "org.cniska.foosball.android.STATE_NUM_PLAYERS_GOALS";
+	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.STATE_NuM_GOALS_TO_WIN";
 
 	private static final int PLAYER1 = 0;
 	private static final int PLAYER2 = 1;
@@ -52,12 +54,9 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	private Player[] mPlayers;
 	private String[] mPlayerNames;
 	private int[] mPlayerGoals;
-
 	private int mNumGoalsToWin;
-
 	private EloRatingSystem mRatingSystem;
 	private List<Integer> mHistory;
-
 	private boolean mEnded = false;
 
 	// Methods
@@ -176,7 +175,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
 	}
 
 	@Override
@@ -449,7 +448,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 	private void loadPlayers() {
 		Logger.info(TAG, "Loading player records.");
 
-		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
 
 		if (cursor.moveToFirst()) {
 			int i = 0;
@@ -485,7 +484,7 @@ public class PlayMatchActivity extends Activity implements LoaderManager.LoaderC
 		ContentValues values = new ContentValues();
 		values.put(Player.NAME, name);
 		Uri uri = getContentResolver().insert(Player.CONTENT_URI, values);
-		Cursor cursor = getContentResolver().query(uri, PlayerProvider.projectionArray, null, null, null);
+		Cursor cursor = getContentResolver().query(uri, PlayerProvider.sProjectionArray, null, null, null);
 		Player player = null;
 		if (cursor.moveToFirst()) {
 			player = cursorToPlayer(cursor);

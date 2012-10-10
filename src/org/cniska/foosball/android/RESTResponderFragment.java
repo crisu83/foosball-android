@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+/**
+ * This fragment allows for sending and receiving REST calls.
+ */
 public class RESTResponderFragment extends Fragment {
 
 	// Member variables
 	// ----------------------------------------
 
-	private ResultReceiver receiver;
+	private ResultReceiver mReceiver;
 
 	// Methods
 	// ----------------------------------------
@@ -19,7 +22,7 @@ public class RESTResponderFragment extends Fragment {
 	 * Creates a new fragment.
 	 */
 	public RESTResponderFragment() {
-		this.receiver = new ResultReceiver(new Handler()) {
+		this.mReceiver = new ResultReceiver(new Handler()) {
 			@Override
 			protected void onReceiveResult(int resultCode, Bundle resultData) {
 				if (resultData != null && resultData.containsKey(RESTService.REST_RESULT)) {
@@ -50,6 +53,6 @@ public class RESTResponderFragment extends Fragment {
 	// ----------------------------------------
 
 	public ResultReceiver getReceiver() {
-		return receiver;
+		return mReceiver;
 	}
 }

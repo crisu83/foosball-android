@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * This activity lists the player statistics.
+ */
 public class StatisticsActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
@@ -52,22 +55,22 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	// Member variables
 	// ----------------------------------------
 
-	private List<Player> players;
-	private PlayerComparator comparator;
-	private TableLayout layout;
+	private List<Player> mPlayers;
+	private PlayerComparator mComparator;
+	private TableLayout mLayout;
 
 	// Inner classes
 	// ----------------------------------------
 
 	private class PlayerComparator implements Comparator<Player> {
 
-		private SortColumn column;
-		private SortDirection direction;
+		private SortColumn mColumn;
+		private SortDirection mDirection;
 
 		@Override
 		public int compare(Player p1, Player p2) {
-			if (column != null) {
-				switch (column) {
+			if (mColumn != null) {
+				switch (mColumn) {
 					case GOALS:
 						return compareInt(p1.getGoals(), p2.getGoals());
 					case GOALS_AGAINST:
@@ -96,7 +99,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		 * @return The result.
 		 */
 		private int compareString(String value1, String value2) {
-			if (direction == SortDirection.ASCENDING) {
+			if (mDirection == SortDirection.ASCENDING) {
 				return value1.compareTo(value2);
 			} else {
 				return value2.compareTo(value1);
@@ -120,11 +123,11 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		 * @return The result.
 		 */
 		private int compareFloat(float value1, float value2) {
-			if (direction == SortDirection.ASCENDING && (value1 < value2)
-					|| direction == SortDirection.DESCENDING && (value2 < value1)) {
+			if (mDirection == SortDirection.ASCENDING && (value1 < value2)
+					|| mDirection == SortDirection.DESCENDING && (value2 < value1)) {
 				return 1;
-			} else if (direction == SortDirection.ASCENDING && (value1 > value2)
-					|| direction == SortDirection.DESCENDING && (value2 > value1)) {
+			} else if (mDirection == SortDirection.ASCENDING && (value1 > value2)
+					|| mDirection == SortDirection.DESCENDING && (value2 > value1)) {
 				return -1;
 			} else {
 				return 0;
@@ -136,13 +139,13 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		 * @param column Sort column type.
 		 */
 		public void sortColumn(SortColumn column) {
-			if (direction != null && column == this.column) {
-				direction = oppositeDirection();
+			if (mDirection != null && column == this.mColumn) {
+				mDirection = oppositeDirection();
 			} else {
-				direction = defaultDirection();
+				mDirection = defaultDirection();
 			}
 
-			this.column = column;
+			this.mColumn = column;
 		}
 
 		/**
@@ -150,7 +153,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		 * @return The direction.
 		 */
 		private SortDirection oppositeDirection() {
-			return direction == SortDirection.ASCENDING ? SortDirection.DESCENDING : SortDirection.ASCENDING;
+			return mDirection == SortDirection.ASCENDING ? SortDirection.DESCENDING : SortDirection.ASCENDING;
 		}
 
 		/**
@@ -171,24 +174,23 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 
 		setContentView(R.layout.statistics);
 
-
-		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
-		players = new ArrayList<Player>();
+		Cursor cursor = getContentResolver().query(Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
+		mPlayers = new ArrayList<Player>();
 
 		if (cursor.moveToFirst()) {
 			int i = 0;
 			while (!cursor.isAfterLast()) {
-				players.add(cursorToPlayer(cursor));
+				mPlayers.add(cursorToPlayer(cursor));
 				cursor.moveToNext();
 				i++;
 			}
 		}
 
-		comparator = new PlayerComparator();
+		mComparator = new PlayerComparator();
 
-		layout = (TableLayout) findViewById(R.id.table_statistics);
-		addTableHeaderRow(layout);
-		addTablePlayerRows(layout);
+		mLayout = (TableLayout) findViewById(R.id.table_statistics);
+		addTableHeaderRow(mLayout);
+		addTablePlayerRows(mLayout);
 
 		sortByColumn(SortColumn.PLAYER);
 	}
@@ -213,7 +215,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
 	}
 
 	@Override
@@ -314,11 +316,11 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	 * @param layout The table layout.
 	 */
 	private void addTablePlayerRows(TableLayout layout) {
-		int playerCount = players.size();
+		int playerCount = mPlayers.size();
 
 		if (playerCount > 0) {
 			for (int i = 0; i < playerCount; i++) {
-				Player player = players.get(i);
+				Player player = mPlayers.get(i);
 				TableRow row = new TableRow(this);
 				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 10));
 				row.addView(createTableCell(String.valueOf(player.getGoals()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10));
@@ -368,11 +370,11 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 	 * @param column Sort column type.
 	 */
 	private void sortByColumn(SortColumn column) {
-		comparator.sortColumn(column);
-		Collections.sort(players, comparator);
-		layout.removeAllViews();
-		addTableHeaderRow(layout);
-		addTablePlayerRows(layout);
-		layout.invalidate();
+		mComparator.sortColumn(column);
+		Collections.sort(mPlayers, mComparator);
+		mLayout.removeAllViews();
+		addTableHeaderRow(mLayout);
+		addTablePlayerRows(mLayout);
+		mLayout.invalidate();
 	}
 }

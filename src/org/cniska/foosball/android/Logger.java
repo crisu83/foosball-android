@@ -7,8 +7,8 @@ public class Logger {
     // Static variables
     // ----------------------------------------
 
-    private static boolean logging = true;
-    private static int level = Log.ERROR;
+    private static boolean sLogging = true;
+    private static int sLevel = Log.ERROR;
 
     // Methods
     // ----------------------------------------
@@ -23,7 +23,7 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int debug(String tag, String msg) {
-        return logging && level >= Log.DEBUG ? Log.d(tag, msg) : 0;
+        return sLogging && sLevel >= Log.DEBUG ? Log.d(tag, msg) : 0;
     }
 
 	/**
@@ -33,7 +33,7 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int error(String tag, String msg) {
-        return logging && level >= Log.ERROR  ? Log.e(tag, msg) : 0;
+        return sLogging && sLevel >= Log.ERROR  ? Log.e(tag, msg) : 0;
     }
 
 	/**
@@ -43,7 +43,7 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int info(String tag, String msg) {
-        return logging && level >= Log.INFO ? Log.i(tag, msg) : 0;
+        return sLogging && sLevel >= Log.INFO ? Log.i(tag, msg) : 0;
     }
 
 	/**
@@ -53,7 +53,7 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int verbose(String tag, String msg) {
-        return logging && level >= Log.VERBOSE ? Log.v(tag, msg) : 0;
+        return sLogging && sLevel >= Log.VERBOSE ? Log.v(tag, msg) : 0;
     }
 
 	/**
@@ -63,17 +63,17 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int warn(String tag, String msg) {
-        return logging && level >= Log.WARN ? Log.w(tag, msg) : 0;
+        return sLogging && sLevel >= Log.WARN ? Log.w(tag, msg) : 0;
     }
 
     // Getters and setters
     // ----------------------------------------
 
     public static void setLogging(boolean logging) {
-        Logger.logging = logging;
+        Logger.sLogging = logging;
     }
 
     public static void setLevel(int level) {
-        Logger.level = level;
+        Logger.sLevel = level;
     }
 }

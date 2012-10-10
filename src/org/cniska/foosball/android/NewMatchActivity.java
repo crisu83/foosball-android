@@ -29,11 +29,11 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 
 	private static final int PLAYER_LOADER = 0x01;
 
-	public static final String EXTRA_NAME_PLAYER1 = "org.cniska.foosball.PLAYER1";
-	public static final String EXTRA_NAME_PLAYER2 = "org.cniska.foosball.PLAYER2";
-	public static final String EXTRA_NAME_PLAYER3 = "org.cniska.foosball.PLAYER3";
-	public static final String EXTRA_NAME_PLAYER4 = "org.cniska.foosball.PLAYER4";
-	public static final String EXTRA_SCORES_TO_WIN = "org.cniska.foosball.SCORES_TO_WIN";
+	public static final String EXTRA_NAME_PLAYER1 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER1";
+	public static final String EXTRA_NAME_PLAYER2 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER2";
+	public static final String EXTRA_NAME_PLAYER3 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER3";
+	public static final String EXTRA_NAME_PLAYER4 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER4";
+	public static final String EXTRA_SCORES_TO_WIN = "org.cniska.foosball.android.EXTRA_SCORES_TO_WIN";
 
 	// Member variables
 	// ----------------------------------------
@@ -143,7 +143,7 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.projectionArray, null, null, null);
+		return new CursorLoader(this, Player.CONTENT_URI, PlayerProvider.sProjectionArray, null, null, null);
 	}
 
 	@Override

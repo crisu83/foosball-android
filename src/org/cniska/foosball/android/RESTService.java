@@ -36,11 +36,11 @@ public class RESTService extends IntentService {
 	public static final int DELETE = 4;
 
 	// Extras
-	public static final String EXTRA_HTTP_VERB = "org.cniska.foosball.EXTRA_HTTP_VERB";
-	public static final String EXTRA_PARAMS = "org.cniska.foosball.EXTRA_PARAMS";
-	public static final String EXTRA_RESULT_RECEIVER = "org.cniska.foosball.EXTRA_RESULT_RECEIVER";
+	public static final String EXTRA_HTTP_VERB = "org.cniska.foosball.android.EXTRA_HTTP_VERB";
+	public static final String EXTRA_PARAMS = "org.cniska.foosball.android.EXTRA_PARAMS";
+	public static final String EXTRA_RESULT_RECEIVER = "org.cniska.foosball.android.EXTRA_RESULT_RECEIVER";
 
-	public static final String REST_RESULT = "org.cniska.foosball.REST_RESULT";
+	public static final String REST_RESULT = "org.cniska.foosball.android.REST_RESULT";
 
 	// Methods
 	// ----------------------------------------

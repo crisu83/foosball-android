@@ -13,12 +13,18 @@ import org.cniska.foosball.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * This activity allows for testing the REST service by connecting to a dummy script on a webserver.
+ */
 public class RESTServiceActivity extends Activity {
 
 	// Static variables
 	// ----------------------------------------
 
+	public static final String TAG = RESTServiceActivity.class.getName();
 	public static final String TAG_RESPONDER = RESTResponderFragment.class.getName();
+
+	private static final String SERVER_URI = "http://www.cniska.net/foosball/test.php";
 
 	// Methods
 	// ----------------------------------------
@@ -60,7 +66,7 @@ public class RESTServiceActivity extends Activity {
 					if (activity != null) {
 						Bundle params = new Bundle();
 						Intent intent = new Intent(activity, RESTService.class);
-						intent.setData(Uri.parse("http://www.cniska.net/foosball/test.php"));
+						intent.setData(Uri.parse(SERVER_URI));
 						intent.putExtra(RESTService.EXTRA_PARAMS, params);
 						intent.putExtra(RESTService.EXTRA_RESULT_RECEIVER, getReceiver());
 						activity.startService(intent);

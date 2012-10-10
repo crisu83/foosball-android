@@ -4,7 +4,13 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * This class represents a single player record.
+ */
 public class Player implements Parcelable {
+
+	// Static variables
+	// ----------------------------------------
 
 	public static final String _ID = "_id";
 	public static final String CREATED = "created";
@@ -40,34 +46,34 @@ public class Player implements Parcelable {
 	// Member variables
 	// ----------------------------------------
 
-	private long id;
-	private long created;
-	private String name;
-	private int goals;
-	private int goalsAgainst;
-	private int wins;
-	private int losses;
-	private int rating;
+	private long mId;
+	private long mCreated;
+	private String mName;
+	private int mGoals;
+	private int mGoalsAgainst;
+	private int mWins;
+	private int mLosses;
+	private int mRating;
 
 	// Methods
 	// ----------------------------------------
 
 	public Player() {
-		goals = 0;
-		goalsAgainst = 0;
-		wins = 0;
-		losses = 0;
-		rating = EloRatingSystem.INITIAL_RATING;
+		mGoals = 0;
+		mGoalsAgainst = 0;
+		mWins = 0;
+		mLosses = 0;
+		mRating = EloRatingSystem.INITIAL_RATING;
 	}
 
 	private Player(Parcel source) {
-		id = source.readLong();
-		name = source.readString();
-		goals = source.readInt();
-		goalsAgainst = source.readInt();
-		wins = source.readInt();
-		losses = source.readInt();
-		rating = source.readInt();
+		mId = source.readLong();
+		mName = source.readString();
+		mGoals = source.readInt();
+		mGoalsAgainst = source.readInt();
+		mWins = source.readInt();
+		mLosses = source.readInt();
+		mRating = source.readInt();
 	}
 
 	@Override
@@ -77,13 +83,13 @@ public class Player implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(id);
-		dest.writeString(name);
-		dest.writeInt(goals);
-		dest.writeInt(goalsAgainst);
-		dest.writeInt(wins);
-		dest.writeInt(losses);
-		dest.writeInt(rating);
+		dest.writeLong(mId);
+		dest.writeString(mName);
+		dest.writeInt(mGoals);
+		dest.writeInt(mGoalsAgainst);
+		dest.writeInt(mWins);
+		dest.writeInt(mLosses);
+		dest.writeInt(mRating);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class Player implements Parcelable {
 	 * @param amount Amount of goals to add.
 	 */
 	public void addGoals(int amount) {
-		goals += amount;
+		mGoals += amount;
 	}
 
 	/**
@@ -99,21 +105,21 @@ public class Player implements Parcelable {
 	 * @param amount Amount of goals to add.
 	 */
 	public void addGoalsAgainst(int amount) {
-		goalsAgainst += amount;
+		mGoalsAgainst += amount;
 	}
 
 	/**
 	 * Adds a win for the player.
 	 */
 	public void addWin() {
-		wins++;
+		mWins++;
 	}
 
 	/**
 	 * Adds a loss for the player.
 	 */
 	public void addLoss() {
-		losses++;
+		mLosses++;
 	}
 
 	/**
@@ -121,7 +127,7 @@ public class Player implements Parcelable {
 	 * @return The amount.
 	 */
 	public int matchesPlayed() {
-		return wins + losses;
+		return mWins + mLosses;
 	}
 
 	/**
@@ -130,10 +136,10 @@ public class Player implements Parcelable {
 	 */
 	public float winLossRatio() {
 		float ratio;
-		if (wins > 0 && losses > 0) {
-			ratio = ((float) wins) / losses;
-		} else if (wins > 0 && losses == 0) {
-			ratio = wins;
+		if (mWins > 0 && mLosses > 0) {
+			ratio = ((float) mWins) / mLosses;
+		} else if (mWins > 0 && mLosses == 0) {
+			ratio = mWins;
 		} else {
 			ratio = 0;
 		}
@@ -148,66 +154,66 @@ public class Player implements Parcelable {
 	// ----------------------------------------
 
 	public long getId() {
-		return id;
+		return mId;
 	}
 
 	public void setId(long id) {
-		this.id = id;
+		this.mId = id;
 	}
 
 	public long getCreated() {
-		return created;
+		return mCreated;
 	}
 
 	public void setCreated(long created) {
-		this.created = created;
+		this.mCreated = created;
 	}
 
 	public String getName() {
-		return name;
+		return mName;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.mName = name;
 	}
 
 	public int getGoals() {
-		return goals;
+		return mGoals;
 	}
 
 	public void setGoals(int goals) {
-		this.goals = goals;
+		this.mGoals = goals;
 	}
 
 	public int getGoalsAgainst() {
-		return goalsAgainst;
+		return mGoalsAgainst;
 	}
 
 	public void setGoalsAgainst(int goalsAgainst) {
-		this.goalsAgainst = goalsAgainst;
+		this.mGoalsAgainst = goalsAgainst;
 	}
 
 	public int getWins() {
-		return wins;
+		return mWins;
 	}
 
 	public void setWins(int wins) {
-		this.wins = wins;
+		this.mWins = wins;
 	}
 
 	public int getLosses() {
-		return losses;
+		return mLosses;
 	}
 
 	public void setLosses(int losses) {
-		this.losses = losses;
+		this.mLosses = losses;
 	}
 
 	public int getRating() {
-		return rating;
+		return mRating;
 	}
 
 	public void setRating(int rating) {
-		this.rating = rating;
+		this.mRating = rating;
 	}
 }

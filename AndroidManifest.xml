@@ -16,6 +16,9 @@
 		<activity android:name=".NewMatchActivity"></activity>
 		<activity android:name=".PlayMatchActivity"></activity>
 		<activity android:name=".StatisticsActivity"></activity>
+		<activity android:name=".RESTServiceActivity"></activity>
+		<service android:name=".RESTService" />
 	</application>
+	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>

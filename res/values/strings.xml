@@ -8,6 +8,7 @@
 	<string name="button_new_match">New match</string>
 	<string name="button_start">Start</string>
 	<string name="button_statistics">Statistics</string>
+	<string name="button_test_rest">Test REST</string>
 
 	<string name="dialog_button_no">No</string>
 	<string name="dialog_button_yes">Yes</string>

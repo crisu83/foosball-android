@@ -407,12 +407,14 @@ public class PlayMatchActivity extends Activity {
 		Logger.info(getClass().getName(), "Updating player records.");
 
 		if (player1 != null) {
-			player1 = updatePlayer(player1, numGoalsPlayer1, player3 == null ? blueTeamGoals() : 0, blueTeamRating(), teamType == TeamType.RED);
+			player1 = updatePlayer(player1, numGoalsPlayer1, player3 == null ? blueTeamGoals() : 0, blueTeamRating(),
+					teamType == TeamType.RED);
 			data.updatePlayer(player1);
 		}
 
 		if (player2 != null) {
-			player2 = updatePlayer(player2, numGoalsPlayer2, player4 == null ? redTeamGoals() : 0, redTeamRating(), teamType == TeamType.BLUE);
+			player2 = updatePlayer(player2, numGoalsPlayer2, player4 == null ? redTeamGoals() : 0, redTeamRating(),
+					teamType == TeamType.BLUE);
 			data.updatePlayer(player2);
 		}
 
@@ -475,13 +477,17 @@ public class PlayMatchActivity extends Activity {
 	 * Updates the given player by adding goals and wins or losses.
 	 * @param player Player to update.
 	 * @param goals The amount of goals the player made in the match.
+	 * @param opponentRating The rating of the opposing player(s).
 	 * @param won Whether the player won the match.
 	 * @return The player.
 	 */
 	private Player updatePlayer(Player player, int goals, int goalsAgainst, int opponentRating, boolean won) {
 		player.addGoals(goals);
 		player.addGoalsAgainst(goalsAgainst);
-		int newRating = ratingSystem.newRating(player.getRating(), opponentRating, won ? EloRatingSystem.SCORE_WIN : EloRatingSystem.SCORE_LOSS);
+
+		// Adjust the player's rating.
+		int newRating = ratingSystem.newRating(player.getRating(), opponentRating,
+				won ? EloRatingSystem.SCORE_WIN : EloRatingSystem.SCORE_LOSS);
 		player.setRating(newRating);
 
 		if (won) {

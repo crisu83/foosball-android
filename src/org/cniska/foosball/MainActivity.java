@@ -44,4 +44,13 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, StatisticsActivity.class);
 		startActivity(intent);
 	}
+
+	/**
+	 * Tests the REST service implementation.
+	 * @param view
+	 */
+	public void testRest(View view) {
+		Intent intent = new Intent(this, RESTServiceActivity.class);
+		startActivity(intent);
+	}
 }

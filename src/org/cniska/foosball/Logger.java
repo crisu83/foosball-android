@@ -18,7 +18,6 @@ public class Logger {
 
 	/**
 	 * Logs a debug message.
-	 *
 	 * @param tag The message source.
 	 * @param msg The message to log.
 	 * @return True if the message was logged, otherwise false.
@@ -29,7 +28,6 @@ public class Logger {
 
 	/**
 	 * Logs an error message.
-	 *
 	 * @param tag The message source.
 	 * @param msg The message to log.
 	 * @return True if the message was logged, otherwise false.
@@ -40,7 +38,6 @@ public class Logger {
 
 	/**
 	 * Logs an info message.
-	 *
 	 * @param tag The message source.
 	 * @param msg The message to log.
 	 * @return True if the message was logged, otherwise false.
@@ -51,7 +48,6 @@ public class Logger {
 
 	/**
 	 * Logs a verbose message.
-	 *
 	 * @param tag The message source.
 	 * @param msg The message to log.
 	 * @return True if the message was logged, otherwise false.
@@ -62,7 +58,6 @@ public class Logger {
 
 	/**
 	 * Logs a warning message.
-	 *
 	 * @param tag The message source.
 	 * @param msg The message to log.
 	 * @return True if the message was logged, otherwise false.

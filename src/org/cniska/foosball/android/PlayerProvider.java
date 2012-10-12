@@ -36,7 +36,7 @@ public class PlayerProvider extends ContentProvider {
 		Player.STATUS,
 		Player.RESULT,
 		Player.NAME,
-		Player.GOALS,
+		Player.GOALS_FOR,
 		Player.GOALS_AGAINST,
 		Player.WINS,
 		Player.LOSSES,
@@ -53,7 +53,7 @@ public class PlayerProvider extends ContentProvider {
 		sProjectionMap.put(Player.STATUS, Player.STATUS);
 		sProjectionMap.put(Player.RESULT, Player.RESULT);
 		sProjectionMap.put(Player.NAME, Player.NAME);
-		sProjectionMap.put(Player.GOALS, Player.GOALS);
+		sProjectionMap.put(Player.GOALS_FOR, Player.GOALS_FOR);
 		sProjectionMap.put(Player.GOALS_AGAINST, Player.GOALS_AGAINST);
 		sProjectionMap.put(Player.WINS, Player.WINS);
 		sProjectionMap.put(Player.LOSSES, Player.LOSSES);
@@ -77,7 +77,7 @@ public class PlayerProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-		builder.setTables(DatabaseHelper.TABLE_PLAYER);
+		builder.setTables(DatabaseHelper.TABLE_PLAYERS);
 		builder.setProjectionMap(sProjectionMap);
 
 		switch (sUriMatcher.match(uri)) {
@@ -128,7 +128,7 @@ public class PlayerProvider extends ContentProvider {
 
 		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
 
-		long insertId = db.insert(DatabaseHelper.TABLE_PLAYER, null, values);
+		long insertId = db.insert(DatabaseHelper.TABLE_PLAYERS, null, values);
 
 		if (insertId > 0) {
 			Uri playerUri = ContentUris.withAppendedId(Player.CONTENT_URI, insertId);
@@ -160,7 +160,7 @@ public class PlayerProvider extends ContentProvider {
 				throwUnknownUriException(uri);
 		}
 
-		int numAffectedRows = db.delete(DatabaseHelper.TABLE_PLAYER, selection, selectionArgs);
+		int numAffectedRows = db.delete(DatabaseHelper.TABLE_PLAYERS, selection, selectionArgs);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return numAffectedRows;
 	}
@@ -185,11 +185,16 @@ public class PlayerProvider extends ContentProvider {
 		}
 
 		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
-		int numAffectedRows = db.update(DatabaseHelper.TABLE_PLAYER, values, selection, selectionArgs);
+		int numAffectedRows = db.update(DatabaseHelper.TABLE_PLAYERS, values, selection, selectionArgs);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return numAffectedRows;
 	}
 
+	/**
+	 * Throws an unknown uri exception when called.
+	 * @param uri Unknown uri.
+	 * @throws IllegalArgumentException
+	 */
 	private void throwUnknownUriException(Uri uri) throws IllegalArgumentException {
 		throw new IllegalArgumentException("Unknown URI: " + uri);
 	}

@@ -25,14 +25,14 @@
 				android:layout_marginRight="20dp"
 				android:orientation="vertical">
 
-			<TextView android:id="@+id/text_team_red"
+			<TextView android:id="@+id/text_home_team"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:layout_marginBottom="5dp"
 					android:textAllCaps="true"
 					android:textStyle="bold"
 					android:textSize="15dp"
-					android:text="@string/team_red" />
+					android:text="@string/text_home_team" />
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player1"
 					android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player2"
 					android:singleLine="true"
-					android:hint="@string/hint_player1"/>
+					android:hint="@string/hint_player1" android:text="Foo"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player3"
 					android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player4"
 					android:singleLine="true"
-					android:hint="@string/hint_player3"/>
+					android:hint="@string/hint_player3" android:text="Var"/>
 
 			<TextView android:id="@+id/text_scores_to_win"
 					android:layout_height="40dp"
@@ -70,14 +70,14 @@
 				android:layout_weight="50"
 				android:orientation="vertical">
 
-			<TextView android:id="@+id/text_team_blue"
+			<TextView android:id="@+id/text_away_team"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:layout_marginBottom="5dp"
 					android:textAllCaps="true"
 					android:textStyle="bold"
 					android:textSize="15dp"
-					android:text="@string/team_blue" />
+					android:text="@string/text_away_team" />
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player2"
 					android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
 					android:inputType="textCapSentences"
 					android:nextFocusDown="@+id/edit_text_player3"
 					android:singleLine="true"
-					android:hint="@string/hint_player2"/>
+					android:hint="@string/hint_player2" android:text="Bar"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player4"
 					android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
 					android:imeOptions="actionDone"
 					android:inputType="textCapSentences"
 					android:singleLine="true"
-					android:hint="@string/hint_player4"/>
+					android:hint="@string/hint_player4" android:text="Char"/>
 
 			<RadioGroup android:id="@+id/radio_group_score_to_win"
 					android:layout_height="wrap_content"
@@ -129,6 +129,6 @@
 			android:padding="10dp"
 			android:textSize="20dp"
 			android:text="@string/button_start"
-			android:onClick="start" />
+			android:onClick="submitForm" />
 
 </LinearLayout>

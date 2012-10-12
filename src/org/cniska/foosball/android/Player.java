@@ -17,7 +17,7 @@ public class Player implements Parcelable {
 	public static final String STATUS = "status";
 	public static final String RESULT = "result";
 	public static final String NAME = "name";
-	public static final String GOALS = "goals";
+	public static final String GOALS_FOR = "goals_for";
 	public static final String GOALS_AGAINST = "goals_against";
 	public static final String WINS = "wins";
 	public static final String LOSSES = "losses";
@@ -49,7 +49,7 @@ public class Player implements Parcelable {
 	private long mId;
 	private long mCreated;
 	private String mName;
-	private int mGoals;
+	private int mGoalsFor;
 	private int mGoalsAgainst;
 	private int mWins;
 	private int mLosses;
@@ -59,7 +59,7 @@ public class Player implements Parcelable {
 	// ----------------------------------------
 
 	public Player() {
-		mGoals = 0;
+		mGoalsFor = 0;
 		mGoalsAgainst = 0;
 		mWins = 0;
 		mLosses = 0;
@@ -69,7 +69,7 @@ public class Player implements Parcelable {
 	private Player(Parcel source) {
 		mId = source.readLong();
 		mName = source.readString();
-		mGoals = source.readInt();
+		mGoalsFor = source.readInt();
 		mGoalsAgainst = source.readInt();
 		mWins = source.readInt();
 		mLosses = source.readInt();
@@ -85,7 +85,7 @@ public class Player implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(mId);
 		dest.writeString(mName);
-		dest.writeInt(mGoals);
+		dest.writeInt(mGoalsFor);
 		dest.writeInt(mGoalsAgainst);
 		dest.writeInt(mWins);
 		dest.writeInt(mLosses);
@@ -96,8 +96,8 @@ public class Player implements Parcelable {
 	 * Adds goals for the player.
 	 * @param amount Amount of goals to add.
 	 */
-	public void addGoals(int amount) {
-		mGoals += amount;
+	public void addGoalsFor(int amount) {
+		mGoalsFor += amount;
 	}
 
 	/**
@@ -177,12 +177,12 @@ public class Player implements Parcelable {
 		this.mName = name;
 	}
 
-	public int getGoals() {
-		return mGoals;
+	public int getGoalsFor() {
+		return mGoalsFor;
 	}
 
-	public void setGoals(int goals) {
-		this.mGoals = goals;
+	public void setGoalsFor(int goalsFor) {
+		this.mGoalsFor = goalsFor;
 	}
 
 	public int getGoalsAgainst() {

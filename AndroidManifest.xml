@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-		  package="org.cniska.foosball"
+		  package="org.cniska.foosball.android"
 		  android:versionCode="1"
 		  android:versionName="1.0">
 	<uses-sdk android:minSdkVersion="11"
 			  android:targetSdkVersion="15" />
 	<application android:label="@string/app_name"
 				 android:icon="@drawable/ic_launcher">
-		<activity android:name=".android.MainActivity"
+		<activity android:name=".MainActivity"
 				  android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".android.NewMatchActivity"></activity>
-		<activity android:name=".android.PlayMatchActivity"></activity>
-		<activity android:name=".android.StatisticsActivity"></activity>
-		<activity android:name=".android.RESTServiceActivity"></activity>
-		<service android:name=".android.RESTService" />
-		<provider android:name=".android.PlayerProvider"
+		<activity android:name=".NewMatchActivity"></activity>
+		<activity android:name=".PlayMatchActivity"></activity>
+		<activity android:name=".StatisticsActivity"></activity>
+		<activity android:name=".RESTServiceActivity"></activity>
+		<service android:name=".RESTService" />
+		<provider android:name=".PlayerProvider"
 				  android:authorities="org.cniska.foosball.android.PlayerProvider" />
 	</application>
 	<uses-permission android:name="android.permission.INTERNET" />

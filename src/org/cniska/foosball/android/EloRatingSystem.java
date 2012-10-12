@@ -20,6 +20,9 @@ public class EloRatingSystem {
 	// Methods
 	// ----------------------------------------
 
+	private EloRatingSystem() {
+	}
+
 	/**
 	 * Returns the new rating for the player after winning or losing to the opponent(s) with the given rating.
 	 * @param rating Player's old rating.
@@ -27,7 +30,7 @@ public class EloRatingSystem {
 	 * @param score Game score (WIN = 1.0, DRAW = 0.5, LOSS = 0.0).
 	 * @return Player's new rating.
 	 */
-	public int newRating(int rating, int opponentRating, double score) {
+	public static int newRating(int rating, int opponentRating, double score) {
 		double expectedScore = calculateExpectedScore(rating, opponentRating);
 		return calculateNewRating(rating, score, expectedScore, K_FACTOR);
 	}
@@ -39,7 +42,7 @@ public class EloRatingSystem {
 	 * @param opponentRating The rating of the opposing player(s).
 	 * @return Expected score.
 	 */
-	private double calculateExpectedScore(int rating, int opponentRating) {
+	private static double calculateExpectedScore(int rating, int opponentRating) {
 		return 1.0 / (1.0 + Math.pow(10.0, (rating - opponentRating) / 400.0));
 	}
 
@@ -52,7 +55,7 @@ public class EloRatingSystem {
 	 * @param kFactor K-factor.
 	 * @return Player's new rating.
 	 */
-	private int calculateNewRating(int rating, double score, double expectedScore, double kFactor) {
+	private static int calculateNewRating(int rating, double score, double expectedScore, double kFactor) {
 		return rating + (int) (kFactor * (score - expectedScore));
 	}
 }

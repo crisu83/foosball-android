@@ -17,6 +17,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import org.cniska.foosball.R;
 
+import java.util.ArrayList;
+
 /**
  * This activity handles match creation.
  */
@@ -27,16 +29,27 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 
 	public static final String TAG = NewMatchActivity.class.getName();
 
-	public static final String EXTRA_NAME_PLAYER1 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER1";
-	public static final String EXTRA_NAME_PLAYER2 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER2";
-	public static final String EXTRA_NAME_PLAYER3 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER3";
-	public static final String EXTRA_NAME_PLAYER4 = "org.cniska.foosball.android.EXTRA_NAME_PLAYER4";
+	public static final String EXTRA_PLAYER_NAMES = "org.cniska.foosball.android.EXTRA_PLAYER_NAMES";
 	public static final String EXTRA_SCORES_TO_WIN = "org.cniska.foosball.android.EXTRA_SCORES_TO_WIN";
+
+	private static final int NUM_SUPPORTED_PLAYERS = 4;
+	private static final int AUTO_COMPLETE_THRESHOLD = 1;
+
+	private static String[] PROJECTION = {
+		Player.NAME,
+	};
+
+	private static int[] editTextIds = new int[] {
+		R.id.edit_text_player1,
+		R.id.edit_text_player2,
+		R.id.edit_text_player3,
+		R.id.edit_text_player4
+	};
 
 	// Member variables
 	// ----------------------------------------
 
-	private AutoCompleteTextView[] mEditTexts;
+	private AutoCompleteTextView[] mEditTexts = new AutoCompleteTextView[4];
 
 	// Methods
 	// ----------------------------------------
@@ -45,15 +58,14 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mEditTexts = new AutoCompleteTextView[4];
-
 		setContentView(R.layout.new_match);
 
-		mEditTexts[0] = (AutoCompleteTextView) findViewById(R.id.edit_text_player1);
-		mEditTexts[1] = (AutoCompleteTextView) findViewById(R.id.edit_text_player2);
-		mEditTexts[2] = (AutoCompleteTextView) findViewById(R.id.edit_text_player3);
-		mEditTexts[3] = (AutoCompleteTextView) findViewById(R.id.edit_text_player4);
+		// Collect the auto-complete views so that we can refer to them later.
+		for (int i = 0; i < NUM_SUPPORTED_PLAYERS; i++) {
+			mEditTexts[i] = (AutoCompleteTextView) findViewById(editTextIds[i]);
+		}
 
+		// Ask the loader manager to start loading our player names.
 		getLoaderManager().initLoader(0, null, this);
 
 		Logger.info(TAG, "Activity created.");
@@ -77,49 +89,14 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 		}
 	}
 
-	/**
-	 * Starts the match.
-	 * @param view
-	 */
-	public void start(View view) {
-		// Resolve the radio value.
-		RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.radio_group_score_to_win);
-		int checkedRadioId = scoresToWin.getCheckedRadioButtonId();
-		RadioButton checkedRadio = (RadioButton) findViewById(checkedRadioId);
-
-		// Make sure that there weren't any validation errors before continuing.
-		if (validate()) {
-			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
-			Intent intent = new Intent(this, PlayMatchActivity.class);
-			intent.putExtra(EXTRA_NAME_PLAYER1, mEditTexts[0].getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER2, mEditTexts[1].getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER3, mEditTexts[2].getText().toString().trim());
-			intent.putExtra(EXTRA_NAME_PLAYER4, mEditTexts[3].getText().toString().trim());
-			intent.putExtra(EXTRA_SCORES_TO_WIN, checkedRadio.getText().toString());
-			startActivity(intent);
-		}
-	}
-
-	@Override
-	protected void onResume() {
-		Logger.info(TAG, "Activity resumed.");
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause() {
-		Logger.info(TAG, "Activity paused.");
-		super.onPause();
-	}
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { Player.NAME };
-		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, projection, null, null, null);
+		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, PROJECTION, null, null, null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// Collect the player names for the auto-completion.
 		String[] playerNames = new String[data.getCount()];
 		if (data.moveToNext()) {
 			int i = 0;
@@ -130,11 +107,13 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 			}
 		}
 
+		// Create the auto-complete adapter.
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 				this, android.R.layout.simple_spinner_dropdown_item, playerNames);
 
-		for (int i = 0; i < 4; i++) {
-			mEditTexts[i].setThreshold(1);
+		// Bind auto-completion for the edit text views.
+		for (int i = 0; i < NUM_SUPPORTED_PLAYERS; i++) {
+			mEditTexts[i].setThreshold(AUTO_COMPLETE_THRESHOLD);
 			mEditTexts[i].setAdapter(adapter);
 		}
 	}
@@ -144,10 +123,37 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 	}
 
 	/**
+	 * Submits the form.
+	 * @param view
+	 */
+	public void submitForm(View view) {
+		// Resolve the radio value.
+		RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.radio_group_score_to_win);
+		int checkedRadioId = scoresToWin.getCheckedRadioButtonId();
+		RadioButton checkedRadio = (RadioButton) findViewById(checkedRadioId);
+
+		// Make sure that there weren't any validation errors before continuing.
+		if (validateForm()) {
+			// Collect the selected player names to pass them with the intent.
+			ArrayList<String> playerNames = new ArrayList<String>(4);
+			for (int i = 0; i < NUM_SUPPORTED_PLAYERS; i++) {
+				playerNames.add(mEditTexts[i].getText().toString().trim());
+			}
+
+			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
+			Intent intent = new Intent(this, PlayMatchActivity.class);
+			intent.putStringArrayListExtra(EXTRA_PLAYER_NAMES, playerNames);
+			intent.putExtra(EXTRA_SCORES_TO_WIN, checkedRadio.getText().toString());
+			startActivity(intent);
+			finish();
+		}
+	}
+
+	/**
 	 * Validates the form.
 	 * @return Whether the form is valid.
 	 */
-	private boolean validate() {
+	private boolean validateForm() {
 		// Make sure that player 1 is given.
 		if (mEditTexts[0].getText().toString().isEmpty()) {
 			mEditTexts[0].setError("Player 1 is required");

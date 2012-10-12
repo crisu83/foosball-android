@@ -74,7 +74,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 			if (mColumn != null) {
 				switch (mColumn) {
 					case GOALS:
-						return compareInt(p1.getGoals(), p2.getGoals());
+						return compareInt(p1.getGoalsFor(), p2.getGoalsFor());
 					case GOALS_AGAINST:
 						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
 					case WINS:
@@ -182,7 +182,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		mLayout = (TableLayout) findViewById(R.id.table_statistics);
 
 		/*
-		String[] from = { Player.NAME, Player.GOALS, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
+		String[] from = { Player.NAME, Player.GOALS_FOR, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
 		int[] to = new int[] { R.id.column_name, R.id.column_goals, R.id.column_goals_against, R.id.column_wins, R.id.column_losses, R.id.column_rating };
 		mAdapter = new SimpleCursorAdapter(this, R.layout.statistics_item, null, from, to, 0);
 		setListAdapter(mAdapter);
@@ -211,7 +211,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { Player._ID, Player.NAME, Player.GOALS, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
+		String[] projection = { Player._ID, Player.NAME, Player.GOALS_FOR, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
 		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, projection, null, null, null);
 	}
 
@@ -243,7 +243,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		Player player = new Player();
 		player.setId(cursor.getLong(0));
 		player.setName(cursor.getString(1));
-		player.setGoals(cursor.getInt(2));
+		player.setGoalsFor(cursor.getInt(2));
 		player.setGoalsAgainst(cursor.getInt(3));
 		player.setWins(cursor.getInt(4));
 		player.setLosses(cursor.getInt(5));
@@ -336,7 +336,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 				Player player = mPlayers.get(i);
 				TableRow row = new TableRow(this);
 				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 10));
-				row.addView(createTableCell(String.valueOf(player.getGoals()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10));
+				row.addView(createTableCell(String.valueOf(player.getGoalsFor()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getGoalsAgainst()), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getWins()), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 10));
 				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 10));

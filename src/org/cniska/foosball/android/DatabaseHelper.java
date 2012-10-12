@@ -14,21 +14,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "foosball.db";
 	private static final int DATABASE_VERSION = 1;
 
-	public static final String TABLE_PLAYER = "players";
+	public static final String TABLE_PLAYERS = "players";
 
-	private static final String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYER + " (" +
+	private static final String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYERS + " (" +
 			Player._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			Player.CREATED + " INTEGER NOT NULL, " +
 			Player.STATUS + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.RESULT + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.NAME + " TEXT NOT NULL DEFAULT '0', " +
-			Player.GOALS + " INTEGER NOT NULL DEFAULT '0', " +
+			Player.GOALS_FOR + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.GOALS_AGAINST + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.WINS + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.LOSSES + " INTEGER NOT NULL DEFAULT '0', " +
 			Player.RATING + " INTEGER NOT NULL DEFAULT '" + EloRatingSystem.INITIAL_RATING + "');";
 
-	private static final String DROP_TABLE_PLAYER = "DROP TABLE IF EXISTS " + TABLE_PLAYER + ";";
+	private static final String DROP_TABLE_PLAYER = "DROP TABLE IF EXISTS " + TABLE_PLAYERS + ";";
 
 	private static final String DATABASE_SCHEMA = CREATE_TABLE_PLAYER;
 

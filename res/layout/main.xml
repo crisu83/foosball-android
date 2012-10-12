@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_height="wrap_content"
+		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"
+		android:gravity="center"
 		android:orientation="vertical"
-		android:paddingLeft="20dp"
-		android:paddingRight="20dp"
-		android:paddingBottom="20dp"
-		android:paddingTop="80dp">
+		android:padding="20dp">
 
 	<TextView android:id="@+id/title_main"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:layout_gravity="center"
 			android:layout_marginBottom="10dp"
 			android:textSize="40dp"
 			android:text="@string/title_main" />
@@ -20,8 +17,6 @@
 	<Button android:id="@+id/button_new_match"
 			android:layout_width="200dp"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/title_main"
-			android:layout_gravity="center"
 			android:padding="10dp"
 			android:textSize="20dp"
 			android:text="@string/button_new_match"
@@ -30,12 +25,10 @@
 	<Button android:id="@+id/button_statistics"
 			android:layout_width="200dp"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/button_new_match"
-			android:layout_gravity="center"
 			android:padding="10dp"
 			android:textSize="20dp"
 			android:text="@string/button_statistics"
-			android:onClick="openStatistics" />
+			android:onClick="openStatistics" android:gravity="center"/>
 
 	<!--<Button android:id="@+id/button_rest"
 			android:layout_width="200dp"

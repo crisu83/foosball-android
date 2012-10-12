@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.apache.http.HttpStatus;
-import org.cniska.foosball.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 

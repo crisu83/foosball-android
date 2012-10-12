@@ -7,11 +7,14 @@
 	<string name="button_new_match">New match</string>
 	<string name="button_start">Start</string>
 	<string name="button_statistics">Statistics</string>
+	<string name="button_rematch">Rematch</string>
+	<string name="button_random_teams">Random teams</string>
+	<string name="button_exit">Exit</string>
 	<string name="button_test_rest">Test REST</string>
 
 	<string name="dialog_button_no">No</string>
 	<string name="dialog_button_yes">Yes</string>
-	<string name="dialog_message_quit">Do you really want to quit?</string>
+	<string name="dialog_message_exit">Do you really want to exit?</string>
 
 	<string name="hint_player1">Player 1</string>
 	<string name="hint_player2">Player 2</string>
@@ -19,6 +22,7 @@
 	<string name="hint_player4">Player 4</string>
 
 	<string name="label_score_to_win">Score to win</string>
+	<string name="label_random_teams">Random teams</string>
 
 	<string name="menu_back">Back</string>
 	<string name="menu_exit">Exit</string>
@@ -33,12 +37,11 @@
 	<string name="table_header_matches">P</string>
 	<string name="table_header_rating">RATING</string>
 
-	<string name="text_home_team">Home</string>
-	<string name="text_away_team">Away</string>
+	<string name="text_home_team">HOME</string>
+	<string name="text_away_team">AWAY</string>
+	<string name="text_team_won">%1$s WON!</string>
 
-	<string name="text_score">%1$d - %2$d</string>
-
-	<string name="title_new_match">New match</string>
 	<string name="title_main">Foosball</string>
+	<string name="title_new_match">New match</string>
 
 </resources>

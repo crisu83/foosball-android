@@ -16,8 +16,10 @@
 		</activity>
 		<activity android:name=".NewMatchActivity"></activity>
 		<activity android:name=".PlayMatchActivity"></activity>
+		<activity android:name=".MatchOverActivity"></activity>
 		<activity android:name=".StatisticsActivity"></activity>
 		<activity android:name=".RESTServiceActivity"></activity>
+		<activity android:name=".MatchOverActivity"/>
 		<service android:name=".RESTService" />
 		<provider android:name=".PlayerProvider"
 				  android:authorities="org.cniska.foosball.android.PlayerProvider" />

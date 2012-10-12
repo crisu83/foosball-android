@@ -11,7 +11,6 @@ import android.view.*;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import org.cniska.foosball.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

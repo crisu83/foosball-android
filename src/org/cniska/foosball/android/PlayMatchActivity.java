@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This activity handles match logging.
@@ -30,11 +30,9 @@ public class PlayMatchActivity extends Activity {
 
 	private static final String STATE_NUM_HOME_TEAM_GOALS = "org.cniska.foosball.android.STATE_NUM_HOME_TEAM_GOALS";
 	private static final String STATE_NUM_AWAY_TEAM_GOALS = "org.cniska.foosball.android.STATE_NUM_AWAY_TEAM_GOALS";
-	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.STATE_NuM_GOALS_TO_WIN";
-
-	private static final int TEAM_NONE = 0;
-	private static final int TEAM_HOME = 1;
-	private static final int TEAM_AWAY = 2;
+	private static final String STATE_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.STATE_NUM_GOALS_TO_WIN";
+	private static final String STATE_PLAYER_NAMES = "org.cniska.foosball.android.STATE_PLAYER_NAMES";
+	private static final String STATE_HISTORY = "org.cniska.foosball.android.STATE_HISTORY";
 
 	private static String[] PROJECTION = {
 		Player._ID,
@@ -46,17 +44,25 @@ public class PlayMatchActivity extends Activity {
 		Player.RATING
 	};
 
+	public static final String EXTRA_WINNING_TEAM = "org.cniska.foosball.android.EXTRA_WINNING_TEAM";
+
+	public static final int TEAM_NONE = 0;
+	public static final int TEAM_HOME = 1;
+	public static final int TEAM_AWAY = 2;
+
 	// Member variables
 	// ----------------------------------------
 
 	PowerManager.WakeLock mWakeLock;
 
-	private int mNumGoalsToWin = 10;
 	private int mNumHomeTeamGoals = 0;
 	private int mNumAwayTeamGoals = 0;
+	private int mNumGoalsToWin = 10;
 	private int mWinningTeam = TEAM_NONE;
+	private TextView mHomeTeamScore;
+	private TextView mAwayTeamScore;
 	private ArrayList<String> mPlayerNames;
-	private List<Integer> mHistory = new ArrayList<Integer>();
+	private ArrayList<Integer> mHistory = new ArrayList<Integer>();
 	private boolean mEnded = false;
 
 	// Methods
@@ -71,20 +77,40 @@ public class PlayMatchActivity extends Activity {
 
 		// Restore member variables if state has changed.
 		if (savedInstanceState != null) {
-			mNumGoalsToWin = savedInstanceState.getInt(STATE_NUM_GOALS_TO_WIN);
 			mNumHomeTeamGoals = savedInstanceState.getInt(STATE_NUM_HOME_TEAM_GOALS);
 			mNumAwayTeamGoals = savedInstanceState.getInt(STATE_NUM_AWAY_TEAM_GOALS);
+			mNumGoalsToWin = savedInstanceState.getInt(STATE_NUM_GOALS_TO_WIN);
+			mPlayerNames = savedInstanceState.getStringArrayList(STATE_PLAYER_NAMES);
+			mHistory = savedInstanceState.getIntegerArrayList(STATE_HISTORY);
 		}
 
 		// Process intent data if necessary.
 		Intent intent = getIntent();
 		if (intent != null) {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
-			mNumGoalsToWin = Integer.parseInt(intent.getStringExtra(NewMatchActivity.EXTRA_SCORES_TO_WIN));
+			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
 		}
 
 		setContentView(R.layout.play_match);
 
+		mHomeTeamScore = (TextView) findViewById(R.id.text_home_team_score);
+		mAwayTeamScore = (TextView) findViewById(R.id.text_away_team_score);
+
+		mHomeTeamScore.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addHomeTeamGoal(v);
+			}
+		});
+
+		mAwayTeamScore.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addAwayTeamGoal(v);
+			}
+		});
+
+		renderPlayerNames();
 		renderMatchScore();
 
 		Logger.info(TAG, "Activity created.");
@@ -105,7 +131,7 @@ public class PlayMatchActivity extends Activity {
 				return true;
 
 			case R.id.menu_exit:
-				quitWithConfirmation();
+				exitWithConfirmation();
 				return true;
 
 			default:
@@ -119,6 +145,8 @@ public class PlayMatchActivity extends Activity {
 		state.putInt(STATE_NUM_GOALS_TO_WIN, mNumGoalsToWin);
 		state.putInt(STATE_NUM_HOME_TEAM_GOALS, mNumHomeTeamGoals);
 		state.putInt(STATE_NUM_AWAY_TEAM_GOALS, mNumAwayTeamGoals);
+		state.putStringArrayList(STATE_PLAYER_NAMES, mPlayerNames);
+		state.putIntegerArrayList(STATE_HISTORY, mHistory);
 		Logger.info(TAG, "Activity state saved.");
 	}
 
@@ -147,7 +175,7 @@ public class PlayMatchActivity extends Activity {
 			Logger.info(TAG, "Goal logged for the home team.");
 			updateMatchScore();
 		} else {
-			Logger.error(TAG, "Failed to log goal for the home team (match has ended).");
+			Logger.warn(TAG, "Failed to log goal for the home team (match has ended).");
 		}
 	}
 
@@ -162,7 +190,7 @@ public class PlayMatchActivity extends Activity {
 			Logger.info(TAG, "Goal logged for the away team.");
 			updateMatchScore();
 		} else {
-			Logger.error(TAG, "Failed to log goal for the away team (match has ended).");
+			Logger.warn(TAG, "Failed to log goal for the away team (match has ended).") ;
 		}
 	}
 
@@ -196,6 +224,30 @@ public class PlayMatchActivity extends Activity {
 	}
 
 	/**
+	 * Displays a confirm dialog to exit the match.
+	 */
+	public void exitWithConfirmation() {
+		new AlertDialog.Builder(this)
+				.setMessage(R.string.dialog_message_exit)
+				.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						exit();
+					}
+				})
+				.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				})
+				.create()
+				.show();
+	}
+
+	/**
 	 * Updates the match score and checks if either team has won the match.
 	 */
 	private void updateMatchScore() {
@@ -212,95 +264,129 @@ public class PlayMatchActivity extends Activity {
 	}
 
 	/**
+	 * Renders the player names below the team name.
+	 */
+	private void renderPlayerNames() {
+		String homeTeamNames, awayTeamNames, name;
+
+		homeTeamNames = mPlayerNames.get(0);
+		name = mPlayerNames.get(2);
+		if (!TextUtils.isEmpty(name)) {
+			homeTeamNames += " / " + name;
+		}
+
+		TextView homeTeamView = (TextView) findViewById(R.id.text_home_team_player_names);
+		if (homeTeamView != null) {
+			homeTeamView.setText(homeTeamNames);
+		}
+
+		awayTeamNames = mPlayerNames.get(1);
+		name = mPlayerNames.get(3);
+		if (!TextUtils.isEmpty(name)) {
+			awayTeamNames += " / " + name;
+		}
+
+		TextView awayTeamView = (TextView) findViewById(R.id.text_away_team_player_names);
+		if (awayTeamView != null) {
+			awayTeamView.setText(awayTeamNames);
+		}
+	}
+
+	/**
 	 * Renders the match score.
 	 */
 	private void renderMatchScore() {
-		TextView scoreView = (TextView) findViewById(R.id.text_score);
-		String score = getResources().getString(R.string.text_score);
-		scoreView.setText(String.format(score, mNumHomeTeamGoals, mNumAwayTeamGoals));
+		mHomeTeamScore.setText(String.valueOf(mNumHomeTeamGoals));
+		mAwayTeamScore.setText(String.valueOf(mNumAwayTeamGoals));
 	}
 
 	/**
-	 * Displays a confirm dialog to quit the match.
-	 */
-	public void quitWithConfirmation() {
-		new AlertDialog.Builder(this)
-				.setMessage(R.string.dialog_message_quit)
-				.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						quit();
-					}
-				})
-				.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				})
-				.create()
-				.show();
-	}
-
-	/**
-	 * Ends the match and saves the statistics.
+	 * Saves player data and starts the match over activity.
+	 * Called when the match is over.
 	 */
 	private void end() {
 		if (!mEnded) {
 			mEnded = true;
 
-			String namePlayer1, namePlayer2, namePlayer3, namePlayer4;
-			Player player1, player2, player3, player4;
+			saveStats(); // Save player statistics.
 
-			namePlayer1 = mPlayerNames.get(0);
-			player1 = findPlayerByName(namePlayer1);
+			Logger.info(TAG, "Sending intent to start MatchOverActivity.");
+			Intent intent = new Intent(this, MatchOverActivity.class);
+			intent.putStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES, mPlayerNames);
+			intent.putExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, mNumGoalsToWin);
+			intent.putExtra(EXTRA_WINNING_TEAM, mWinningTeam);
+			startActivity(intent);
+		}
+	}
 
-			if (player1 == null) {
-				player1 = createPlayer(namePlayer1);
-			}
+	/**
+	 * Ends the match and saves the statistics.
+	 */
+	private void saveStats() {
+		Player player1, player2, player3, player4;
+		String name;
 
-			namePlayer2 = mPlayerNames.get(1);
-			player2 = findPlayerByName(namePlayer2);
+		name = mPlayerNames.get(0);
+		player1 = findPlayerByName(name);
 
-			if (player2 == null) {
-				player2 = createPlayer(namePlayer2);
-			}
+		if (player1 == null) {
+			player1 = createPlayer(name);
+		}
 
-			namePlayer3 = mPlayerNames.get(2);
-			player3 = findPlayerByName(namePlayer3);
+		name = mPlayerNames.get(1);
+		player2 = findPlayerByName(name);
+
+		if (player2 == null) {
+			player2 = createPlayer(name);
+		}
+
+		name = mPlayerNames.get(2);
+		if (!TextUtils.isEmpty(name)) {
+			player3 = findPlayerByName(name);
 
 			if (player3 == null) {
-				player3 = createPlayer(namePlayer3);
+				player3 = createPlayer(name);
 			}
+		} else {
+			player3 = null;
+		}
 
-			namePlayer4 = mPlayerNames.get(3);
-			player4 = findPlayerByName(namePlayer4);
+		name = mPlayerNames.get(3);
+		if (!TextUtils.isEmpty(name)) {
+			player4 = findPlayerByName(name);
 
 			if (player4 == null) {
-				player4 = createPlayer(namePlayer4);
+				player4 = createPlayer(name);
 			}
-
-			if (player1 != null && player2 != null) {
-				// Calculate the team ratings.
-				int homeTeamRating = player3 != null ? (player1.getRating() + player3.getRating()) / 2 : player1.getRating();
-				int awayTeamRating = player4 != null ? (player2.getRating() + player4.getRating()) / 2 : player2.getRating();
-
-				updatePlayer(player1, mNumHomeTeamGoals, mNumAwayTeamGoals, awayTeamRating, mWinningTeam == TEAM_HOME);
-				updatePlayer(player2, mNumAwayTeamGoals, mNumHomeTeamGoals, homeTeamRating, mWinningTeam == TEAM_AWAY);
-
-				if (player3 != null) {
-					updatePlayer(player3, mNumHomeTeamGoals, mNumAwayTeamGoals, awayTeamRating, mWinningTeam == TEAM_HOME);
-				}
-
-				if (player4 != null) {
-					updatePlayer(player4, mNumAwayTeamGoals, mNumHomeTeamGoals, homeTeamRating, mWinningTeam == TEAM_AWAY);
-				}
-			}
-
-			quit();
+		} else {
+			player4 = null;
 		}
+
+		if (player1 != null && player2 != null) {
+			// Calculate the team ratings.
+			int homeTeamRating = player3 != null ? (player1.getRating() + player3.getRating()) / 2 : player1.getRating();
+			int awayTeamRating = player4 != null ? (player2.getRating() + player4.getRating()) / 2 : player2.getRating();
+
+			updatePlayer(player1, mNumHomeTeamGoals, mNumAwayTeamGoals, awayTeamRating, mWinningTeam == TEAM_HOME);
+			updatePlayer(player2, mNumAwayTeamGoals, mNumHomeTeamGoals, homeTeamRating, mWinningTeam == TEAM_AWAY);
+
+			if (player3 != null) {
+				updatePlayer(player3, mNumHomeTeamGoals, mNumAwayTeamGoals, awayTeamRating, mWinningTeam == TEAM_HOME);
+			}
+
+			if (player4 != null) {
+				updatePlayer(player4, mNumAwayTeamGoals, mNumHomeTeamGoals, homeTeamRating, mWinningTeam == TEAM_AWAY);
+			}
+		}
+	}
+
+	/**
+	 * Exits the match without saving.
+	 */
+	private void exit() {
+		Logger.info(TAG, "Sending intent to start MainActivity.");
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
 	}
 
 	/**
@@ -317,15 +403,6 @@ public class PlayMatchActivity extends Activity {
 			player = cursorToPlayer(cursor);
 		}
 		return player;
-	}
-
-	/**
-	 * Quits the match without saving.
-	 */
-	private void quit() {
-		Logger.info(TAG, "Sending intent to start MainActivity.");
-		Intent intent = new Intent(this, MainActivity.class);
-		startActivity(intent);
 	}
 
 	/**
@@ -394,7 +471,7 @@ public class PlayMatchActivity extends Activity {
 	}
 
 	/**
-	 * Bind the cursor data to a player record.
+	 * Binds the cursor data to a player record.
 	 * @param cursor The cursor.
 	 * @return The record.
 	 */

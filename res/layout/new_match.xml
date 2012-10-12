@@ -1,134 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:orientation="vertical"
-		android:padding="20dp">
-
-	<TextView android:id="@+id/title_new_match"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_marginBottom="10dp"
-			android:textSize="20dp"
-			android:text="@string/title_new_match" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:orientation="horizontal">
+			android:layout_width="fill_parent"
+			android:orientation="vertical"
+			android:padding="20dp">
+
+		<TextView android:id="@+id/title_new_match"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_marginBottom="10dp"
+				android:textSize="20dp"
+				android:text="@string/title_new_match" />
 
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="50"
-				android:layout_marginRight="20dp"
-				android:orientation="vertical">
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="5dp"
+					  android:orientation="horizontal">
 
 			<TextView android:id="@+id/text_home_team"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:layout_marginBottom="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:textSize="15dp"
-					android:text="@string/text_home_team" />
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="50"
+					  android:textStyle="bold"
+					  android:textSize="15dp"
+					  android:text="@string/text_home_team" />
 
-			<AutoCompleteTextView android:id="@+id/edit_text_player1"
-					android:layout_height="wrap_content"
-					android:layout_width="match_parent"
-					android:imeOptions="actionNext"
-					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/edit_text_player2"
-					android:singleLine="true"
-					android:hint="@string/hint_player1" android:text="Foo"/>
-
-			<AutoCompleteTextView android:id="@+id/edit_text_player3"
-					android:layout_height="wrap_content"
-					android:layout_width="match_parent"
-					android:layout_marginBottom="10dp"
-					android:imeOptions="actionNext"
-					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/edit_text_player4"
-					android:singleLine="true"
-					android:hint="@string/hint_player3" android:text="Var"/>
-
-			<TextView android:id="@+id/text_scores_to_win"
-					android:layout_height="40dp"
-					android:layout_width="wrap_content"
-					android:layout_marginBottom="10dp"
-					android:paddingTop="10dp"
-					android:paddingBottom="10dp"
-					android:textSize="15dp"
-					android:hint="@string/label_score_to_win" />
+			<TextView android:id="@+id/text_away_team"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="50"
+					  android:textStyle="bold"
+					  android:textSize="15dp"
+					  android:text="@string/text_away_team" />
 
 		</LinearLayout>
 
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_weight="50"
-				android:orientation="vertical">
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="5dp"
+					  android:orientation="horizontal">
 
-			<TextView android:id="@+id/text_away_team"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:layout_marginBottom="5dp"
-					android:textAllCaps="true"
-					android:textStyle="bold"
-					android:textSize="15dp"
-					android:text="@string/text_away_team" />
+			<AutoCompleteTextView android:id="@+id/edit_text_player1"
+								  android:layout_width="0dp"
+								  android:layout_height="wrap_content"
+								  android:layout_weight="50"
+								  android:imeOptions="actionNext"
+								  android:inputType="textCapSentences"
+								  android:nextFocusDown="@+id/edit_text_player2"
+								  android:singleLine="true"
+								  android:hint="@string/hint_player1" android:text="Foo"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player2"
-					android:layout_height="wrap_content"
-					android:layout_width="match_parent"
-					android:imeOptions="actionNext"
-					android:inputType="textCapSentences"
-					android:nextFocusDown="@+id/edit_text_player3"
-					android:singleLine="true"
-					android:hint="@string/hint_player2" android:text="Bar"/>
+								  android:layout_width="0dp"
+								  android:layout_height="wrap_content"
+								  android:layout_weight="50"
+								  android:imeOptions="actionNext"
+								  android:inputType="textCapSentences"
+								  android:nextFocusDown="@+id/edit_text_player3"
+								  android:singleLine="true"
+								  android:hint="@string/hint_player2" android:text="Bar"/>
+
+		</LinearLayout>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="5dp"
+					  android:orientation="horizontal">
+
+			<AutoCompleteTextView android:id="@+id/edit_text_player3"
+								  android:layout_width="0dp"
+								  android:layout_height="wrap_content"
+								  android:layout_weight="50"
+								  android:imeOptions="actionNext"
+								  android:inputType="textCapSentences"
+								  android:nextFocusDown="@+id/edit_text_player4"
+								  android:singleLine="true"
+								  android:hint="@string/hint_player3" android:text="Var"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player4"
-					android:layout_height="wrap_content"
-					android:layout_width="match_parent"
-					android:layout_marginBottom="10dp"
-					android:imeOptions="actionDone"
-					android:inputType="textCapSentences"
-					android:singleLine="true"
-					android:hint="@string/hint_player4" android:text="Char"/>
+								  android:layout_width="0dp"
+								  android:layout_height="wrap_content"
+								  android:layout_weight="50"
+								  android:imeOptions="actionDone"
+								  android:inputType="textCapSentences"
+								  android:singleLine="true"
+								  android:hint="@string/hint_player4" android:text="Char"/>
+
+		</LinearLayout>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="0dp"
+					  android:orientation="horizontal">
+
+			<TextView android:id="@+id/label_score_to_win"
+					  android:layout_width="0dp"
+					  android:layout_height="fill_parent"
+					  android:layout_weight="50"
+					  android:textSize="15dp"
+					  android:gravity="center_vertical"
+					  android:text="@string/label_score_to_win" />
 
 			<RadioGroup android:id="@+id/radio_group_score_to_win"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:layout_marginBottom="10dp"
-					android:orientation="horizontal"
-					android:paddingTop="5dp">
+						android:layout_width="0dp"
+						android:layout_height="fill_parent"
+						android:layout_weight="50"
+						android:gravity="center_vertical"
+						android:orientation="horizontal" >
 
 				<RadioButton android:id="@+id/radio_score_to_win_10"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:layout_marginRight="10dp"
-						android:text="10"
-						android:checked="true" />
+							 android:layout_height="wrap_content"
+							 android:layout_width="wrap_content"
+							 android:text="10"
+							 android:checked="true" />
 
 				<RadioButton android:id="@+id/radio_score_to_win_5"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:text="5" />
+							 android:layout_height="wrap_content"
+							 android:layout_width="wrap_content"
+							 android:layout_marginLeft="10dp"
+							 android:text="5" />
 
 			</RadioGroup>
 
 		</LinearLayout>
 
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="5dp"
+					  android:orientation="horizontal">
+
+			<TextView android:id="@+id/label_random_teams"
+					  android:layout_width="0dp"
+					  android:layout_height="fill_parent"
+					  android:layout_weight="50"
+					  android:gravity="center_vertical"
+					  android:textSize="15dp"
+					  android:text="@string/label_random_teams" />
+
+			<CheckBox android:id="@+id/check_box_random_teams"
+					android:layout_width="0dp"
+					android:layout_height="fill_parent"
+					android:layout_weight="50"
+					android:gravity="center_vertical"
+					android:orientation="horizontal" />
+
+		</LinearLayout>
+
+		<Button android:id="@+id/button_start"
+				android:layout_height="wrap_content"
+				android:layout_width="200dp"
+				android:layout_gravity="center"
+				android:padding="10dp"
+				android:textSize="20dp"
+				android:text="@string/button_start"
+				android:onClick="submitForm" />
+
 	</LinearLayout>
 
-	<Button android:id="@+id/button_start"
-			android:layout_height="wrap_content"
-			android:layout_width="200dp"
-			android:layout_gravity="center"
-			android:padding="10dp"
-			android:textSize="20dp"
-			android:text="@string/button_start"
-			android:onClick="submitForm" />
-
-</LinearLayout>
+</ScrollView>

@@ -4,33 +4,80 @@
 			  android:layout_height="fill_parent"
 			  android:layout_width="fill_parent"
 			  android:orientation="vertical"
-			  android:padding="20dp">
+			  android:padding="20dp" android:gravity="center">
 
-	<Button android:id="@+id/button_add_home_team_goal"
-			android:layout_width="200dp"
-			android:layout_height="fill_parent"
-			android:layout_weight="60"
-			android:layout_gravity="center"
-			android:padding="10dp"
-			android:textSize="30dp"
-			android:text="@string/text_home_team"
-			android:onClick="addHomeTeamGoal" />
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				  android:layout_height="wrap_content"
+				  android:layout_width="fill_parent"
+				  android:orientation="horizontal">
 
-	<TextView android:id="@+id/text_score"
-			  android:layout_width="fill_parent"
-			  android:layout_height="fill_parent"
-			  android:layout_weight="40"
-			  android:gravity="center"
-			  android:textSize="80dp" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="0dp"
+					  android:layout_height="fill_parent"
+					  android:layout_weight="40"
+					  android:orientation="vertical">
 
-	<Button android:id="@+id/button_add_away_team_goal"
-			android:layout_width="200dp"
-			android:layout_height="fill_parent"
-			android:layout_weight="60"
-			android:layout_gravity="center"
-			android:padding="10dp"
-			android:textSize="30dp"
-			android:text="@string/text_away_team"
-			android:onClick="addAwayTeamGoal" />
+			<TextView android:id="@+id/text_home_team"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:gravity="center"
+					  android:textSize="20dp"
+					  android:textStyle="bold"
+					  android:text="@string/text_home_team" />
+
+			<TextView android:id="@+id/text_home_team_player_names"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:gravity="center" />
+
+			<TextView android:id="@+id/text_home_team_score"
+					  android:layout_width="fill_parent"
+					  android:layout_height="0dp"
+					  android:layout_weight="70"
+					  android:gravity="center"
+					  android:padding="0dp"
+					  android:textSize="100dp"
+					  android:text="0" />
+
+		</LinearLayout>
+
+		<TextView android:id="@+id/text_score_dash"
+				  android:layout_width="40dp"
+				  android:layout_height="fill_parent"
+				  android:layout_marginTop="35dp"
+				  android:gravity="center"
+				  android:textSize="100dp"
+				  android:text="-" />
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="0dp"
+					  android:layout_height="fill_parent"
+					  android:layout_weight="40"
+					  android:orientation="vertical">
+
+			<TextView android:id="@+id/text_home_team"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:gravity="center"
+					  android:textSize="20dp"
+					  android:textStyle="bold"
+					  android:text="@string/text_away_team" />
+
+			<TextView android:id="@+id/text_away_team_player_names"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:gravity="center" />
+
+			<TextView android:id="@+id/text_away_team_score"
+					  android:layout_width="fill_parent"
+					  android:layout_height="0dp"
+					  android:layout_weight="70"
+					  android:gravity="center"
+					  android:textSize="100dp"
+					  android:text="0" />
+
+		</LinearLayout>
+
+	</LinearLayout>
 
 </LinearLayout>

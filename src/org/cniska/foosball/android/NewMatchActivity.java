@@ -11,13 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import org.cniska.foosball.R;
+import android.widget.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  * This activity handles match creation.
@@ -30,7 +28,7 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 	public static final String TAG = NewMatchActivity.class.getName();
 
 	public static final String EXTRA_PLAYER_NAMES = "org.cniska.foosball.android.EXTRA_PLAYER_NAMES";
-	public static final String EXTRA_SCORES_TO_WIN = "org.cniska.foosball.android.EXTRA_SCORES_TO_WIN";
+	public static final String EXTRA_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.EXTRA_NUM_GOALS_TO_WIN";
 
 	private static final int NUM_SUPPORTED_PLAYERS = 4;
 	private static final int AUTO_COMPLETE_THRESHOLD = 1;
@@ -140,12 +138,18 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 				playerNames.add(mEditTexts[i].getText().toString().trim());
 			}
 
+			// Randomize teams if necessary.
+			CheckBox randomTeams = (CheckBox) findViewById(R.id.check_box_random_teams);
+			if (randomTeams.isChecked()) {
+				Random random = new Random(System.currentTimeMillis());
+				Collections.shuffle(playerNames, random);
+			}
+
 			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 			Intent intent = new Intent(this, PlayMatchActivity.class);
 			intent.putStringArrayListExtra(EXTRA_PLAYER_NAMES, playerNames);
-			intent.putExtra(EXTRA_SCORES_TO_WIN, checkedRadio.getText().toString());
+			intent.putExtra(EXTRA_NUM_GOALS_TO_WIN, Integer.parseInt(checkedRadio.getText().toString()));
 			startActivity(intent);
-			finish();
 		}
 	}
 

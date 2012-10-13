@@ -1,9 +1,5 @@
 package org.cniska.foosball.android;
 
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +7,11 @@ import android.view.*;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * This activity lists the player statistics.
  */
-public class StatisticsActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StatisticsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
 	// ----------------------------------------
@@ -187,7 +188,7 @@ public class StatisticsActivity extends Activity implements LoaderManager.Loader
 		setListAdapter(mAdapter);
 		*/
 
-		getLoaderManager().initLoader(0, null, this);
+		getSupportLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override

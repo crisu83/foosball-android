@@ -1,6 +1,9 @@
 package org.cniska.foosball.android;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +16,8 @@ import android.view.WindowManager;
 public class MainActivity extends Activity {
 
 	public static final String TAG = MainActivity.class.getName();
+
+	public static final String ACCOUNT_TYPE = "com.google";
 	
 	// Methods
 	// ----------------------------------------
@@ -20,6 +25,10 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		AccountManager accountManager = AccountManager.get(getApplicationContext());
+		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
+		//ContentResolver.setIsSyncable();
 
 		// Remove the title bar and set app to full-screen mode.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);

@@ -1,17 +1,19 @@
 package org.cniska.foosball.android;
 
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +22,7 @@ import java.util.Random;
 /**
  * This activity handles match creation.
  */
-public class NewMatchActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class NewMatchActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Static variables
 	// ----------------------------------------
@@ -64,7 +66,7 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 		}
 
 		// Ask the loader manager to start loading our player names.
-		getLoaderManager().initLoader(0, null, this);
+		getSupportLoaderManager().initLoader(0, null, this);
 
 		Logger.info(TAG, "Activity created.");
 	}
@@ -138,11 +140,13 @@ public class NewMatchActivity extends Activity implements LoaderManager.LoaderCa
 				playerNames.add(mEditTexts[i].getText().toString().trim());
 			}
 
-			// Randomize teams if necessary.
-			CheckBox randomTeams = (CheckBox) findViewById(R.id.check_box_random_teams);
-			if (randomTeams.isChecked()) {
-				Random random = new Random(System.currentTimeMillis());
-				Collections.shuffle(playerNames, random);
+			// Randomize teams if necessary. This can only be done if all four players are playing.
+			if (!TextUtils.isEmpty(playerNames.get(2)) && !TextUtils.isEmpty(playerNames.get(3))) {
+				CheckBox randomTeams = (CheckBox) findViewById(R.id.check_box_random_teams);
+				if (randomTeams.isChecked()) {
+					Random random = new Random(System.currentTimeMillis());
+					Collections.shuffle(playerNames, random);
+				}
 			}
 
 			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");

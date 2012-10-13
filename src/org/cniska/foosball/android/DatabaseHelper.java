@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+	// Static variables
+	// ----------------------------------------
+
 	private static final String TAG = DatabaseHelper.class.getName();
 
 	private static final String DATABASE_NAME = "foosball.db";
@@ -31,6 +34,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DROP_TABLE_PLAYER = "DROP TABLE IF EXISTS " + TABLE_PLAYERS + ";";
 
 	private static final String DATABASE_SCHEMA = CREATE_TABLE_PLAYER;
+
+	// Methods
+	// ----------------------------------------
 
 	/**
 	 * Creates a database helper.

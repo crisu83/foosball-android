@@ -55,7 +55,7 @@
 								  android:inputType="textCapSentences"
 								  android:nextFocusDown="@+id/edit_text_player2"
 								  android:singleLine="true"
-								  android:hint="@string/hint_player1" android:text="Foo"/>
+								  android:hint="@string/hint_player1"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player2"
 								  android:layout_width="0dp"
@@ -65,7 +65,7 @@
 								  android:inputType="textCapSentences"
 								  android:nextFocusDown="@+id/edit_text_player3"
 								  android:singleLine="true"
-								  android:hint="@string/hint_player2" android:text="Bar"/>
+								  android:hint="@string/hint_player2"/>
 
 		</LinearLayout>
 
@@ -83,7 +83,7 @@
 								  android:inputType="textCapSentences"
 								  android:nextFocusDown="@+id/edit_text_player4"
 								  android:singleLine="true"
-								  android:hint="@string/hint_player3" android:text="Var"/>
+								  android:hint="@string/hint_player3"/>
 
 			<AutoCompleteTextView android:id="@+id/edit_text_player4"
 								  android:layout_width="0dp"
@@ -92,7 +92,7 @@
 								  android:imeOptions="actionDone"
 								  android:inputType="textCapSentences"
 								  android:singleLine="true"
-								  android:hint="@string/hint_player4" android:text="Char"/>
+								  android:hint="@string/hint_player4"/>
 
 		</LinearLayout>
 

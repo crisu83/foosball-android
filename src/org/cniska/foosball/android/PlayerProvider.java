@@ -1,11 +1,15 @@
 package org.cniska.foosball.android;
 
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -29,19 +33,6 @@ public class PlayerProvider extends ContentProvider {
 
 	private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	private static Map<String, String> sProjectionMap;
-
-	public static String[] sProjectionArray = {
-		Player._ID,
-		Player.CREATED,
-		Player.STATUS,
-		Player.RESULT,
-		Player.NAME,
-		Player.GOALS_FOR,
-		Player.GOALS_AGAINST,
-		Player.WINS,
-		Player.LOSSES,
-		Player.RATING
-	};
 
 	static {
 		sUriMatcher.addURI(AUTHORITY, BASE_PATH, PLAYERS);
@@ -94,6 +85,11 @@ public class PlayerProvider extends ContentProvider {
 				throwUnknownUriException(uri);
 		}
 
+		// Apply the default sort order if none is specified.
+		if (TextUtils.isEmpty(sortOrder)) {
+			sortOrder = Player.DEFAULT_SORT_ORDER;
+		}
+
 		SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
 		Cursor cursor = builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -132,7 +128,8 @@ public class PlayerProvider extends ContentProvider {
 
 		if (insertId > 0) {
 			Uri playerUri = ContentUris.withAppendedId(Player.CONTENT_URI, insertId);
-			getContext().getContentResolver().notifyChange(playerUri, null);
+			boolean syncToNetwork = !callerIsSyncAdapter(uri);
+			getContext().getContentResolver().notifyChange(playerUri, null, syncToNetwork);
 			return playerUri;
 		} else {
 			throw new SQLiteException("Failed to insert row into " + uri);
@@ -152,7 +149,7 @@ public class PlayerProvider extends ContentProvider {
 				if (TextUtils.isEmpty(selection)) {
 					selection = where;
 				} else {
-					selection += " AND " + where;
+					selection += " AND (" + where + ")";
 				}
 				break;
 
@@ -161,7 +158,8 @@ public class PlayerProvider extends ContentProvider {
 		}
 
 		int numAffectedRows = db.delete(DatabaseHelper.TABLE_PLAYERS, selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		boolean syncToNetwork = !callerIsSyncAdapter(uri);
+		getContext().getContentResolver().notifyChange(uri, null, syncToNetwork);
 		return numAffectedRows;
 	}
 
@@ -176,7 +174,7 @@ public class PlayerProvider extends ContentProvider {
 				if (TextUtils.isEmpty(selection)) {
 					selection = where;
 				} else {
-					selection += " AND " + where;
+					selection += " AND (" + where + ")";
 				}
 				break;
 
@@ -186,7 +184,8 @@ public class PlayerProvider extends ContentProvider {
 
 		SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
 		int numAffectedRows = db.update(DatabaseHelper.TABLE_PLAYERS, values, selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		boolean syncToNetwork = !callerIsSyncAdapter(uri);
+		getContext().getContentResolver().notifyChange(uri, null, syncToNetwork);
 		return numAffectedRows;
 	}
 
@@ -197,5 +196,14 @@ public class PlayerProvider extends ContentProvider {
 	 */
 	private void throwUnknownUriException(Uri uri) throws IllegalArgumentException {
 		throw new IllegalArgumentException("Unknown URI: " + uri);
+	}
+
+	/**
+	 * Returns whether the caller for the given uri is a sync adapter.
+	 * @param uri Called URI.
+	 * @return The result.
+	 */
+	private static boolean callerIsSyncAdapter(Uri uri) {
+		return Boolean.parseBoolean(uri.getQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER));
 	}
 }

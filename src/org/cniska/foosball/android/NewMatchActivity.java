@@ -58,6 +58,9 @@ public class NewMatchActivity extends FragmentActivity implements LoaderManager.
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setHomeButtonEnabled(true);
+
 		setContentView(R.layout.new_match);
 
 		// Collect the auto-complete views so that we can refer to them later.
@@ -81,9 +84,12 @@ public class NewMatchActivity extends FragmentActivity implements LoaderManager.
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_back:
-				finish();
+			case android.R.id.home:
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
 				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}

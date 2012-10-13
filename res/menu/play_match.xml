@@ -6,8 +6,4 @@
 			android:title="@string/menu_undo"
 			android:showAsAction="ifRoom|withText" />
 
-	<item android:id="@+id/menu_exit"
-		  android:title="@string/menu_exit"
-		  android:showAsAction="ifRoom|withText" />
-
 </menu>

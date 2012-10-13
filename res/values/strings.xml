@@ -24,6 +24,7 @@
 	<string name="label_score_to_win">Score to win</string>
 	<string name="label_random_teams">Random teams</string>
 
+	<string name="menu_new_player">New player</string>
 	<string name="menu_back">Back</string>
 	<string name="menu_exit">Exit</string>
 	<string name="menu_undo">Undo</string>
@@ -43,5 +44,6 @@
 
 	<string name="title_main">Foosball</string>
 	<string name="title_new_match">New match</string>
+	<string name="title_statistics">Statistics</string>
 
 </resources>

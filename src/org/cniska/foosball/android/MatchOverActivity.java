@@ -3,6 +3,7 @@ package org.cniska.foosball.android;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -41,12 +42,29 @@ public class MatchOverActivity extends Activity {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
 		}
 
+		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setHomeButtonEnabled(true);
+
 		setContentView(R.layout.match_over);
 
 		if (mWinningTeam == PlayMatchActivity.TEAM_HOME) {
 			renderWinningTeam(getResources().getString(R.string.text_home_team));
 		} else {
 			renderWinningTeam(getResources().getString(R.string.text_away_team));
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 

@@ -91,6 +91,9 @@ public class PlayMatchActivity extends Activity {
 			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
 		}
 
+		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setHomeButtonEnabled(true);
+
 		setContentView(R.layout.play_match);
 
 		mHomeTeamScore = (TextView) findViewById(R.id.text_home_team_score);
@@ -126,12 +129,12 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_undo:
-				undoAction();
+			case android.R.id.home:
+				exitWithConfirmation();
 				return true;
 
-			case R.id.menu_exit:
-				exitWithConfirmation();
+			case R.id.menu_undo:
+				undoAction();
 				return true;
 
 			default:
@@ -386,6 +389,7 @@ public class PlayMatchActivity extends Activity {
 	private void exit() {
 		Logger.info(TAG, "Sending intent to start MainActivity.");
 		Intent intent = new Intent(this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 

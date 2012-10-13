@@ -1,5 +1,6 @@
 package org.cniska.foosball.android;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -177,6 +178,9 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		mPlayers = new ArrayList<Player>();
 		mComparator = new PlayerComparator();
 
+		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setHomeButtonEnabled(true);
+
 		setContentView(R.layout.statistics);
 
 		mLayout = (TableLayout) findViewById(R.id.table_statistics);
@@ -192,18 +196,14 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.statistics, menu);
-		return true;
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_back:
-				finish();
+			case android.R.id.home:
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
 				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}

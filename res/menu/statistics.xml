@@ -2,8 +2,4 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item android:id="@+id/menu_back"
-			android:title="@string/menu_back"
-			android:showAsAction="ifRoom|withText" />
-
 </menu>

@@ -26,10 +26,6 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		AccountManager accountManager = AccountManager.get(getApplicationContext());
-		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
-		//ContentResolver.setIsSyncable();
-
 		// Remove the title bar and set app to full-screen mode.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

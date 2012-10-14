@@ -23,7 +23,7 @@ public class PlayerProvider extends ContentProvider {
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG = PlayerProvider.class.getName();
+	private static final String TAG = "PlayerProvider";
 
 	private static final int PLAYERS = 1;
 	private static final int PLAYER_ID = 2;
@@ -86,7 +86,7 @@ public class PlayerProvider extends ContentProvider {
 		}
 
 		// Apply the default sort order if none is specified.
-		if (TextUtils.isEmpty(sortOrder)) {
+		if (sortOrder == null) {
 			sortOrder = Player.DEFAULT_SORT_ORDER;
 		}
 

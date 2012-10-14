@@ -1,6 +1,5 @@
 package org.cniska.foosball.android;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,19 +11,19 @@ import java.util.ArrayList;
 /**
  * This activity is displayed when a match ends.
  */
-public class MatchOverActivity extends Activity {
+public class MatchOverActivity extends BaseActivity {
 
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG = MatchOverActivity.class.getName();
+	private static final String TAG = "MatchOverActivity";
 
 	// Member variables
 	// ----------------------------------------
 
 	private int mNumGoalsToWin = 10;
 	private int mWinningTeam = 0;
-	private ArrayList<String> mPlayerNames;
+	private ArrayList<String> mPlayerNames = new ArrayList<String>();
 
 	// Methods
 	// ----------------------------------------
@@ -33,8 +32,6 @@ public class MatchOverActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mPlayerNames = new ArrayList<String>();
-
 		Intent intent = getIntent();
 		if (intent != null) {
 			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
@@ -42,25 +39,23 @@ public class MatchOverActivity extends Activity {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
 		}
 
-		getActionBar().setDisplayShowTitleEnabled(false);
-		getActionBar().setHomeButtonEnabled(true);
+		initActionBar(false, true);
 
 		setContentView(R.layout.match_over);
 
-		if (mWinningTeam == PlayMatchActivity.TEAM_HOME) {
-			renderWinningTeam(getResources().getString(R.string.text_home_team));
-		} else {
-			renderWinningTeam(getResources().getString(R.string.text_away_team));
-		}
+		renderWinningTeam(getResources().getString(
+				mWinningTeam == PlayMatchActivity.TEAM_HOME
+				? R.string.text_home_team
+				: R.string.text_away_team));
+
+		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				Intent intent = new Intent(this, MainActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+				startMainActivity();
 				return true;
 
 			default:
@@ -82,11 +77,10 @@ public class MatchOverActivity extends Activity {
 
 	/**
 	 * Exits the activity.
+	 * @param view
 	 */
 	public void exit(View view) {
-		Logger.info(TAG, "Sending intent to start MainActivity.");
-		Intent intent = new Intent(this, MainActivity.class);
-		startActivity(intent);
+		startMainActivity();
 	}
 
 	/**

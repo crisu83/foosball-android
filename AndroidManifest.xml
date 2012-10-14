@@ -24,6 +24,7 @@
 		<activity android:name=".StatisticsActivity"></activity>
 		<activity android:name=".RESTServiceActivity"></activity>
 		<activity android:name=".MatchOverActivity"/>
+		<activity android:name=".BaseActivity"/>
 
 		<service android:name=".SyncService"
 				 android:exported="true">

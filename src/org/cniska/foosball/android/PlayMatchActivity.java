@@ -1,6 +1,5 @@
 package org.cniska.foosball.android;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -21,12 +20,12 @@ import java.util.ArrayList;
 /**
  * This activity handles match logging.
  */
-public class PlayMatchActivity extends Activity {
+public class PlayMatchActivity extends BaseActivity {
 
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG =  PlayMatchActivity.class.getName();
+	private static final String TAG = "PlayMatchActivity";
 
 	private static final String STATE_NUM_HOME_TEAM_GOALS = "org.cniska.foosball.android.STATE_NUM_HOME_TEAM_GOALS";
 	private static final String STATE_NUM_AWAY_TEAM_GOALS = "org.cniska.foosball.android.STATE_NUM_AWAY_TEAM_GOALS";
@@ -91,8 +90,7 @@ public class PlayMatchActivity extends Activity {
 			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
 		}
 
-		getActionBar().setDisplayShowTitleEnabled(false);
-		getActionBar().setHomeButtonEnabled(true);
+		initActionBar(false, false);
 
 		setContentView(R.layout.play_match);
 
@@ -129,10 +127,6 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
-				exitWithConfirmation();
-				return true;
-
 			case R.id.menu_undo:
 				undoAction();
 				return true;
@@ -156,14 +150,12 @@ public class PlayMatchActivity extends Activity {
 	@Override
 	protected void onResume() {
 		mWakeLock.acquire(); // We do not want the screen to become locked while a match is on-going.
-		Logger.info(TAG, "Activity resumed.");
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		mWakeLock.release(); // The screen maybe locked when this activity is paused.
-		Logger.info(TAG, "Activity paused.");
 		super.onPause();
 	}
 

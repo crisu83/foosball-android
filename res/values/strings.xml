@@ -30,12 +30,12 @@
 	<string name="menu_undo">Undo</string>
 
 	<string name="table_header_player">PLAYER</string>
-	<string name="table_header_goals">G</string>
-	<string name="table_header_goals_against">A</string>
+	<string name="table_header_games_played">GP</string>
 	<string name="table_header_wins">W</string>
 	<string name="table_header_losses">L</string>
+	<string name="table_header_goals_for">GF</string>
+	<string name="table_header_goals_against">GA</string>
 	<string name="table_header_win_loss_ratio">W:L</string>
-	<string name="table_header_matches">P</string>
 	<string name="table_header_rating">RATING</string>
 
 	<string name="text_home_team">HOME</string>

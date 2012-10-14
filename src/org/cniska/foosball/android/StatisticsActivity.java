@@ -1,18 +1,17 @@
 package org.cniska.foosball.android;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.*;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +21,7 @@ import java.util.List;
 /**
  * This activity lists the player statistics.
  */
-public class StatisticsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StatisticsActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Enumerables
 	// ----------------------------------------
@@ -31,6 +30,7 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		PLAYER,
 		GOALS,
 		GOALS_AGAINST,
+		GAMES_PLAYED,
 		WINS,
 		LOSSES,
 		WIN_LOSS_RATIO,
@@ -41,26 +41,6 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		ASCENDING,
 		DESCENDING
 	}
-
-	// Static variables
-	// ----------------------------------------
-
-	private static final int LAYOUT_WEIGHT_PLAYER = 30;
-	private static final int LAYOUT_WEIGHT_GOALS = 10;
-	private static final int LAYOUT_WEIGHT_GOALS_AGAINST = 10;
-	private static final int LAYOUT_WEIGHT_WINS = 10;
-	private static final int LAYOUT_WEIGHT_LOSSES = 10;
-	private static final int LAYOUT_WEIGHT_WIN_LOSS_RATIO = 10;
-	private static final int LAYOUT_WEIGHT_RATING = 20;
-
-	// Member variables
-	// ----------------------------------------
-
-	//private CursorAdapter mAdapter;
-
-	private List<Player> mPlayers;
-	private PlayerComparator mComparator;
-	private TableLayout mLayout;
 
 	// Inner classes
 	// ----------------------------------------
@@ -78,6 +58,8 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 						return compareInt(p1.getGoalsFor(), p2.getGoalsFor());
 					case GOALS_AGAINST:
 						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
+					case GAMES_PLAYED:
+						return compareInt(p1.gamesPlayed(), p2.gamesPlayed());
 					case WINS:
 						return compareInt(p1.getWins(), p2.getWins());
 					case LOSSES:
@@ -168,6 +150,29 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		}
 	}
 
+	// Static variables
+	// ----------------------------------------
+
+	private static final String TAG = "StatisticsActivity";
+
+	private static final int LAYOUT_WEIGHT_PLAYER = 30;
+	private static final int LAYOUT_WEIGHT_GOALS = 10;
+	private static final int LAYOUT_WEIGHT_GOALS_AGAINST = 10;
+	private static final int LAYOUT_WEIGHT_GAMES_PLAYED = 10;
+	private static final int LAYOUT_WEIGHT_WINS = 10;
+	private static final int LAYOUT_WEIGHT_LOSSES = 10;
+	private static final int LAYOUT_WEIGHT_WIN_LOSS_RATIO = 10;
+	private static final int LAYOUT_WEIGHT_RATING = 20;
+
+	// Member variables
+	// ----------------------------------------
+
+	//private CursorAdapter mAdapter;
+
+	private List<Player> mPlayers = new ArrayList<Player>();
+	private PlayerComparator mComparator = new PlayerComparator();
+	private TableLayout mLayout;
+
 	// Methods
 	// ----------------------------------------
 
@@ -175,11 +180,7 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mPlayers = new ArrayList<Player>();
-		mComparator = new PlayerComparator();
-
-		getActionBar().setDisplayShowTitleEnabled(false);
-		getActionBar().setHomeButtonEnabled(true);
+		initActionBar(false, true);
 
 		setContentView(R.layout.statistics);
 
@@ -193,15 +194,15 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		*/
 
 		getSupportLoaderManager().initLoader(0, null, this);
+
+		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				Intent intent = new Intent(this, MainActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+				startMainActivity();
 				return true;
 
 			default:
@@ -230,8 +231,6 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 
 		addTableHeaderRow(mLayout);
 		addTablePlayerRows(mLayout);
-
-		sortByColumn(SortColumn.PLAYER);
 	}
 
 	@Override
@@ -258,7 +257,7 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 	private void addTableHeaderRow(TableLayout layout) {
 		TableRow row = new TableRow(this);
 
-		TextView headerPlayer = createTableHeaderCell(getResources().getString(R.string.table_header_player), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 10);
+		TextView headerPlayer = createTableHeaderCell(getResources().getString(R.string.table_header_player), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 0);
 		headerPlayer.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -267,25 +266,16 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		});
 		row.addView(headerPlayer);
 
-		TextView headerGoals = createTableHeaderCell(getResources().getString(R.string.table_header_goals), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10);
-		headerGoals.setOnClickListener(new View.OnClickListener() {
+		TextView headerGamesPlayed = createTableHeaderCell(getResources().getString(R.string.table_header_games_played), LAYOUT_WEIGHT_GAMES_PLAYED, Gravity.CENTER, 0);
+		headerGamesPlayed.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sortByColumn(SortColumn.GOALS);
+				sortByColumn(SortColumn.GAMES_PLAYED);
 			}
 		});
-		row.addView(headerGoals);
+		row.addView(headerGamesPlayed);
 
-		TextView headerGoalsAgainst = createTableHeaderCell(getResources().getString(R.string.table_header_goals_against), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 10);
-		headerGoalsAgainst.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sortByColumn(SortColumn.GOALS_AGAINST);
-			}
-		});
-		row.addView(headerGoalsAgainst);
-
-		TextView headerWins = createTableHeaderCell(getResources().getString(R.string.table_header_wins), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 10);
+		TextView headerWins = createTableHeaderCell(getResources().getString(R.string.table_header_wins), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 0);
 		headerWins.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -294,7 +284,7 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		});
 		row.addView(headerWins);
 
-		TextView headerLosses = createTableHeaderCell(getResources().getString(R.string.table_header_losses), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 10);
+		TextView headerLosses = createTableHeaderCell(getResources().getString(R.string.table_header_losses), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 0);
 		headerLosses.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -303,7 +293,26 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 		});
 		row.addView(headerLosses);
 
-		TextView headerWinLossRatio = createTableHeaderCell(getResources().getString(R.string.table_header_win_loss_ratio), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 10);
+		TextView headerGoals = createTableHeaderCell(getResources().getString(R.string.table_header_goals_for), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 0);
+		headerGoals.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortByColumn(SortColumn.GOALS);
+			}
+		});
+		row.addView(headerGoals);
+
+		TextView headerGoalsAgainst = createTableHeaderCell(getResources().getString(R.string.table_header_goals_against), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 0);
+		headerGoalsAgainst.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortByColumn(SortColumn.GOALS_AGAINST);
+			}
+		});
+		row.addView(headerGoalsAgainst);
+
+		/*
+		TextView headerWinLossRatio = createTableHeaderCell(getResources().getString(R.string.table_header_win_loss_ratio), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 0);
 		headerWinLossRatio.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -311,8 +320,9 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 			}
 		});
 		row.addView(headerWinLossRatio);
+		*/
 
-		TextView headerRating = createTableHeaderCell(getResources().getString(R.string.table_header_rating), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 10);
+		TextView headerRating = createTableHeaderCell(getResources().getString(R.string.table_header_rating), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 0);
 		headerRating.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -335,13 +345,14 @@ public class StatisticsActivity extends FragmentActivity implements LoaderManage
 			for (int i = 0; i < numPlayers; i++) {
 				Player player = mPlayers.get(i);
 				TableRow row = new TableRow(this);
-				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 10));
-				row.addView(createTableCell(String.valueOf(player.getGoalsFor()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.valueOf(player.getGoalsAgainst()), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.valueOf(player.getWins()), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.format("%2.01f", player.winLossRatio()), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 10));
-				row.addView(createTableCell(String.valueOf(player.getRating()), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 10));
+				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 0));
+				row.addView(createTableCell(String.valueOf(player.gamesPlayed()), LAYOUT_WEIGHT_GAMES_PLAYED, Gravity.CENTER, 0));
+				row.addView(createTableCell(String.valueOf(player.getWins()), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 0));
+				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 0));
+				row.addView(createTableCell(String.valueOf(player.getGoalsFor()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 0));
+				row.addView(createTableCell(String.valueOf(player.getGoalsAgainst()), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 0));
+				//row.addView(createTableCell(String.format("%2.01f", player.winLossRatio()), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 0));
+				row.addView(createTableCell(String.valueOf(player.getRating()), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 0));
 				mLayout.addView(row);
 			}
 		}

@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG = DatabaseHelper.class.getName();
+	private static final String TAG = "DatabaseHelper";
 
 	private static final String DATABASE_NAME = "foosball.db";
 	private static final int DATABASE_VERSION = 1;

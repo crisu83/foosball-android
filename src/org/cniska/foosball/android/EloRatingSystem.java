@@ -8,6 +8,8 @@ public class EloRatingSystem {
 	// Static variables
 	// ----------------------------------------
 
+	private static final String TAG = "EloRatingSystem";
+
 	public static final int INITIAL_RATING = 1500;
 	public static final int[] BRACKETS = { 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400 };
 

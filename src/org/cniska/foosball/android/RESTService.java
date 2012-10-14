@@ -27,7 +27,7 @@ public class RESTService extends IntentService {
 	// Static variables
 	// ----------------------------------------
 
-	public static final String TAG = RESTService.class.getName();
+	public static final String TAG = "RESTService";
 
 	// Http verbs
 	public static final int GET = 1;

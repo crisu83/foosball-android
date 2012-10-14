@@ -29,7 +29,7 @@ public class Player implements Parcelable {
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.foosball.player";
 	public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.foosball.player";
 
-	public static final String DEFAULT_SORT_ORDER = "name ASC";
+	public static final String DEFAULT_SORT_ORDER = "rating DESC";
 
 	public static final Parcelable.Creator<Player> CREATOR = new Parcelable.Creator<Player>() {
 		@Override
@@ -126,7 +126,7 @@ public class Player implements Parcelable {
 	 * Returns the amount of matches the player has played.
 	 * @return The amount.
 	 */
-	public int matchesPlayed() {
+	public int gamesPlayed() {
 		return mWins + mLosses;
 	}
 

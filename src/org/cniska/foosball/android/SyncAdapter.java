@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
-	private static final String TAG = SyncAdapter.class.getName();
+	private static final String TAG = "SyncAdapter";
 
 	// Methods
 	// ----------------------------------------

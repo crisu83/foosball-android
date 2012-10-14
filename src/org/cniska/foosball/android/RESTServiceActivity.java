@@ -20,8 +20,8 @@ public class RESTServiceActivity extends Activity {
 	// Static variables
 	// ----------------------------------------
 
-	public static final String TAG = RESTServiceActivity.class.getName();
-	public static final String TAG_RESPONDER = RESTResponderFragment.class.getName();
+	public static final String TAG = "RESTServiceActivity";
+	public static final String TAG_RESPONDER = "RESTResponderFragment";
 
 	private static final String SERVER_URI = "http://www.cniska.net/foosball/test.php";
 

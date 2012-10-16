@@ -2,6 +2,7 @@ package org.cniska.foosball.android;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -30,7 +31,10 @@ public class BaseActivity extends FragmentActivity {
 	protected void initActionBar(boolean showTitle, boolean homeButtonEnabled) {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(showTitle);
-		actionBar.setHomeButtonEnabled(homeButtonEnabled);
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			actionBar.setHomeButtonEnabled(homeButtonEnabled);
+		}
 	}
 
 	protected void startMainActivity() {

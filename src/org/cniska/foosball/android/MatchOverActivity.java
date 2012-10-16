@@ -39,7 +39,8 @@ public class MatchOverActivity extends BaseActivity {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
 		}
 
-		initActionBar(false, true);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.match_over);
 

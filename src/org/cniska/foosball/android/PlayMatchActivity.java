@@ -90,7 +90,7 @@ public class PlayMatchActivity extends BaseActivity {
 			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
 		}
 
-		initActionBar(false, false);
+		getActionBar().setDisplayShowTitleEnabled(false);
 
 		setContentView(R.layout.play_match);
 

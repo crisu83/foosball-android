@@ -180,7 +180,8 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		initActionBar(false, true);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.statistics);
 

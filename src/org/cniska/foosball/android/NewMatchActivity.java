@@ -56,7 +56,8 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		initActionBar(false, true);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.new_match);
 

@@ -2,7 +2,8 @@ package org.cniska.foosball.android;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -39,29 +40,23 @@ public class MatchOverActivity extends BaseActivity {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
 		}
 
-		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setTitle(getString(R.string.title_match_over));
 		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.match_over);
 
-		renderWinningTeam(getResources().getString(
-				mWinningTeam == PlayMatchActivity.TEAM_HOME
-				? R.string.text_home_team
-				: R.string.text_away_team));
+		renderWinningTeam(mWinningTeam == PlayMatchActivity.TEAM_HOME
+				? getString(R.string.text_home_team)
+				: getString(R.string.text_away_team));
 
 		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				startMainActivity();
-				return true;
-
-			default:
-				return super.onOptionsItemSelected(item);
-		}
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.match_over, menu);
+		return true;
 	}
 
 	/**
@@ -69,6 +64,14 @@ public class MatchOverActivity extends BaseActivity {
 	 * @param view
 	 */
 	public void rematch(View view) {
+		// Switch sides for the rematch.
+		ArrayList<String> swappedNames = new ArrayList<String>(NewMatchActivity.NUM_SUPPORTED_PLAYERS);
+		swappedNames.add(mPlayerNames.get(1));
+		swappedNames.add(mPlayerNames.get(0));
+		swappedNames.add(mPlayerNames.get(3));
+		swappedNames.add(mPlayerNames.get(2));
+		mPlayerNames = swappedNames;
+
 		Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 		Intent intent = new Intent(this, PlayMatchActivity.class);
 		intent.putStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES, mPlayerNames);
@@ -89,7 +92,7 @@ public class MatchOverActivity extends BaseActivity {
 	 * @param teamName Team name.
 	 */
 	private void renderWinningTeam(String teamName) {
-		String teamWonText = getResources().getString(R.string.text_team_won);
+		String teamWonText = getString(R.string.text_team_won);
 		TextView winningTeamView = (TextView) findViewById(R.id.text_winning_team);
 		winningTeamView.setText(String.format(teamWonText, teamName));
 	}

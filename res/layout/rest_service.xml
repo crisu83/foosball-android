@@ -5,4 +5,4 @@
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
 		android:orientation="vertical"
-		android:padding="20dp" />
+		android:padding="16dp" />

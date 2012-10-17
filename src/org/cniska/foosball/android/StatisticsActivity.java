@@ -7,7 +7,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.Gravity;
-import android.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -180,7 +181,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setTitle(getString(R.string.title_statistics));
 		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.statistics);
@@ -200,15 +201,10 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				startMainActivity();
-				return true;
-
-			default:
-				return super.onOptionsItemSelected(item);
-		}
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.statistics, menu);
+		return true;
 	}
 
 	@Override

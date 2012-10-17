@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.MenuItem;
 
 
 public class BaseActivity extends FragmentActivity {
@@ -25,6 +26,19 @@ public class BaseActivity extends FragmentActivity {
 	protected void onPause() {
 		Logger.info(TAG, "Activity paused.");
 		super.onPause();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_cancel:
+			case android.R.id.home:
+				startMainActivity();
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	protected void setHomeButtonEnabled(boolean enabled) {

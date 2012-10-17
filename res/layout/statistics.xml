@@ -8,14 +8,7 @@
 				  android:layout_height="wrap_content"
 				  android:layout_width="fill_parent"
 				  android:orientation="vertical"
-				  android:padding="20dp">
-
-		<TextView android:id="@+id/title_statistics"
-				  android:layout_height="wrap_content"
-				  android:layout_width="wrap_content"
-				  android:layout_marginBottom="10dp"
-				  android:textSize="20dp"
-				  android:text="@string/title_statistics" />
+				  android:padding="16dp">
 
 		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:id="@+id/table_statistics"

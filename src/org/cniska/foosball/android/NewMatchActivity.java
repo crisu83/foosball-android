@@ -9,7 +9,6 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
@@ -30,14 +29,14 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	public static final String EXTRA_PLAYER_NAMES = "org.cniska.foosball.android.EXTRA_PLAYER_NAMES";
 	public static final String EXTRA_NUM_GOALS_TO_WIN = "org.cniska.foosball.android.EXTRA_NUM_GOALS_TO_WIN";
 
-	private static final int NUM_SUPPORTED_PLAYERS = 4;
+	public static final int NUM_SUPPORTED_PLAYERS = 4;
 	private static final int AUTO_COMPLETE_THRESHOLD = 1;
 
 	private static String[] PROJECTION = {
 		Player.NAME,
 	};
 
-	private static int[] editTextIds = new int[] {
+	private static int[] sEditTextIds = new int[] {
 		R.id.edit_text_player1,
 		R.id.edit_text_player2,
 		R.id.edit_text_player3,
@@ -56,14 +55,14 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setTitle(getString(R.string.title_new_match));
 		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.new_match);
 
 		// Collect the auto-complete views so that we can refer to them later.
 		for (int i = 0; i < NUM_SUPPORTED_PLAYERS; i++) {
-			mEditTexts[i] = (AutoCompleteTextView) findViewById(editTextIds[i]);
+			mEditTexts[i] = (AutoCompleteTextView) findViewById(sEditTextIds[i]);
 		}
 
 		// Ask the loader manager to start loading our player names.
@@ -80,18 +79,6 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				startMainActivity();
-				return true;
-
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, PROJECTION, null, null, null);
 	}
@@ -99,13 +86,11 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		// Collect the player names for the auto-completion.
-		String[] playerNames = new String[data.getCount()];
+		ArrayList<String> playerNames = new ArrayList<String>(data.getCount());
 		if (data.moveToNext()) {
-			int i = 0;
 			while (!data.isAfterLast()) {
-				playerNames[i] = data.getString(0);
+				playerNames.add(data.getString(0));
 				data.moveToNext();
-				i++;
 			}
 		}
 

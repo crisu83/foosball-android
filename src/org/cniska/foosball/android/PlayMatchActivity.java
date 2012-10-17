@@ -90,7 +90,7 @@ public class PlayMatchActivity extends BaseActivity {
 			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
 		}
 
-		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setTitle(getString(R.string.title_match));
 
 		setContentView(R.layout.play_match);
 
@@ -129,6 +129,10 @@ public class PlayMatchActivity extends BaseActivity {
 		switch (item.getItemId()) {
 			case R.id.menu_undo:
 				undoAction();
+				return true;
+
+			case R.id.menu_cancel:
+				exitWithConfirmation();
 				return true;
 
 			default:

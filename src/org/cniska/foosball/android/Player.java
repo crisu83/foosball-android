@@ -21,6 +21,7 @@ public class Player implements Parcelable {
 	public static final String GOALS_AGAINST = "goals_against";
 	public static final String WINS = "wins";
 	public static final String LOSSES = "losses";
+	public static final String GAMES_PLAYED = "games_played";
 	public static final String RATING = "rating";
 
 	public static final Uri CONTENT_URI = Uri.parse(

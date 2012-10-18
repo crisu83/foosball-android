@@ -1,40 +1,36 @@
 package org.cniska.foosball.android;
 
+import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
 
-/**
- * This activity lists the player statistics.
- */
 public class StatisticsActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+	private static final String TAG = "StatisticsActivity";
 
 	// Enumerables
 	// ----------------------------------------
 
 	public enum SortColumn {
 		PLAYER,
-		GOALS,
-		GOALS_AGAINST,
-		GAMES_PLAYED,
 		WINS,
 		LOSSES,
+		GAMES_PLAYED,
 		WIN_LOSS_RATIO,
+		GOALS_FOR,
+		GOALS_AGAINST,
 		RATING
 	}
 
@@ -55,18 +51,18 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		public int compare(Player p1, Player p2) {
 			if (mColumn != null) {
 				switch (mColumn) {
-					case GOALS:
-						return compareInt(p1.getGoalsFor(), p2.getGoalsFor());
-					case GOALS_AGAINST:
-						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
-					case GAMES_PLAYED:
-						return compareInt(p1.gamesPlayed(), p2.gamesPlayed());
 					case WINS:
 						return compareInt(p1.getWins(), p2.getWins());
 					case LOSSES:
 						return compareInt(p1.getLosses(), p2.getLosses());
+					case GAMES_PLAYED:
+						return compareInt(p1.gamesPlayed(), p2.gamesPlayed());
 					case WIN_LOSS_RATIO:
 						return compareFloat(p1.winLossRatio(), p2.winLossRatio());
+					case GOALS_FOR:
+						return compareInt(p1.getGoalsFor(), p2.getGoalsFor());
+					case GOALS_AGAINST:
+						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
 					case RATING:
 						return compareInt(p1.getRating(), p2.getRating());
 					case PLAYER:
@@ -151,28 +147,54 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		}
 	}
 
+	private static class PlayerAdapter extends SimpleAdapter {
+
+		/**
+		 * Creates a new adapter.
+		 * @param context The context.
+		 * @param data A list of maps.
+		 */
+		public PlayerAdapter(Context context, ArrayList<HashMap<String, String>> data) {
+			super(context, data, R.layout.statistics_item, new String[] {
+				Player.NAME,
+				Player.WINS,
+				Player.LOSSES,
+				Player.GAMES_PLAYED,
+				Player.GOALS_FOR,
+				Player.GOALS_AGAINST,
+				Player.RATING
+			}, new int[] {
+				R.id.column_name,
+				R.id.column_wins,
+				R.id.column_losses,
+				R.id.column_games_played,
+				R.id.column_goals_for,
+				R.id.column_goals_against,
+				R.id.column_rating
+			});
+		}
+	}
+
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG = "StatisticsActivity";
-
-	private static final int LAYOUT_WEIGHT_PLAYER = 30;
-	private static final int LAYOUT_WEIGHT_GOALS = 10;
-	private static final int LAYOUT_WEIGHT_GOALS_AGAINST = 10;
-	private static final int LAYOUT_WEIGHT_GAMES_PLAYED = 10;
-	private static final int LAYOUT_WEIGHT_WINS = 10;
-	private static final int LAYOUT_WEIGHT_LOSSES = 10;
-	private static final int LAYOUT_WEIGHT_WIN_LOSS_RATIO = 10;
-	private static final int LAYOUT_WEIGHT_RATING = 20;
+	private static final String[] PROJECTION = {
+		Player._ID,
+		Player.NAME,
+		Player.WINS,
+		Player.LOSSES,
+		Player.GOALS_FOR,
+		Player.GOALS_AGAINST,
+		Player.RATING
+	};
 
 	// Member variables
 	// ----------------------------------------
 
-	//private CursorAdapter mAdapter;
-
-	private List<Player> mPlayers = new ArrayList<Player>();
+	private PlayerAdapter mAdapter;
+	private ListView mListView;
+	private ArrayList<Player> mPlayers = new ArrayList<Player>();
 	private PlayerComparator mComparator = new PlayerComparator();
-	private TableLayout mLayout;
 
 	// Methods
 	// ----------------------------------------
@@ -180,222 +202,142 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		getActionBar().setTitle(getString(R.string.title_statistics));
-		setHomeButtonEnabled(true);
-
+		setTitle(getString(R.string.title_statistics));
 		setContentView(R.layout.statistics);
-
-		mLayout = (TableLayout) findViewById(R.id.table_statistics);
-
-		/*
-		String[] from = { Player.NAME, Player.GOALS_FOR, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
-		int[] to = new int[] { R.id.column_name, R.id.column_goals, R.id.column_goals_against, R.id.column_wins, R.id.column_losses, R.id.column_rating };
-		mAdapter = new SimpleCursorAdapter(this, R.layout.statistics_item, null, from, to, 0);
-		setListAdapter(mAdapter);
-		*/
-
+		mListView = (ListView) findViewById(R.id.list);
+		setHeaderClickListeners();
 		getSupportLoaderManager().initLoader(0, null, this);
-
 		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.statistics, menu);
-		return true;
+	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, PROJECTION, null, null, null);
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { Player._ID, Player.NAME, Player.GOALS_FOR, Player.GOALS_AGAINST, Player.WINS, Player.LOSSES, Player.RATING };
-		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, projection, null, null, null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		//mAdapter.swapCursor(data);
-
-		if (data.moveToFirst()) {
-			int i = 0;
-			while (!data.isAfterLast()) {
-				mPlayers.add(cursorToPlayer(data));
-				data.moveToNext();
-				i++;
+	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+		if (cursor.moveToFirst()) {
+			while (!cursor.isAfterLast()) {
+				mPlayers.add(cursorToPlayer(cursor));
+				cursor.moveToNext();
 			}
 		}
 
-		addTableHeaderRow(mLayout);
-		addTablePlayerRows(mLayout);
+		updateListView();
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		//mAdapter.swapCursor(null);
-	}
-
-	private Player cursorToPlayer(Cursor cursor) {
-		Player player = new Player();
-		player.setId(cursor.getLong(0));
-		player.setName(cursor.getString(1));
-		player.setGoalsFor(cursor.getInt(2));
-		player.setGoalsAgainst(cursor.getInt(3));
-		player.setWins(cursor.getInt(4));
-		player.setLosses(cursor.getInt(5));
-		player.setRating(cursor.getInt(6));
-		return player;
+	public void onLoaderReset(Loader<Cursor> cursorLoader) {
 	}
 
 	/**
-	 * Creates the table header row and adds it to the given table layout.
-	 * @param layout The table layout.
+	 * Updates the list view by rebuilding the data for the adapter.
 	 */
-	private void addTableHeaderRow(TableLayout layout) {
-		TableRow row = new TableRow(this);
+	private void updateListView() {
+		ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 
-		TextView headerPlayer = createTableHeaderCell(getResources().getString(R.string.table_header_player), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 0);
+		for (int i = 0, len = mPlayers.size(); i < len; i++) {
+			Player player = mPlayers.get(i);
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(Player.NAME, player.getName());
+			map.put(Player.WINS, String.valueOf(player.getWins()));
+			map.put(Player.LOSSES, String.valueOf(player.getLosses()));
+			map.put(Player.GAMES_PLAYED, String.valueOf(player.gamesPlayed()));
+			map.put(Player.GOALS_FOR, String.valueOf(player.getGoalsFor()));
+			map.put(Player.GOALS_AGAINST, String.valueOf(player.getGoalsAgainst()));
+			map.put(Player.RATING, String.valueOf(player.getRating()));
+			data.add(map);
+		}
+
+		mAdapter = new PlayerAdapter(this, data);
+		mListView.setAdapter(mAdapter);
+	}
+
+	/**
+	 * Sets click listeners for the table header cells.
+	 */
+	private void setHeaderClickListeners() {
+		TextView headerPlayer = (TextView) findViewById(R.id.heading_name);
 		headerPlayer.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sortByColumn(SortColumn.PLAYER);
 			}
 		});
-		row.addView(headerPlayer);
 
-		TextView headerGamesPlayed = createTableHeaderCell(getResources().getString(R.string.table_header_games_played), LAYOUT_WEIGHT_GAMES_PLAYED, Gravity.CENTER, 0);
-		headerGamesPlayed.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sortByColumn(SortColumn.GAMES_PLAYED);
-			}
-		});
-		row.addView(headerGamesPlayed);
-
-		TextView headerWins = createTableHeaderCell(getResources().getString(R.string.table_header_wins), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 0);
+		TextView headerWins = (TextView) findViewById(R.id.heading_wins);
 		headerWins.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sortByColumn(SortColumn.WINS);
 			}
 		});
-		row.addView(headerWins);
 
-		TextView headerLosses = createTableHeaderCell(getResources().getString(R.string.table_header_losses), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 0);
+		TextView headerLosses = (TextView) findViewById(R.id.heading_losses);
 		headerLosses.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sortByColumn(SortColumn.LOSSES);
 			}
 		});
-		row.addView(headerLosses);
 
-		TextView headerGoals = createTableHeaderCell(getResources().getString(R.string.table_header_goals_for), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 0);
-		headerGoals.setOnClickListener(new View.OnClickListener() {
+		TextView headerGamesPlayed = (TextView) findViewById(R.id.heading_games_played);
+		headerGamesPlayed.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sortByColumn(SortColumn.GOALS);
+				sortByColumn(SortColumn.GAMES_PLAYED);
 			}
 		});
-		row.addView(headerGoals);
 
-		TextView headerGoalsAgainst = createTableHeaderCell(getResources().getString(R.string.table_header_goals_against), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 0);
+		TextView headerGoalsFor = (TextView) findViewById(R.id.heading_goals_for);
+		headerGoalsFor.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortByColumn(SortColumn.GOALS_FOR);
+			}
+		});
+
+		TextView headerGoalsAgainst = (TextView) findViewById(R.id.heading_goals_against);
 		headerGoalsAgainst.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sortByColumn(SortColumn.GOALS_AGAINST);
 			}
 		});
-		row.addView(headerGoalsAgainst);
 
-		/*
-		TextView headerWinLossRatio = createTableHeaderCell(getResources().getString(R.string.table_header_win_loss_ratio), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 0);
-		headerWinLossRatio.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sortByColumn(SortColumn.WIN_LOSS_RATIO);
-			}
-		});
-		row.addView(headerWinLossRatio);
-		*/
-
-		TextView headerRating = createTableHeaderCell(getResources().getString(R.string.table_header_rating), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 0);
+		TextView headerRating = (TextView) findViewById(R.id.heading_rating);
 		headerRating.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sortByColumn(SortColumn.RATING);
 			}
 		});
-		row.addView(headerRating);
-
-		mLayout.addView(row);
 	}
 
 	/**
-	 * Creates the player rows and adds them to the given table layout.
-	 * @param layout The table layout.
-	 */
-	private void addTablePlayerRows(TableLayout layout) {
-		int numPlayers = mPlayers.size();
-
-		if (numPlayers > 0) {
-			for (int i = 0; i < numPlayers; i++) {
-				Player player = mPlayers.get(i);
-				TableRow row = new TableRow(this);
-				row.addView(createTableCell(player.getName(), LAYOUT_WEIGHT_PLAYER, Gravity.LEFT, 0));
-				row.addView(createTableCell(String.valueOf(player.gamesPlayed()), LAYOUT_WEIGHT_GAMES_PLAYED, Gravity.CENTER, 0));
-				row.addView(createTableCell(String.valueOf(player.getWins()), LAYOUT_WEIGHT_WINS, Gravity.CENTER, 0));
-				row.addView(createTableCell(String.valueOf(player.getLosses()), LAYOUT_WEIGHT_LOSSES, Gravity.CENTER, 0));
-				row.addView(createTableCell(String.valueOf(player.getGoalsFor()), LAYOUT_WEIGHT_GOALS, Gravity.CENTER, 0));
-				row.addView(createTableCell(String.valueOf(player.getGoalsAgainst()), LAYOUT_WEIGHT_GOALS_AGAINST, Gravity.CENTER, 0));
-				//row.addView(createTableCell(String.format("%2.01f", player.winLossRatio()), LAYOUT_WEIGHT_WIN_LOSS_RATIO, Gravity.CENTER, 0));
-				row.addView(createTableCell(String.valueOf(player.getRating()), LAYOUT_WEIGHT_RATING, Gravity.CENTER, 0));
-				mLayout.addView(row);
-			}
-		}
-	}
-
-	/**
-	 * Creates a single table header cell.
-	 * @param text Cell text.
-	 * @param weight Cell weight.
-	 * @param gravity Cell gravity (think align).
-	 * @param padding Cell padding.
-	 * @return The cell.
-	 */
-	private TextView createTableHeaderCell(String text, float weight, int gravity, int padding) {
-		TextView cell = createTableCell(text, weight, gravity, padding);
-		cell.setTypeface(null, Typeface.BOLD);
-		return cell;
-	}
-
-	/**
-	 * Creates a single table cell.
-	 * @param text Cell text.
-	 * @param weight Cell weight.
-	 * @param gravity Cell gravity (think align).
-	 * @param padding Cell padding.
-	 * @return The cell.
-	 */
-	private TextView createTableCell(String text, float weight, int gravity, int padding) {
-		TextView cell = new TextView(this);
-		cell.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, weight));
-		cell.setPadding(padding, padding, padding, padding);
-		cell.setGravity(gravity);
-		cell.setText(text);
-		return cell;
-	}
-
-	/**
-	 * Sorts the table by the given column.
+	 * Sorts the list view by the given column.
 	 * @param column Sort column type.
 	 */
 	private void sortByColumn(SortColumn column) {
 		mComparator.sortColumn(column);
 		Collections.sort(mPlayers, mComparator);
-		mLayout.removeAllViews();
-		addTableHeaderRow(mLayout);
-		addTablePlayerRows(mLayout);
-		mLayout.invalidate();
+		updateListView();
+	}
+
+	/**
+	 * Returns a player object with data from the given cursor.
+	 * @param cursor The cursor.
+	 * @return The player.
+	 */
+	private Player cursorToPlayer(Cursor cursor) {
+		Player player = new Player();
+		player.setName(cursor.getString(cursor.getColumnIndex(Player.NAME)));
+		player.setWins(cursor.getInt(cursor.getColumnIndex(Player.WINS)));
+		player.setLosses(cursor.getInt(cursor.getColumnIndex(Player.LOSSES)));
+		player.setGoalsFor(cursor.getInt(cursor.getColumnIndex(Player.GOALS_FOR)));
+		player.setGoalsAgainst(cursor.getInt(cursor.getColumnIndex(Player.GOALS_AGAINST)));
+		player.setRating(cursor.getInt(cursor.getColumnIndex(Player.RATING)));
+		return player;
 	}
 }

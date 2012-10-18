@@ -1,20 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:orientation="vertical"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:padding="16dp">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				  android:layout_height="wrap_content"
-				  android:layout_width="fill_parent"
-				  android:orientation="vertical"
-				  android:padding="16dp">
+	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				 android:id="@+id/table_statistics"
+				 android:layout_height="wrap_content"
+				 android:layout_width="fill_parent">
 
-		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:id="@+id/table_statistics"
-				android:layout_height="wrap_content"
-				android:layout_width="fill_parent" />
+		<TableRow android:layout_width="fill_parent"
+				  android:layout_height="wrap_content">
 
-	</LinearLayout>
+			<TextView android:id="@+id/heading_name"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="30"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="PLAYER" />
 
-</ScrollView>
+			<TextView android:id="@+id/heading_wins"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="10"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="W" />
+
+			<TextView android:id="@+id/heading_losses"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="10"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="L" />
+
+			<TextView android:id="@+id/heading_games_played"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="10"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="GP" />
+
+			<TextView android:id="@+id/heading_goals_for"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="10"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="GF" />
+
+			<TextView android:id="@+id/heading_goals_against"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="10"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="GA" />
+
+			<TextView android:id="@+id/heading_rating"
+					  android:layout_width="0dp"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="20"
+					  android:gravity="center"
+					  android:padding="4dp"
+					  android:textStyle="bold"
+					  android:text="RATING" />
+
+		</TableRow>
+
+		<ListView android:id="@+id/list"
+				  android:layout_width="match_parent"
+				  android:layout_height="match_parent" />
+
+	</TableLayout>
+
+</LinearLayout>

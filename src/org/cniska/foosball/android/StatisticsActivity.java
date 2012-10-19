@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -208,6 +210,13 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		setHeaderClickListeners();
 		getSupportLoaderManager().initLoader(0, null, this);
 		Logger.info(TAG, "Activity created.");
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.statistics, menu);
+		return true;
 	}
 
 	@Override

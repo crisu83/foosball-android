@@ -132,7 +132,7 @@ public class PlayMatchActivity extends BaseActivity {
 				return true;
 
 			case R.id.menu_cancel:
-				exitWithConfirmation();
+				exitConfirmation();
 				return true;
 
 			default:
@@ -168,7 +168,7 @@ public class PlayMatchActivity extends BaseActivity {
 	 * @param view
 	 */
 	public void addHomeTeamGoal(View view) {
-		if (!mEnded) {
+		if (!mEnded && mNumHomeTeamGoals < mNumGoalsToWin && mNumAwayTeamGoals != mNumGoalsToWin) {
 			mNumHomeTeamGoals++;
 			mHistory.add(TEAM_HOME);
 			Logger.info(TAG, "Goal logged for the home team.");
@@ -183,7 +183,7 @@ public class PlayMatchActivity extends BaseActivity {
 	 * @param view
 	 */
 	public void addAwayTeamGoal(View view) {
-		if (!mEnded) {
+		if (!mEnded && mNumAwayTeamGoals < mNumGoalsToWin && mNumHomeTeamGoals != mNumGoalsToWin) {
 			mNumAwayTeamGoals++;
 			mHistory.add(TEAM_AWAY);
 			Logger.info(TAG, "Goal logged for the away team.");
@@ -225,7 +225,7 @@ public class PlayMatchActivity extends BaseActivity {
 	/**
 	 * Displays a confirm dialog to exit the match.
 	 */
-	public void exitWithConfirmation() {
+	public void exitConfirmation() {
 		new AlertDialog.Builder(this)
 				.setMessage(R.string.dialog_message_exit)
 				.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
@@ -247,6 +247,34 @@ public class PlayMatchActivity extends BaseActivity {
 	}
 
 	/**
+	 * Displays a confirm dialog to end the match.
+	 */
+	public void endConfirmation() {
+		new AlertDialog.Builder(this)
+				.setMessage(endMessage())
+				.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						end();
+					}
+				})
+				.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				})
+				.create()
+				.show();
+	}
+
+	private String endMessage() {
+		return String.format(getString(R.string.dialog_message_match_ended), mWinningTeam == TEAM_HOME
+				? getString(R.string.text_home_team)
+				: getString(R.string.text_away_team));
+	}
+
+	/**
 	 * Updates the match score and checks if either team has won the match.
 	 */
 	private void updateMatchScore() {
@@ -255,10 +283,10 @@ public class PlayMatchActivity extends BaseActivity {
 		// Check if either team has reached the number of goals to win.
 		if (mNumHomeTeamGoals >= mNumGoalsToWin) {
 			mWinningTeam = TEAM_HOME;
-			end();
+			endConfirmation();
 		} else if (mNumAwayTeamGoals >= mNumGoalsToWin) {
 			mWinningTeam = TEAM_AWAY;
-			end();
+			endConfirmation();
 		}
 	}
 

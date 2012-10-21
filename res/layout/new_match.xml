@@ -5,196 +5,206 @@
 			android:layout_height="wrap_content">
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				  android:layout_width="match_parent"
+				  android:layout_width="wrap_content"
 				  android:layout_height="wrap_content"
+				  android:layout_gravity="center_horizontal"
 				  android:minWidth="640dp"
-				  android:orientation="horizontal">
+				  android:orientation="vertical"
+				  android:padding="16dp"
+			>
 
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-					  android:layout_height="wrap_content"
-					  android:layout_width="match_parent"
-					  android:layout_gravity="center_horizontal"
-					  android:orientation="vertical"
-					  android:padding="16dp">
-
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
-
-				<TextView android:id="@+id/text_home_team"
-						  android:layout_width="0dp"
-						  android:layout_height="wrap_content"
-						  android:layout_weight="50"
-						  style="?android:attr/listSeparatorTextViewStyle"
-						  android:text="@string/text_home_team" />
-
-				<TextView android:id="@+id/text_away_team"
-						  android:layout_width="0dp"
-						  android:layout_height="wrap_content"
-						  android:layout_weight="50"
-						  android:layout_marginLeft="8dp"
-						  style="?android:attr/listSeparatorTextViewStyle"
-						  android:text="@string/text_away_team" />
-
-			</LinearLayout>
-
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
-
-				<AutoCompleteTextView android:id="@+id/edit_text_player1"
-									  android:layout_width="0dp"
-									  android:layout_height="wrap_content"
-									  android:layout_weight="50"
-									  android:imeOptions="actionNext"
-									  android:inputType="textCapSentences"
-									  android:nextFocusDown="@+id/edit_text_player2"
-									  android:singleLine="true"
-									  android:hint="@string/hint_player1"/>
-
-				<AutoCompleteTextView android:id="@+id/edit_text_player2"
-									  android:layout_width="0dp"
-									  android:layout_height="wrap_content"
-									  android:layout_weight="50"
-									  android:layout_marginLeft="8dp"
-									  android:imeOptions="actionNext"
-									  android:inputType="textCapSentences"
-									  android:nextFocusDown="@+id/edit_text_player3"
-									  android:singleLine="true"
-									  android:hint="@string/hint_player2"/>
-
-			</LinearLayout>
-
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:layout_marginBottom="16dp"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
-
-				<AutoCompleteTextView android:id="@+id/edit_text_player3"
-									  android:layout_width="0dp"
-									  android:layout_height="wrap_content"
-									  android:layout_weight="50"
-									  android:imeOptions="actionNext"
-									  android:inputType="textCapSentences"
-									  android:nextFocusDown="@+id/edit_text_player4"
-									  android:singleLine="true"
-									  android:hint="@string/hint_player3" />
-
-				<AutoCompleteTextView android:id="@+id/edit_text_player4"
-									  android:layout_width="0dp"
-									  android:layout_height="wrap_content"
-									  android:layout_weight="50"
-									  android:layout_marginLeft="8dp"
-									  android:imeOptions="actionDone"
-									  android:inputType="textCapSentences"
-									  android:singleLine="true"
-									  android:hint="@string/hint_player4" />
-
-			</LinearLayout>
-
-			<TextView android:id="@+id/text_home_team"
 					  android:layout_width="match_parent"
 					  android:layout_height="wrap_content"
-					  style="?android:attr/listSeparatorTextViewStyle"
-					  android:text="Additional options" />
+					  android:orientation="horizontal"
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+				>
 
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
+			<TextView
+					android:id="@+id/text_home_team"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:text="@string/text_home_team"
+					style="?android:attr/listSeparatorTextViewStyle"/>
 
-				<TextView android:id="@+id/label_score_to_win"
-						  android:layout_width="0dp"
-						  android:layout_height="fill_parent"
-						  android:layout_weight="50"
-						  android:paddingLeft="8dp"
-						  android:textSize="16sp"
-						  android:gravity="center_vertical"
-						  android:text="@string/label_score_to_win" />
+			<TextView
+					android:id="@+id/text_away_team"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:layout_marginLeft="8dp"
+					android:text="@string/text_away_team"
+					style="?android:attr/listSeparatorTextViewStyle"/>
 
-				<RadioGroup android:id="@+id/radio_group_score_to_win"
-							android:layout_width="0dp"
-							android:layout_height="fill_parent"
-							android:layout_weight="50"
-							android:layout_marginLeft="8dp"
-							android:gravity="center_vertical"
-							android:orientation="horizontal" >
+		</LinearLayout>
 
-					<RadioButton android:id="@+id/radio_score_to_win_10"
-								 android:layout_height="wrap_content"
-								 android:layout_width="wrap_content"
-								 android:checked="true"
-								 android:text="10" />
-
-					<RadioButton android:id="@+id/radio_score_to_win_5"
-								 android:layout_height="wrap_content"
-								 android:layout_width="wrap_content"
-								 android:layout_marginLeft="10dp"
-								 android:text="5" />
-
-				</RadioGroup>
-
-			</LinearLayout>
-
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
-
-				<TextView android:id="@+id/label_random_teams"
-						  android:layout_width="0dp"
-						  android:layout_height="fill_parent"
-						  android:layout_weight="50"
-						  android:gravity="center_vertical"
-						  android:paddingLeft="8dp"
-						  android:textSize="16sp"
-						  android:text="@string/label_random_teams" />
-
-				<CheckBox android:id="@+id/check_box_random_teams"
-						  android:layout_width="0dp"
-						  android:layout_height="fill_parent"
-						  android:layout_weight="50"
-						  android:layout_marginLeft="8dp"
-						  android:gravity="center_vertical"
-						  android:orientation="horizontal" />
-
-			</LinearLayout>
-
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						  android:layout_width="match_parent"
-						  android:layout_height="wrap_content"
-						  android:gravity="right"
-						  android:paddingTop="4dp"
-						  android:paddingBottom="4dp"
-						  android:orientation="horizontal">
-
-				<TextView android:layout_width="0dp"
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="match_parent"
 					  android:layout_height="wrap_content"
-					  android:layout_weight="75" />
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+					  android:orientation="horizontal">
 
-				<Button android:id="@+id/button_start"
-						android:layout_width="0dp"
+			<AutoCompleteTextView
+					android:id="@+id/edit_text_player1"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:imeOptions="actionNext"
+					android:inputType="textCapSentences"
+					android:nextFocusDown="@+id/edit_text_player2"
+					android:singleLine="true"
+					android:hint="@string/hint_player1"/>
+
+			<AutoCompleteTextView
+					android:id="@+id/edit_text_player2"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:layout_marginLeft="8dp"
+					android:imeOptions="actionNext"
+					android:inputType="textCapSentences"
+					android:nextFocusDown="@+id/edit_text_player3"
+					android:singleLine="true"
+					android:hint="@string/hint_player2"/>
+
+		</LinearLayout>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_marginBottom="16dp"
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+					  android:orientation="horizontal">
+
+			<AutoCompleteTextView
+					android:id="@+id/edit_text_player3"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:imeOptions="actionNext"
+					android:inputType="textCapSentences"
+					android:nextFocusDown="@+id/edit_text_player4"
+					android:singleLine="true"
+					android:hint="@string/hint_player3"/>
+
+			<AutoCompleteTextView
+					android:id="@+id/edit_text_player4"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="50"
+					android:layout_marginLeft="8dp"
+					android:imeOptions="actionDone"
+					android:inputType="textCapSentences"
+					android:singleLine="true"
+					android:hint="@string/hint_player4"/>
+
+		</LinearLayout>
+
+		<TextView
+				android:id="@+id/text_home_team"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Additional options"
+				style="?android:attr/listSeparatorTextViewStyle"/>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+					  android:orientation="horizontal">
+
+			<TextView
+					android:id="@+id/label_score_to_win"
+					android:layout_width="0dp"
+					android:layout_height="fill_parent"
+					android:layout_weight="50"
+					android:paddingLeft="8dp"
+					android:textSize="16sp"
+					android:gravity="center_vertical"
+					android:text="@string/label_score_to_win"/>
+
+			<RadioGroup
+					android:id="@+id/radio_group_score_to_win"
+					android:layout_width="0dp"
+					android:layout_height="fill_parent"
+					android:layout_weight="50"
+					android:layout_marginLeft="8dp"
+					android:gravity="center_vertical"
+					android:orientation="horizontal">
+
+				<RadioButton
+						android:id="@+id/radio_score_to_win_10"
 						android:layout_height="wrap_content"
-						android:layout_weight="25"
-						android:padding="12dp"
-						android:textSize="24sp"
-						android:text="@string/button_start"
-						android:onClick="submitForm" />
+						android:layout_width="wrap_content"
+						android:checked="true"
+						android:text="10"/>
 
-			</LinearLayout>
+				<RadioButton
+						android:id="@+id/radio_score_to_win_5"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:layout_marginLeft="10dp"
+						android:text="5"/>
+
+			</RadioGroup>
+
+		</LinearLayout>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+					  android:orientation="horizontal">
+
+			<TextView
+					android:id="@+id/label_random_teams"
+					android:layout_width="0dp"
+					android:layout_height="fill_parent"
+					android:layout_weight="50"
+					android:gravity="center_vertical"
+					android:paddingLeft="8dp"
+					android:textSize="16sp"
+					android:text="@string/label_random_teams"/>
+
+			<CheckBox
+					android:id="@+id/check_box_random_teams"
+					android:layout_width="0dp"
+					android:layout_height="fill_parent"
+					android:layout_weight="50"
+					android:layout_marginLeft="8dp"
+					android:gravity="center_vertical"
+					android:orientation="horizontal"/>
+
+		</LinearLayout>
+
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:gravity="right"
+					  android:paddingTop="4dp"
+					  android:paddingBottom="4dp"
+					  android:orientation="horizontal">
+
+			<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="75"/>
+
+			<Button
+					android:id="@+id/button_start"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="25"
+					android:padding="12dp"
+					android:textSize="24sp"
+					android:text="@string/button_start"
+					android:onClick="submitForm"/>
 
 		</LinearLayout>
 

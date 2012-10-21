@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -23,7 +22,7 @@ public class MatchOverActivity extends BaseActivity {
 	// ----------------------------------------
 
 	private int mNumGoalsToWin = 10;
-	private int mWinningTeam = 0;
+	private int mWinningTeam = PlayMatchActivity.TEAM_NONE;
 	private ArrayList<String> mPlayerNames = new ArrayList<String>();
 
 	// Methods
@@ -40,14 +39,10 @@ public class MatchOverActivity extends BaseActivity {
 			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
 		}
 
-		getActionBar().setTitle(getString(R.string.title_match_over));
+		getActionBar().setTitle(getString(R.string.title_match_ended));
 		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.match_over);
-
-		renderWinningTeam(mWinningTeam == PlayMatchActivity.TEAM_HOME
-				? getString(R.string.text_home_team)
-				: getString(R.string.text_away_team));
 
 		Logger.info(TAG, "Activity created.");
 	}
@@ -85,15 +80,5 @@ public class MatchOverActivity extends BaseActivity {
 	 */
 	public void exit(View view) {
 		startMainActivity();
-	}
-
-	/**
-	 * Renders the winning team.
-	 * @param teamName Team name.
-	 */
-	private void renderWinningTeam(String teamName) {
-		String teamWonText = getString(R.string.text_team_won);
-		TextView winningTeamView = (TextView) findViewById(R.id.text_winning_team);
-		winningTeamView.setText(String.format(teamWonText, teamName));
 	}
 }

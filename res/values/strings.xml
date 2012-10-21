@@ -10,11 +10,11 @@
 	<string name="button_rematch">Rematch</string>
 	<string name="button_random_teams">Random teams</string>
 	<string name="button_exit">Exit</string>
-	<string name="button_test_rest">Test REST</string>
 
 	<string name="dialog_button_no">No</string>
 	<string name="dialog_button_yes">Yes</string>
 	<string name="dialog_message_exit">Do you really want to exit?</string>
+	<string name="dialog_message_match_ended">%s won. Is this correct?</string>
 
 	<string name="hint_player1">Player 1</string>
 	<string name="hint_player2">Player 2</string>
@@ -43,11 +43,12 @@
 	<string name="text_home">HOME</string>
 	<string name="text_away">AWAY</string>
 	<string name="text_team_won">%1$s won!</string>
+	<string name="text_match_ended">Match ended</string>
 
 	<string name="title_main">Foosball</string>
 	<string name="title_new_match">New match</string>
 	<string name="title_match">Match</string>
-	<string name="title_match_over">Match over</string>
+	<string name="title_match_ended">Match ended</string>
 	<string name="title_statistics">Statistics</string>
 
 </resources>

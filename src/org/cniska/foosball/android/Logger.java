@@ -2,6 +2,9 @@ package org.cniska.foosball.android;
 
 import android.util.Log;
 
+/**
+ * This class provides functionality for both setting the logging level and disabling logging completely.
+ */
 public class Logger {
 
     // Static variables
@@ -33,7 +36,7 @@ public class Logger {
 	 * @return True if the message was logged, otherwise false.
 	 */
     public static int error(String tag, String msg) {
-        return sLogging && sLevel >= Log.ERROR  ? Log.e(tag, msg) : 0;
+        return sLogging && sLevel >= Log.ERROR ? Log.e(tag, msg) : 0;
     }
 
 	/**

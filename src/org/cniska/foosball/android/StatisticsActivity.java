@@ -1,7 +1,9 @@
 package org.cniska.foosball.android;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -44,32 +46,30 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	// Inner classes
 	// ----------------------------------------
 
-	private class PlayerComparator implements Comparator<Player> {
+	private class DataComparator implements Comparator<Data> {
 
 		private SortColumn mColumn;
 		private SortDirection mDirection;
 
 		@Override
-		public int compare(Player p1, Player p2) {
+		public int compare(Data d1, Data d2) {
 			if (mColumn != null) {
 				switch (mColumn) {
 					case WINS:
-						return compareInt(p1.getWins(), p2.getWins());
+						return compareInt(d1.wins, d2.wins);
 					case LOSSES:
-						return compareInt(p1.getLosses(), p2.getLosses());
+						return compareInt(d1.losses, d2.losses);
 					case GAMES_PLAYED:
-						return compareInt(p1.gamesPlayed(), p2.gamesPlayed());
-					case WIN_LOSS_RATIO:
-						return compareFloat(p1.winLossRatio(), p2.winLossRatio());
+						return compareInt(d1.gamesPlayed, d2.gamesPlayed);
 					case GOALS_FOR:
-						return compareInt(p1.getGoalsFor(), p2.getGoalsFor());
+						return compareInt(d1.goalsFor, d2.goalsFor);
 					case GOALS_AGAINST:
-						return compareInt(p1.getGoalsAgainst(), p2.getGoalsAgainst());
+						return compareInt(d1.goalsAgainst, d2.goalsAgainst);
 					case RATING:
-						return compareInt(p1.getRating(), p2.getRating());
+						return compareInt(d1.rating, d2.rating);
 					case PLAYER:
 					default:
-						return compareString(p1.getName(), p2.getName());
+						return compareString(d1.name, d2.name);
 				}
 			} else {
 				return 0;
@@ -150,53 +150,57 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	}
 
 	private static class PlayerAdapter extends SimpleAdapter {
-
-		/**
-		 * Creates a new adapter.
-		 * @param context The context.
-		 * @param data A list of maps.
-		 */
 		public PlayerAdapter(Context context, ArrayList<HashMap<String, String>> data) {
-			super(context, data, R.layout.statistics_item, new String[] {
-				Player.NAME,
-				Player.WINS,
-				Player.LOSSES,
-				Player.GAMES_PLAYED,
-				Player.GOALS_FOR,
-				Player.GOALS_AGAINST,
-				Player.RATING
-			}, new int[] {
-				R.id.column_name,
-				R.id.column_wins,
-				R.id.column_losses,
-				R.id.column_games_played,
-				R.id.column_goals_for,
-				R.id.column_goals_against,
-				R.id.column_rating
-			});
+			super(context, data, R.layout.statistics_item,
+					new String[] {
+						COLUMN_NAME,
+						COLUMN_WINS,
+						COLUMN_LOSSES,
+						COLUMN_GAMES_PLAYED,
+						COLUMN_GOALS_FOR,
+						COLUMN_GOALS_AGAINST,
+						COLUMN_RATING
+					},
+					new int[] {
+						R.id.column_name,
+						R.id.column_wins,
+						R.id.column_losses,
+						R.id.column_games_played,
+						R.id.column_goals_for,
+						R.id.column_goals_against,
+						R.id.column_rating
+					});
 		}
 	}
 
-	// Static variables
-	// ----------------------------------------
+	private class Data {
+		public long id;
+		public String name;
+		public int wins;
+		public int losses;
+		public int gamesPlayed;
+		public int goalsFor;
+		public int goalsAgainst;
+		public int rating;
+	}
 
-	private static final String[] PROJECTION = {
-		Player._ID,
-		Player.NAME,
-		Player.WINS,
-		Player.LOSSES,
-		Player.GOALS_FOR,
-		Player.GOALS_AGAINST,
-		Player.RATING
-	};
+	private static final String COLUMN_NAME = "name";
+	private static final String COLUMN_WINS = "wins";
+	private static final String COLUMN_LOSSES = "losses";
+	private static final String COLUMN_GAMES_PLAYED = "games_played";
+	private static final String COLUMN_GOALS_FOR = "goals_for";
+	private static final String COLUMN_GOALS_AGAINST = "goals_against";
+	private static final String COLUMN_RATING = "rating";
 
 	// Member variables
 	// ----------------------------------------
 
 	private PlayerAdapter mAdapter;
 	private ListView mListView;
-	private ArrayList<Player> mPlayers = new ArrayList<Player>();
-	private PlayerComparator mComparator = new PlayerComparator();
+	private ArrayList<RawPlayer> mPlayers = new ArrayList<RawPlayer>();
+	private DataComparator mComparator = new DataComparator();
+
+	private ArrayList<Data> mData;
 
 	// Methods
 	// ----------------------------------------
@@ -206,7 +210,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		super.onCreate(savedInstanceState);
 		setTitle(getString(R.string.title_statistics));
 		setContentView(R.layout.statistics);
-		mListView = (ListView) findViewById(R.id.list);
+		mListView = (ListView) findViewById(R.id.statistics_list);
 		setHeaderClickListeners();
 		getSupportLoaderManager().initLoader(0, null, this);
 		Logger.info(TAG, "Activity created.");
@@ -221,19 +225,60 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-		return new CursorLoader(getApplicationContext(), Player.CONTENT_URI, PROJECTION, null, null, null);
+		return new CursorLoader(getApplicationContext(), DataContract.Players.CONTENT_URI,
+				new String[] { DataContract.Players._ID, DataContract.Players.NAME },
+				null, null, null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		if (cursor.moveToFirst()) {
-			while (!cursor.isAfterLast()) {
-				mPlayers.add(cursorToPlayer(cursor));
-				cursor.moveToNext();
-			}
-		}
+		if (cursor != null) {
+			ContentResolver contentResolver = getContentResolver();
+			mData = new ArrayList<Data>(cursor.getCount());
 
-		updateListView();
+			if (cursor.moveToFirst()) {
+				while (!cursor.isAfterLast()) {
+					Data item = new Data();
+
+					item.id = cursor.getLong(0);
+					item.name = cursor.getString(1);
+
+					Cursor c = contentResolver.query(
+							Uri.withAppendedPath(DataContract.Players.CONTENT_URI, item.id + "/stats"),
+							new String[] {
+								"COUNT(*) as games_played",
+								"SUM(" + DataContract.Stats.GOALS_FOR + ") AS goals_for",
+								"SUM(" + DataContract.Stats.GOALS_AGAINST + ") AS goals_against",
+								"SUM(" + DataContract.Stats.SCORE + ") AS wins"
+							}, null, null, null);
+
+					if (c.moveToFirst()) {
+						item.gamesPlayed = c.getInt(0);
+						item.goalsFor = c.getInt(1);
+						item.goalsAgainst = c.getInt(2);
+						item.wins = c.getInt(3);
+						item.losses = item.gamesPlayed - item.wins;
+						c.close();
+					}
+
+					c = contentResolver.query(
+							Uri.withAppendedPath(DataContract.Players.CONTENT_URI, item.id + "/rating"),
+							new String[] { DataContract.Ratings.RATING }, null, null, null);
+
+					if (c.moveToFirst()) {
+						item.rating = c.getInt(0);
+						c.close();
+					}
+
+					mData.add(item);
+					cursor.moveToNext();
+				}
+
+				cursor.close();
+			}
+
+			updateListView();
+		}
 	}
 
 	@Override
@@ -246,16 +291,16 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	private void updateListView() {
 		ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 
-		for (int i = 0, len = mPlayers.size(); i < len; i++) {
-			Player player = mPlayers.get(i);
+		for (int i = 0, len = mData.size(); i < len; i++) {
+			Data item = mData.get(i);
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put(Player.NAME, player.getName());
-			map.put(Player.WINS, String.valueOf(player.getWins()));
-			map.put(Player.LOSSES, String.valueOf(player.getLosses()));
-			map.put(Player.GAMES_PLAYED, String.valueOf(player.gamesPlayed()));
-			map.put(Player.GOALS_FOR, String.valueOf(player.getGoalsFor()));
-			map.put(Player.GOALS_AGAINST, String.valueOf(player.getGoalsAgainst()));
-			map.put(Player.RATING, String.valueOf(player.getRating()));
+			map.put(COLUMN_NAME, item.name);
+			map.put(COLUMN_WINS, String.valueOf(item.wins));
+			map.put(COLUMN_LOSSES, String.valueOf(item.losses));
+			map.put(COLUMN_GAMES_PLAYED, String.valueOf(item.gamesPlayed));
+			map.put(COLUMN_GOALS_FOR, String.valueOf(item.goalsFor));
+			map.put(COLUMN_GOALS_AGAINST, String.valueOf(item.goalsAgainst));
+			map.put(COLUMN_RATING, String.valueOf(item.rating));
 			data.add(map);
 		}
 
@@ -330,23 +375,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	 */
 	private void sortByColumn(SortColumn column) {
 		mComparator.sortColumn(column);
-		Collections.sort(mPlayers, mComparator);
+		Collections.sort(mData, mComparator);
 		updateListView();
-	}
-
-	/**
-	 * Returns a player object with data from the given cursor.
-	 * @param cursor The cursor.
-	 * @return The player.
-	 */
-	private Player cursorToPlayer(Cursor cursor) {
-		Player player = new Player();
-		player.setName(cursor.getString(cursor.getColumnIndex(Player.NAME)));
-		player.setWins(cursor.getInt(cursor.getColumnIndex(Player.WINS)));
-		player.setLosses(cursor.getInt(cursor.getColumnIndex(Player.LOSSES)));
-		player.setGoalsFor(cursor.getInt(cursor.getColumnIndex(Player.GOALS_FOR)));
-		player.setGoalsAgainst(cursor.getInt(cursor.getColumnIndex(Player.GOALS_AGAINST)));
-		player.setRating(cursor.getInt(cursor.getColumnIndex(Player.RATING)));
-		return player;
 	}
 }

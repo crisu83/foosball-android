@@ -5,52 +5,59 @@
 			  android:layout_width="fill_parent"
 			  android:layout_height="wrap_content">
 
-	<TextView android:id="@+id/column_name"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="30"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="30"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_wins"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="10"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_wins"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:gravity="center"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_losses"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="10"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_losses"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:gravity="center"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_games_played"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="10"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_games_played"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:gravity="center"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_goals_for"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="10"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_goals_for"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:gravity="center"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_goals_against"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="10"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_goals_against"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:gravity="center"
+			android:padding="4dp"/>
 
-	<TextView android:id="@+id/column_rating"
-			  android:layout_width="0dp"
-			  android:layout_height="wrap_content"
-			  android:layout_weight="20"
-			  android:gravity="center"
-			  android:padding="4dp" />
+	<TextView
+			android:id="@+id/column_rating"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="20"
+			android:gravity="center"
+			android:padding="4dp"/>
 
 </LinearLayout>

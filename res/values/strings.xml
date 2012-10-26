@@ -48,7 +48,7 @@
 	<string name="title_main">Foosball</string>
 	<string name="title_new_match">New match</string>
 	<string name="title_match">Match</string>
-	<string name="title_match_ended">Match ended</string>
+	<string name="title_match_over">Match over</string>
 	<string name="title_statistics">Statistics</string>
 
 </resources>

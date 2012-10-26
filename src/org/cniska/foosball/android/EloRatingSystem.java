@@ -2,22 +2,22 @@ package org.cniska.foosball.android;
 
 /**
  * This class handles the player Elo rating system calculations.
+ * See Wikipedia for more info: http://en.wikipedia.org/wiki/Elo_rating_system
  */
 public class EloRatingSystem {
+
+	private static final String TAG = "EloRatingSystem";
 
 	// Static variables
 	// ----------------------------------------
 
-	private static final String TAG = "EloRatingSystem";
-
 	public static final int INITIAL_RATING = 1500;
-	public static final int[] BRACKETS = { 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400 };
 
 	public static final double SCORE_WIN = 1.0;
 	public static final double SCORE_DRAW = 0.5;
 	public static final double SCORE_LOSS = 0.0;
 
-	private static final int K_FACTOR = 32;
+	public static final int K_FACTOR = 32;
 
 	// Methods
 	// ----------------------------------------
@@ -44,8 +44,8 @@ public class EloRatingSystem {
 	 * @param opponentRating The rating of the opposing player(s).
 	 * @return Expected score.
 	 */
-	private static double calculateExpectedScore(int rating, int opponentRating) {
-		return 1.0 / (1.0 + Math.pow(10.0, (rating - opponentRating) / 400.0));
+	public static double calculateExpectedScore(int rating, int opponentRating) {
+		return 1.0 / (1.0 + Math.pow(10.0, (opponentRating - rating) / 400.0));
 	}
 
 	/**
@@ -58,6 +58,6 @@ public class EloRatingSystem {
 	 * @return Player's new rating.
 	 */
 	private static int calculateNewRating(int rating, double score, double expectedScore, double kFactor) {
-		return rating + (int) (kFactor * (score - expectedScore));
+		return rating + (int) Math.round(kFactor * (score - expectedScore));
 	}
 }

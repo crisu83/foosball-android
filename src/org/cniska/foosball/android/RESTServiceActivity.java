@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -31,7 +30,7 @@ public class RESTServiceActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.rest_service);
+		//setContentView(R.layout.rest_service);
 
 		FragmentManager manager = getFragmentManager();
 		FragmentTransaction transaction = manager.beginTransaction();
@@ -52,10 +51,10 @@ public class RESTServiceActivity extends Activity {
 				public void onRESTResult(int statusCode, String result) {
 					if (statusCode == HttpStatus.SC_OK && result != null) {
 						Activity activity = getActivity();
-						LinearLayout layout = (LinearLayout) activity.findViewById(R.id.rest_service);
+						//LinearLayout layout = (LinearLayout) activity.findViewById(R.id.rest_service);
 						TextView view = new TextView(activity);
 						view.setText(parseResult(result));
-						layout.addView(view);
+						//layout.addView(view);
 					}
 				}
 

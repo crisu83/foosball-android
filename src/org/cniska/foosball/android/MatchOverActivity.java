@@ -21,8 +21,7 @@ public class MatchOverActivity extends BaseActivity {
 	// Member variables
 	// ----------------------------------------
 
-	private int mNumGoalsToWin = 10;
-	private int mWinningTeam = PlayMatchActivity.TEAM_NONE;
+    private RawMatch mMatch;
 	private ArrayList<String> mPlayerNames = new ArrayList<String>();
 
 	// Methods
@@ -34,12 +33,10 @@ public class MatchOverActivity extends BaseActivity {
 
 		Intent intent = getIntent();
 		if (intent != null) {
-			mNumGoalsToWin = intent.getIntExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, 10);
-			mWinningTeam = intent.getIntExtra(PlayMatchActivity.EXTRA_WINNING_TEAM, 0);
-			mPlayerNames = intent.getStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES);
+			mMatch = intent.getParcelableExtra(NewMatchActivity.EXTRA_MATCH);
 		}
 
-		getActionBar().setTitle(getString(R.string.title_match_ended));
+		getActionBar().setTitle(getString(R.string.title_match_over));
 		setHomeButtonEnabled(true);
 
 		setContentView(R.layout.match_over);
@@ -60,7 +57,7 @@ public class MatchOverActivity extends BaseActivity {
 	 */
 	public void rematch(View view) {
 		// Switch sides for the rematch.
-		ArrayList<String> swappedNames = new ArrayList<String>(NewMatchActivity.NUM_SUPPORTED_PLAYERS);
+		ArrayList<String> swappedNames = new ArrayList<String>(RawMatch.NUM_SUPPORTED_PLAYERS);
 		swappedNames.add(mPlayerNames.get(1));
 		swappedNames.add(mPlayerNames.get(0));
 		swappedNames.add(mPlayerNames.get(3));
@@ -69,8 +66,7 @@ public class MatchOverActivity extends BaseActivity {
 
 		Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 		Intent intent = new Intent(this, PlayMatchActivity.class);
-		intent.putStringArrayListExtra(NewMatchActivity.EXTRA_PLAYER_NAMES, mPlayerNames);
-		intent.putExtra(NewMatchActivity.EXTRA_NUM_GOALS_TO_WIN, mNumGoalsToWin);
+		intent.putExtra(NewMatchActivity.EXTRA_MATCH, mMatch);
 		startActivity(intent);
 	}
 

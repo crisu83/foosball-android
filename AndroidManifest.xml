@@ -4,8 +4,8 @@
 		  android:versionCode="1"
 		  android:versionName="1.0">
 
-	<uses-sdk android:minSdkVersion="4"
-			  android:targetSdkVersion="15" />
+	<uses-sdk android:minSdkVersion="8"
+			  android:targetSdkVersion="15" /><!-- Froyo / ICS -->
 
 	<application android:label="@string/app_name"
 				 android:icon="@drawable/ic_launcher">
@@ -22,7 +22,6 @@
 		<activity android:name=".PlayMatchActivity" />
 		<activity android:name=".MatchOverActivity" />
 		<activity android:name=".StatisticsActivity" />
-		<activity android:name=".RESTServiceActivity" />
 
 		<service android:name=".SyncService"
 				 android:exported="true">
@@ -35,8 +34,8 @@
 
 		<service android:name=".RESTService" />
 
-		<provider android:name=".PlayerProvider"
-				  android:authorities="org.cniska.foosball.android.PlayerProvider" />
+		<provider android:name=".DataProvider"
+				  android:authorities="org.cniska.foosball.android.DataContract" />
 
 	</application>
 

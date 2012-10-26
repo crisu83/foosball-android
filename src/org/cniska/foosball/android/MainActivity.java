@@ -1,14 +1,13 @@
 package org.cniska.foosball.android;
 
-import android.accounts.*;
-import android.content.ContentResolver;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
-import java.util.ArrayList;
 
 /**
  * This class is the application's main activity.
@@ -33,8 +32,10 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		/*
 		mAccountManager = AccountManager.get(this);
 		mAccountManager.addOnAccountsUpdatedListener(this, null, true);
+		*/
 
 		setContentView(R.layout.main);
 
@@ -43,6 +44,7 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 
 	@Override
 	public void onAccountsUpdated(Account[] accounts) {
+		/*
 		final ArrayList<Account> googleAccounts = new ArrayList<Account>(accounts.length);
 
 		for (int i = 0; i < accounts.length; i++) {
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 				}
 			}
 		}, null);
+		*/
 	}
 
 	/**

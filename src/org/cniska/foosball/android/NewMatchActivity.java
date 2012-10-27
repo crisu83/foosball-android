@@ -12,7 +12,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.*;
 
 import java.util.*;
@@ -81,6 +81,19 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_start:
+				submitForm();
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+
+	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(getApplicationContext(), DataContract.Players.CONTENT_URI, PLAYER_PROJECTION,
 				null, null, null);
@@ -118,18 +131,12 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 
 	/**
 	 * Submits the form.
-	 * @param view
 	 */
-	public void submitForm(View view) {
-		// Resolve the radio value.
-		RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.radio_group_score_to_win);
-		int checkedRadioId = scoresToWin.getCheckedRadioButtonId();
-		RadioButton checkedRadio = (RadioButton) findViewById(checkedRadioId);
-
+	public void submitForm() {
 		// Make sure that there weren't any validation errors before continuing.
 		if (validateForm()) {
             String[] data = new String[RawMatch.NUM_SUPPORTED_PLAYERS];
-			ArrayList<Long> idList = new ArrayList<Long>();
+			ArrayList<Long> playerIdList = new ArrayList<Long>();
 
             for (int i = 0; i < RawMatch.NUM_SUPPORTED_PLAYERS; i++) {
 				String name = mEditTexts[i].getText().toString().trim();
@@ -151,29 +158,49 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 						getContentResolver().insert(DataContract.Ratings.CONTENT_URI, ratingValues);
 					}
 
-					idList.add(mNameIdMap.get(name));
+					playerIdList.add(mNameIdMap.get(name));
 				}
             }
 
-			// Randomize teams if necessary. This can only be done if all four players are playing.
+			// Player setup can only be change if all four players are playing.
 			if (!TextUtils.isEmpty(data[EDIT_TEXT_PLAYER_3]) && !TextUtils.isEmpty(data[EDIT_TEXT_PLAYER_4])) {
-				CheckBox randomTeams = (CheckBox) findViewById(R.id.check_box_random_teams);
-				if (randomTeams.isChecked()) {
-					Random random = new Random(System.currentTimeMillis());
-					Collections.shuffle(idList, random);
+				RadioGroup playerSetup = (RadioGroup) findViewById(R.id.radio_group_player_positions);
+				int checkedPlayerSetupRadioId = playerSetup.getCheckedRadioButtonId();
+
+				switch (checkedPlayerSetupRadioId) {
+					case R.id.radio_player_positions_balance:
+						// todo: implement.
+						break;
+
+					case R.id.radio_player_positions_random:
+						Random random = new Random(System.currentTimeMillis());
+						Collections.shuffle(playerIdList, random);
+						break;
+
+					case R.id.radio_player_positions_current:
+					default:
+						break;
 				}
 			}
 
-            int numGoalsToWin = Integer.parseInt(checkedRadio.getText().toString());
+			RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.radio_group_score_to_win);
+			int checkedScoreToWinRadioId = scoresToWin.getCheckedRadioButtonId();
+			RadioButton scoreToWinRadio = (RadioButton) findViewById(checkedScoreToWinRadioId);
+            int numGoalsToWin = Integer.parseInt(scoreToWinRadio.getText().toString());
 
+			CheckBox rankedCheckBox = (CheckBox) findViewById(R.id.check_box_match_ranked);
+			boolean ranked = rankedCheckBox.isChecked();
+
+			int numPlayers = playerIdList.size();
 			long[] playerIds = new long[RawMatch.NUM_SUPPORTED_PLAYERS];
-			for (int i = 0, len = idList.size(); i < len; i++) {
-				playerIds[i] = idList.get(i);
+			for (int i = 0; i < playerIds.length; i++) {
+				playerIds[i] = i < numPlayers ? playerIdList.get(i) : 0;
 			}
 
             RawMatch match = new RawMatch();
             match.setNumGoalsToWin(numGoalsToWin);
 			match.setPlayerIds(playerIds);
+			match.setRanked(ranked);
 
 			Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 			Intent intent = new Intent(this, PlayMatchActivity.class);

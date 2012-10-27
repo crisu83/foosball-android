@@ -224,17 +224,25 @@ public class RawMatch implements Parcelable {
         return mNumAwayTeamGoals;
     }
 
-    public void setNumGoalsToWin(int numGoalsToWin) {
-        mNumGoalsToWin = numGoalsToWin;
-    }
+	public int getNumGoalsToWin() {
+		return mNumGoalsToWin;
+	}
 
-    public int getNumGoalsToWin() {
-        return mNumGoalsToWin;
+	public void setNumGoalsToWin(int numGoalsToWin) {
+        mNumGoalsToWin = numGoalsToWin;
     }
 
     public int getWinningTeam() {
         return mWinningTeam;
     }
+
+	public boolean isRanked() {
+		return mRanked;
+	}
+
+	public void setRanked(boolean ranked) {
+		mRanked = ranked;
+	}
 
 	public long[] getPlayerIds() {
 		return mPlayerIds;

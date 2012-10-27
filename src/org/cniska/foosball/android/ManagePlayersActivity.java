@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.*;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,35 +50,36 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
 
 			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_delete);
 			deleteButton.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						View parent = (View) view.getParent().getParent();
-						TextView idColumn = (TextView) parent.findViewById(R.id.column_id);
-						final String id = (String) idColumn.getText();
+				@Override
+				public void onClick(View view) {
+					View parent = (View) view.getParent();
+					TextView idColumn = (TextView) parent.findViewById(R.id.column_id);
+					final String id = (String) idColumn.getText();
 
-						TextView nameColumn = (TextView) parent.findViewById(R.id.column_name);
-						final String name = (String) nameColumn.getText();
+					// Ask the user to confirm the delete.
+					new AlertDialog.Builder(mContext)
+							.setMessage(R.string.dialog_message_delete)
+							.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									mContext.getContentResolver().delete(
+											Uri.withAppendedPath(DataContract.Players.CONTENT_URI, id),
+											null, null);
 
-						new AlertDialog.Builder(mContext)
-								.setMessage(String.format(mContext.getString(R.string.dialog_message_delete), name))
-								.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										mContext.getContentResolver().delete(
-												Uri.withAppendedPath(DataContract.Players.CONTENT_URI, id),
-												null, null);
-									}
-								})
-								.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										dialog.cancel();
-									}
-								})
-								.create()
-								.show();
-					}
-				});
+									// Show a toast to the user telling him that the player has been deleted.
+									Toast.makeText(mContext, R.string.toast_player_deleted, 1000).show();
+								}
+							})
+							.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.cancel();
+								}
+							})
+							.create()
+							.show();
+				}
+			});
 
             return view;
         }

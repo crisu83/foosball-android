@@ -16,7 +16,7 @@ public class MainActivity extends BaseActivity {
 
 	public static final String TAG = "MainActivity";
 
-	public static final String VERSION = "0.9.2";
+	public static final String VERSION = "0.9.3";
 
 	// Methods
 	// ----------------------------------------
@@ -28,8 +28,6 @@ public class MainActivity extends BaseActivity {
 		// Remove the title bar and set app to full-screen mode.
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-		getActionBar().setTitle(null);
 
 		setContentView(R.layout.main);
 

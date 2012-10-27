@@ -151,28 +151,6 @@ public class PlayMatchActivity extends BaseActivity {
 	}
 
 	/**
-	 * Displays a confirm dialog to end the match.
-	 */
-	public void endConfirmation() {
-		new AlertDialog.Builder(this)
-				.setMessage(endMessage())
-				.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						end();
-					}
-				})
-				.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				})
-				.create()
-				.show();
-	}
-
-	/**
 	 * Displays a confirm dialog to exit the match.
 	 */
 	public void exitConfirmation() {
@@ -195,25 +173,14 @@ public class PlayMatchActivity extends BaseActivity {
 	}
 
 	/**
-	 * Returns the message for the dialog that is displayed when the match ends.
-	 * @return The text.
-	 */
-	private String endMessage() {
-        int winningTeam = mMatch.getWinningTeam();
-		return String.format(getString(R.string.dialog_message_match_ended), winningTeam == RawMatch.TEAM_HOME
-				? getString(R.string.text_home_team)
-				: getString(R.string.text_away_team));
-	}
-
-	/**
 	 * Renders the player names below the team name.
 	 */
 	private void renderPlayerNames() {
-		ArrayList<RawPlayer> players = loadPlayers();
+		RawPlayer[] players = loadPlayers();
 		String homeTeamNames, awayTeamNames, name;
 
-		homeTeamNames = players.get(0).getName();
-		name = players.get(2) != null ? players.get(2).getName() : null;
+		homeTeamNames = players[0].getName();
+		name = players[2] != null ? players[2].getName() : null;
 		if (!TextUtils.isEmpty(name)) {
 			homeTeamNames += " / " + name;
 		}
@@ -223,8 +190,8 @@ public class PlayMatchActivity extends BaseActivity {
 			homeTeamView.setText(homeTeamNames);
 		}
 
-		awayTeamNames = players.get(1).getName();
-		name = players.get(3) != null ? players.get(3).getName() : null;
+		awayTeamNames = players[1].getName();
+		name = players[3] != null ? players[3].getName() : null;
 		if (!TextUtils.isEmpty(name)) {
 			awayTeamNames += " / " + name;
 		}
@@ -243,7 +210,7 @@ public class PlayMatchActivity extends BaseActivity {
 
 		// Check if either team has reached the number of goals to win.
 		if (mMatch.hasEnded()) {
-			endConfirmation();
+			end();
 		}
 	}
 
@@ -259,33 +226,49 @@ public class PlayMatchActivity extends BaseActivity {
 	 * Loads the players in the current match.
 	 * @return The players.
 	 */
-	private ArrayList<RawPlayer> loadPlayers() {
-		ArrayList<RawPlayer> players = new ArrayList<RawPlayer>(RawMatch.NUM_SUPPORTED_PLAYERS);
+	private RawPlayer[] loadPlayers() {
+		RawPlayer[] players = new RawPlayer[RawMatch.NUM_SUPPORTED_PLAYERS];
 
 		if (mMatch != null) {
+			int i;
 			long[] playerIds = mMatch.getPlayerIds();
-			String[] placeholders = new String[playerIds.length];
-			String[] selectionArgs = new String[playerIds.length];
+			ArrayList<String> placeholders = new ArrayList<String>();
+			ArrayList<String> args = new ArrayList<String>();
 
 			// Loop through the player ids and collect both placeholders and selection arguments.
-			for (int i = 0; i < playerIds.length; i++) {
+			for (i = 0; i < playerIds.length; i++) {
 				if (playerIds[i] > 0) {
-					placeholders[i] = "?";
-					selectionArgs[i] = String.valueOf(playerIds[i]);
+					placeholders.add("?");
+					args.add(String.valueOf(playerIds[i]));
 				}
 			}
 
 			// Combine the arrays to build the "IN" clause for the query.
 			String selection = "_id IN (" + TextUtils.join(",", placeholders) + ")";
 
+			// Convert the args to a string array in order to use it for the query.
+			int numArgs = args.size();
+			String[] selectionArgs = new String[numArgs];
+			for (i = 0; i < numArgs; i++) {
+				selectionArgs[i] = args.get(i);
+			}
+
+			// Execute the query to get the player records.
 			Cursor cursor = getContentResolver().query(
 					DataContract.Players.CONTENT_URI,
 					new String[] { DataContract.Players._ID, DataContract.Players.NAME },
 					selection, selectionArgs, ""); // we need to remove the default ordering
 
+			// Iterate through the cursor and append each player to the result.
 			if (cursor.moveToFirst()) {
 				while (!cursor.isAfterLast()) {
-					players.add(new RawPlayer(cursor));
+					RawPlayer player = new RawPlayer(cursor);
+					long playerId = player.getId();
+					for (i = 0; i < playerIds.length; i++) {
+						if (playerIds[i] == playerId) {
+							players[i] = player;
+						}
+					}
 					cursor.moveToNext();
 				}
 				cursor.close();
@@ -300,8 +283,8 @@ public class PlayMatchActivity extends BaseActivity {
 	 * Called when the match is over.
 	 */
 	private void end() {
-        Logger.info(TAG, "Sending intent to start MatchOverActivity.");
-        Intent intent = new Intent(this, MatchOverActivity.class);
+        Logger.info(TAG, "Sending intent to start MatchSummaryActivity.");
+        Intent intent = new Intent(this, MatchSummaryActivity.class);
         intent.putExtra(NewMatchActivity.EXTRA_MATCH, mMatch);
         startActivity(intent);
 	}

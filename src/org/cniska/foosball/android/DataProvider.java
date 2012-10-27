@@ -59,6 +59,7 @@ public class DataProvider extends ContentProvider {
 		sMatchesProjectionMap.put(DataContract.Matches._ID, DataContract.Matches._ID);
 		sMatchesProjectionMap.put(DataContract.Matches.CREATED, DataContract.Matches.CREATED);
 		sMatchesProjectionMap.put(DataContract.Matches.DURATION, DataContract.Matches.DURATION);
+		sMatchesProjectionMap.put(DataContract.Matches.RANKED, DataContract.Matches.RANKED);
 
 		// Create the projection map for the player table.
 		sPlayersProjectionMap = new HashMap<String, String>();
@@ -103,7 +104,8 @@ public class DataProvider extends ContentProvider {
 		private static final String CREATE_TABLE_MATCH	= "CREATE TABLE " + DataContract.Matches.TABLE_NAME + " ("
 				+ DataContract.Matches._ID				+ " INTEGER PRIMARY KEY,"
 				+ DataContract.Matches.CREATED			+ " INTEGER,"
-				+ DataContract.Matches.DURATION			+ " INTEGER)";
+				+ DataContract.Matches.DURATION			+ " INTEGER,"
+				+ DataContract.Matches.RANKED			+ " INTEGER)";
 
 		private static final String CREATE_TABLE_PLAYER	= "CREATE TABLE " + DataContract.Players.TABLE_NAME + " ("
 				+ DataContract.Players._ID				+ " INTEGER PRIMARY KEY,"

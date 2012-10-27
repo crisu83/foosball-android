@@ -6,16 +6,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 /**
  * This activity is displayed when a match ends.
  */
-public class MatchOverActivity extends BaseActivity {
+public class MatchSummaryActivity extends BaseActivity {
 
-	private static final String TAG = "MatchOverActivity";
+	private static final String TAG = "MatchSummaryActivity";
 
 	// Static variables
 	// ----------------------------------------
@@ -28,8 +29,8 @@ public class MatchOverActivity extends BaseActivity {
 	// ----------------------------------------
 
     private RawMatch mMatch;
-	private int[] mOldPlayerRatings = new int[RawMatch.NUM_SUPPORTED_PLAYERS];
-	private int[] mNewPlayerRatings = new int[RawMatch.NUM_SUPPORTED_PLAYERS];
+	private int[] mOldPlayerRatings;
+	private int[] mNewPlayerRatings;
 	private boolean mDataSaved = false;
 
 	// Methods
@@ -50,19 +51,21 @@ public class MatchOverActivity extends BaseActivity {
 			mDataSaved = savedInstanceState.getBoolean(STATE_DATA_SAVED);
 		}
 
-		getActionBar().setTitle(getString(R.string.title_match_over));
-		setHomeButtonEnabled(true);
+		setTitle(getString(R.string.text_team_won, mMatch.getWinningTeam() == RawMatch.TEAM_HOME
+				? getString(R.string.text_home_team)
+				: getString(R.string.text_away_team)));
+
+		// Start listening for touches outside of this activity in order to prevent the modal from closing
+		// when the user touches the modal backdrop.
+		Window window = getWindow();
+		window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+				WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+		window.setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+				WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 
 		saveData();
 
-		setContentView(R.layout.match_over);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.match_over, menu);
-		return true;
+		setContentView(R.layout.match_summary);
 	}
 
 	@Override
@@ -74,6 +77,23 @@ public class MatchOverActivity extends BaseActivity {
 		outState.putBoolean(STATE_DATA_SAVED, mDataSaved);
 	}
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		switch (event.getAction()) {
+			// Prevent the activity from being closed by clicking the backdrop.
+			case MotionEvent.ACTION_OUTSIDE:
+				return true;
+
+			default:
+				return super.onTouchEvent(event);
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		// Do nothing, we do not want to allow the user to return the previous activity.
+	}
+
 	/**
 	 * Saves all the match related data.
 	 */
@@ -82,6 +102,7 @@ public class MatchOverActivity extends BaseActivity {
 		if (!mDataSaved) {
 			ContentResolver contentResolver = getContentResolver();
 			Cursor cursor;
+			int i;
 
 			// Insert a new row in the match table.
 			ContentValues matchValues = new ContentValues();
@@ -100,7 +121,8 @@ public class MatchOverActivity extends BaseActivity {
 			int winningTeam = mMatch.getWinningTeam();
 			long[] playerIds = mMatch.getPlayerIds();
 
-			int i;
+			mOldPlayerRatings = new int[playerIds.length];
+			mNewPlayerRatings = new int[playerIds.length];
 
 			// Loop through the players and fetch their current ratings.
 			for (i = 0; i < playerIds.length; i++) {
@@ -115,7 +137,7 @@ public class MatchOverActivity extends BaseActivity {
 			}
 
 			// Calculate the home- and away team rating, if there are two opposing players
-			// the team rating is the average rating of those players.
+			// the team rating is the average rating of both players.
 
 			int homeTeamRating = mOldPlayerRatings[2] > 0
 					? (mOldPlayerRatings[0] + mOldPlayerRatings[2]) / 2
@@ -127,8 +149,8 @@ public class MatchOverActivity extends BaseActivity {
 
 			// Loop through the players and save their stats and update their rating.
 			for (i = 0; i < playerIds.length; i++) {
-				// Make sure that we only process players that are playing.
-				// If the rating is zero it means that there is no player playing with that index.
+				// Make sure that we only process players that are actually playing.
+				// If the player id is zero it means that position is empty.
 				if (playerIds[i] > 0) {
 					boolean homeTeamPlayer = (i % 2) == 0;
 					int oldRating = mOldPlayerRatings[i];
@@ -136,23 +158,25 @@ public class MatchOverActivity extends BaseActivity {
 					boolean won = (homeTeamPlayer && winningTeam == RawMatch.TEAM_HOME)
 							|| (!homeTeamPlayer && winningTeam == RawMatch.TEAM_AWAY);
 					double score = won ? EloRatingSystem.SCORE_WIN : EloRatingSystem.SCORE_LOSS;
-					mNewPlayerRatings[i] = EloRatingSystem.newRating(oldRating, opponentRating, score);
 
-					// Insert a new row in the rating table with the player's new rating.
-					ContentValues ratingValues = new ContentValues();
-					ratingValues.put(DataContract.Ratings.PLAYER_ID, playerIds[i]);
-					ratingValues.put(DataContract.Ratings.RATING, mNewPlayerRatings[i]);
-					contentResolver.insert(DataContract.Ratings.CONTENT_URI, ratingValues);
-
-					// Insert a new row in the stats table with the stats from the match.
 					ContentValues statsValues = new ContentValues();
 					statsValues.put(DataContract.Stats.PLAYER_ID, playerIds[i]);
 					statsValues.put(DataContract.Stats.MATCH_ID, mMatch.getId());
 					statsValues.put(DataContract.Stats.GOALS_FOR, homeTeamPlayer ? numHomeTeamGoals : numAwayTeamGoals);
 					statsValues.put(DataContract.Stats.GOALS_AGAINST, homeTeamPlayer ? numAwayTeamGoals : numHomeTeamGoals);
-					statsValues.put(DataContract.Stats.SCORE, won);
+					statsValues.put(DataContract.Stats.SCORE, score);
 					statsValues.put(DataContract.Stats.TEAM, homeTeamPlayer ? RawMatch.TEAM_HOME : RawMatch.TEAM_AWAY);
 					contentResolver.insert(DataContract.Stats.CONTENT_URI, statsValues);
+
+					if (mMatch.isRanked()) {
+						mNewPlayerRatings[i] = EloRatingSystem.newRating(oldRating, opponentRating, score);
+						ContentValues ratingValues = new ContentValues();
+						ratingValues.put(DataContract.Ratings.PLAYER_ID, playerIds[i]);
+						ratingValues.put(DataContract.Ratings.RATING, mNewPlayerRatings[i]);
+						contentResolver.insert(DataContract.Ratings.CONTENT_URI, ratingValues);
+					} else {
+						mNewPlayerRatings = mOldPlayerRatings;
+					}
 				}
 			}
 
@@ -167,18 +191,24 @@ public class MatchOverActivity extends BaseActivity {
 	public void rematch(View view) {
 		long[] playerIds, swappedIds;
 		playerIds = mMatch.getPlayerIds();
-		swappedIds = new long[RawMatch.NUM_SUPPORTED_PLAYERS];
+		swappedIds = new long[playerIds.length];
 
 		// Switch sides for the rematch.
 		swappedIds[0] = playerIds[1];
 		swappedIds[1] = playerIds[0];
 		swappedIds[2] = playerIds[3];
 		swappedIds[3] = playerIds[2];
-		mMatch.setPlayerIds(swappedIds);
+
+		// Create a new match with swapped player ids.
+		RawMatch match = new RawMatch();
+		match.setNumGoalsToWin(mMatch.getNumGoalsToWin());
+		match.setRanked(mMatch.isRanked());
+		match.setPlayerIds(swappedIds);
 
 		Logger.info(TAG, "Sending intent to start PlayMatchActivity.");
 		Intent intent = new Intent(this, PlayMatchActivity.class);
-		intent.putExtra(NewMatchActivity.EXTRA_MATCH, mMatch);
+		intent.putExtra(NewMatchActivity.EXTRA_MATCH, match);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 

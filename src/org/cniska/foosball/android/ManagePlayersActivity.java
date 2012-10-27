@@ -49,12 +49,9 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
             View view = super.getView(position, convertView, parent);
 
 			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_delete);
-
 			deleteButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						Logger.info(TAG, "Delete button pressed.");
-
 						View parent = (View) view.getParent().getParent();
 						TextView idColumn = (TextView) parent.findViewById(R.id.column_id);
 						final String id = (String) idColumn.getText();
@@ -67,7 +64,9 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
 								.setPositiveButton(R.string.dialog_button_yes, new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										delete(id);
+										mContext.getContentResolver().delete(
+												Uri.withAppendedPath(DataContract.Players.CONTENT_URI, id),
+												null, null);
 									}
 								})
 								.setNegativeButton(R.string.dialog_button_no, new DialogInterface.OnClickListener() {
@@ -78,12 +77,6 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
 								})
 								.create()
 								.show();
-					}
-
-					private void delete(String id) {
-						mContext.getContentResolver().delete(
-								Uri.withAppendedPath(DataContract.Players.CONTENT_URI, id),
-								null, null);
 					}
 				});
 
@@ -110,7 +103,6 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
     private PlayerAdapter mAdapter;
     private ListView mListView;
     private ArrayList<Data> mData;
-	private boolean mEditMode = false;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +112,6 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
         setContentView(R.layout.manage_players);
         mListView = (ListView) findViewById(R.id.manage_players_list);
         getSupportLoaderManager().initLoader(0, null, this);
-        Logger.info(TAG, "Activity created.");
     }
 
 	@Override
@@ -177,8 +168,4 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
         mAdapter = new PlayerAdapter(this, data);
         mListView.setAdapter(mAdapter);
     }
-
-	public boolean isEditMode() {
-		return mEditMode;
-	}
 }

@@ -16,7 +16,7 @@ public class MainActivity extends BaseActivity {
 
 	public static final String TAG = "MainActivity";
 
-	public static final String VERSION = "0.9.0";
+	public static final String VERSION = "0.9.2";
 
 	// Methods
 	// ----------------------------------------
@@ -36,8 +36,6 @@ public class MainActivity extends BaseActivity {
 		// Set the app version number.
 		TextView version = (TextView) findViewById(R.id.text_version);
 		version.setText(String.format("v %s", VERSION));
-
-		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override

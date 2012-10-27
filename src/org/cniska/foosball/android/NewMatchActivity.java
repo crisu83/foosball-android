@@ -69,8 +69,8 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 			mEditTexts[i] = (AutoCompleteTextView) findViewById(sEditTextIds[i]);
 		}
 
+		// Ask the loader manager to create a loader for loading the players.
 		getSupportLoaderManager().initLoader(0, null, this);
-		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override

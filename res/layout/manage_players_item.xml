@@ -4,7 +4,8 @@
 			  android:orientation="horizontal"
 			  android:layout_width="fill_parent"
 			  android:layout_height="wrap_content"
-			  android:gravity="center_vertical">
+			  android:gravity="center_vertical"
+			  android:padding="8dp">
 
 	<TextView
 			android:id="@+id/column_id"

@@ -20,9 +20,75 @@ public class DataProvider extends ContentProvider {
 
 	private static final String TAG = "DataProvider";
 
-	private static final String DATABASE_NAME = "foosball.db";
+	// Static variables
+	// ----------------------------------------
 
+	private static final String DATABASE_NAME = "foosball.db";
 	private static final int DATABASE_VERSION = 1;
+
+	// URI codes.
+	private static final int MATCHES			= 0;
+	private static final int MATCH_ID			= 1;
+	private static final int PLAYERS			= 2;
+	private static final int PLAYER_ID			= 3;
+	private static final int PLAYER_STATS 		= 4;
+	private static final int PLAYER_RATING		= 5;
+	private static final int STATS 				= 6;
+	private static final int RATINGS			= 7;
+
+	private static UriMatcher sUriMatcher;
+	private static Map<String, String> sMatchesProjectionMap;
+	private static Map<String, String> sPlayersProjectionMap;
+	private static Map<String, String> sStatsProjectionMap;
+	private static Map<String, String> sRatingsProjectionMap;
+
+	static {
+		// Create the URI matcher and add the necessary URI so that they can be matched later on.
+		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Matches.CONTENT_PATH, MATCHES);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Matches.CONTENT_PATH + "/#", MATCH_ID);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH, PLAYERS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#", PLAYER_ID);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/stats", PLAYER_STATS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_RATING);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH, RATINGS);
+
+		// Create the projection map for the match table.
+		sMatchesProjectionMap = new HashMap<String, String>();
+		sMatchesProjectionMap.put(DataContract.Matches._ID, DataContract.Matches._ID);
+		sMatchesProjectionMap.put(DataContract.Matches.CREATED, DataContract.Matches.CREATED);
+		sMatchesProjectionMap.put(DataContract.Matches.DURATION, DataContract.Matches.DURATION);
+
+		// Create the projection map for the player table.
+		sPlayersProjectionMap = new HashMap<String, String>();
+		sPlayersProjectionMap.put(DataContract.Players._ID, DataContract.Players._ID);
+		sPlayersProjectionMap.put(DataContract.Players.CREATED, DataContract.Players.CREATED);
+		sPlayersProjectionMap.put(DataContract.Players.NAME, DataContract.Players.NAME);
+
+		// Create the projection map for the stats table.
+		sStatsProjectionMap = new HashMap<String, String>();
+		sStatsProjectionMap.put(DataContract.Stats._ID, DataContract.Stats._ID);
+		sStatsProjectionMap.put(DataContract.Stats.CREATED, DataContract.Stats.CREATED);
+		sStatsProjectionMap.put(DataContract.Stats.MATCH_ID, DataContract.Stats.MATCH_ID);
+		sStatsProjectionMap.put(DataContract.Stats.PLAYER_ID, DataContract.Stats.PLAYER_ID);
+		sStatsProjectionMap.put(DataContract.Stats.GOALS_FOR, DataContract.Stats.GOALS_FOR);
+		sStatsProjectionMap.put(DataContract.Stats.GOALS_AGAINST, DataContract.Stats.GOALS_AGAINST);
+		sStatsProjectionMap.put(DataContract.Stats.SCORE, DataContract.Stats.GOALS_AGAINST);
+		sStatsProjectionMap.put(DataContract.Stats.TEAM, DataContract.Stats.TEAM);
+
+		// Create the projection map for the rating table.
+		sRatingsProjectionMap = new HashMap<String, String>();
+		sRatingsProjectionMap.put(DataContract.Ratings._ID, DataContract.Ratings._ID);
+		sRatingsProjectionMap.put(DataContract.Ratings.CREATED, DataContract.Ratings.CREATED);
+		sRatingsProjectionMap.put(DataContract.Ratings.PLAYER_ID, DataContract.Ratings.PLAYER_ID);
+		sRatingsProjectionMap.put(DataContract.Ratings.RATING, DataContract.Ratings.RATING);
+	}
+
+	// Member variables
+	// ----------------------------------------
+
+	private DatabaseHelper mDatabaseHelper;
 
 	// Inner classes
 	// ----------------------------------------
@@ -30,7 +96,7 @@ public class DataProvider extends ContentProvider {
 	/**
 	 * This class handles the database connection to the local SQLite database.
 	 */
-	static class DatabaseHelper extends SQLiteOpenHelper {
+	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String TAG = "DataProvider.DatabaseHelper";
 
@@ -94,70 +160,6 @@ public class DataProvider extends ContentProvider {
 			onCreate(db);
 		}
 	}
-
-	// Static variables
-	// ----------------------------------------
-
-	private static final int MATCHES			= 0;
-	private static final int MATCH_ID			= 1;
-	private static final int PLAYERS			= 2;
-	private static final int PLAYER_ID			= 3;
-	private static final int PLAYER_STATS 		= 4;
-	private static final int PLAYER_RATING		= 5;
-	private static final int STATS 				= 6;
-	private static final int RATINGS			= 7;
-
-	private static UriMatcher sUriMatcher;
-	private static Map<String, String> sMatchesProjectionMap;
-	private static Map<String, String> sPlayersProjectionMap;
-	private static Map<String, String> sStatsProjectionMap;
-	private static Map<String, String> sRatingsProjectionMap;
-
-	static {
-		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Matches.CONTENT_PATH, MATCHES);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Matches.CONTENT_PATH + "/#", MATCH_ID);
-
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH, PLAYERS);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#", PLAYER_ID);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/stats", PLAYER_STATS);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_RATING);
-
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH, RATINGS);
-
-		sMatchesProjectionMap = new HashMap<String, String>();
-		sMatchesProjectionMap.put(DataContract.Matches._ID, DataContract.Matches._ID);
-		sMatchesProjectionMap.put(DataContract.Matches.CREATED, DataContract.Matches.CREATED);
-		sMatchesProjectionMap.put(DataContract.Matches.DURATION, DataContract.Matches.DURATION);
-
-		sPlayersProjectionMap = new HashMap<String, String>();
-		sPlayersProjectionMap.put(DataContract.Players._ID, DataContract.Players._ID);
-		sPlayersProjectionMap.put(DataContract.Players.CREATED, DataContract.Players.CREATED);
-		sPlayersProjectionMap.put(DataContract.Players.NAME, DataContract.Players.NAME);
-
-		sStatsProjectionMap = new HashMap<String, String>();
-		sStatsProjectionMap.put(DataContract.Stats._ID, DataContract.Stats._ID);
-		sStatsProjectionMap.put(DataContract.Stats.CREATED, DataContract.Stats.CREATED);
-		sStatsProjectionMap.put(DataContract.Stats.MATCH_ID, DataContract.Stats.MATCH_ID);
-		sStatsProjectionMap.put(DataContract.Stats.PLAYER_ID, DataContract.Stats.PLAYER_ID);
-		sStatsProjectionMap.put(DataContract.Stats.GOALS_FOR, DataContract.Stats.GOALS_FOR);
-		sStatsProjectionMap.put(DataContract.Stats.GOALS_AGAINST, DataContract.Stats.GOALS_AGAINST);
-		sStatsProjectionMap.put(DataContract.Stats.SCORE, DataContract.Stats.GOALS_AGAINST);
-		sStatsProjectionMap.put(DataContract.Stats.TEAM, DataContract.Stats.TEAM);
-
-		sRatingsProjectionMap = new HashMap<String, String>();
-		sRatingsProjectionMap.put(DataContract.Ratings._ID, DataContract.Ratings._ID);
-		sRatingsProjectionMap.put(DataContract.Ratings.CREATED, DataContract.Ratings.CREATED);
-		sRatingsProjectionMap.put(DataContract.Ratings.PLAYER_ID, DataContract.Ratings.PLAYER_ID);
-		sRatingsProjectionMap.put(DataContract.Ratings.RATING, DataContract.Ratings.RATING);
-	}
-
-	// Member variables
-	// ----------------------------------------
-
-	private DatabaseHelper mDatabaseHelper;
 
 	// Methods
 	// ----------------------------------------

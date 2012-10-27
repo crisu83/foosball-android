@@ -3,14 +3,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			  android:orientation="horizontal"
 			  android:layout_width="fill_parent"
-			  android:layout_height="wrap_content">
+			  android:layout_height="wrap_content"
+			  android:padding="8dp">
 
 	<TextView
 			android:id="@+id/column_name"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="30"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_wins"
@@ -18,7 +19,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="10"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_losses"
@@ -26,7 +27,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="10"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_games_played"
@@ -34,7 +35,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="10"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_goals_for"
@@ -42,7 +43,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="10"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_goals_against"
@@ -50,7 +51,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="10"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_rating"
@@ -58,6 +59,6 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="20"
 			android:gravity="center"
-			android:padding="4dp"/>
+			android:padding="8dp"/>
 
 </LinearLayout>

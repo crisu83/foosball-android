@@ -17,8 +17,7 @@
 					  android:layout_height="wrap_content"
 					  android:orientation="horizontal"
 					  android:paddingTop="4dp"
-					  android:paddingBottom="4dp"
-				>
+					  android:paddingBottom="4dp">
 
 			<TextView
 					android:id="@+id/text_home_team"

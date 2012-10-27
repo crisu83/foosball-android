@@ -37,7 +37,6 @@
 	<string name="table_header_losses">L</string>
 	<string name="table_header_goals_for">GF</string>
 	<string name="table_header_goals_against">GA</string>
-	<string name="table_header_win_loss_ratio">W:L</string>
 	<string name="table_header_rating">RATING</string>
 
 	<string name="text_player_name_anonymous">Anonymous</string>

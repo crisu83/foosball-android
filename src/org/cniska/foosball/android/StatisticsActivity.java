@@ -215,7 +215,6 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		mListView = (ListView) findViewById(R.id.statistics_list);
 		setHeaderClickListeners();
 		getSupportLoaderManager().initLoader(0, null, this);
-		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
@@ -242,23 +241,23 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 				while (!cursor.isAfterLast()) {
 					Data item = new Data();
 
-					item.id = cursor.getLong(0);
-					item.name = cursor.getString(1);
+					item.id = cursor.getLong(cursor.getColumnIndex(DataContract.Players._ID));
+					item.name = cursor.getString(cursor.getColumnIndex(DataContract.Players.NAME));
 
 					Cursor c = contentResolver.query(
 							Uri.withAppendedPath(DataContract.Players.CONTENT_URI, item.id + "/stats"),
 							new String[] {
-								"COUNT(*) as games_played",
-								"SUM(" + DataContract.Stats.GOALS_FOR + ") AS goals_for",
-								"SUM(" + DataContract.Stats.GOALS_AGAINST + ") AS goals_against",
-								"SUM(" + DataContract.Stats.SCORE + ") AS wins"
+								"COUNT(*) AS " + COLUMN_GAMES_PLAYED,
+								"SUM(" + DataContract.Stats.GOALS_FOR + ") AS " + COLUMN_GOALS_FOR,
+								"SUM(" + DataContract.Stats.GOALS_AGAINST + ") AS " + COLUMN_GOALS_AGAINST,
+								"SUM(" + DataContract.Stats.SCORE + ") AS " + COLUMN_WINS
 							}, null, null, null);
 
 					if (c.moveToFirst()) {
-						item.gamesPlayed = c.getInt(0);
-						item.goalsFor = c.getInt(1);
-						item.goalsAgainst = c.getInt(2);
-						item.wins = c.getInt(3);
+						item.gamesPlayed = c.getInt(c.getColumnIndex(COLUMN_GAMES_PLAYED));
+						item.goalsFor = c.getInt(c.getColumnIndex(COLUMN_GOALS_FOR));
+						item.goalsAgainst = c.getInt(c.getColumnIndex(COLUMN_GOALS_AGAINST));
+						item.wins = c.getInt(c.getColumnIndex(COLUMN_WINS));
 						item.losses = item.gamesPlayed - item.wins;
 						c.close();
 					}
@@ -268,15 +267,13 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 							new String[] { DataContract.Ratings.RATING }, null, null, null);
 
 					if (c.moveToFirst()) {
-						item.rating = c.getInt(0);
+						item.rating = c.getInt(c.getColumnIndex(DataContract.Ratings.RATING));
 						c.close();
 					}
 
 					mData.add(item);
 					cursor.moveToNext();
 				}
-
-				cursor.close();
 			}
 
 			updateListView();

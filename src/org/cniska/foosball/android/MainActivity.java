@@ -1,26 +1,23 @@
 package org.cniska.foosball.android;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.TextView;
 
 /**
  * This class is the application's main activity.
  */
-public class MainActivity extends BaseActivity implements OnAccountsUpdateListener {
+public class MainActivity extends BaseActivity {
 
 	public static final String TAG = "MainActivity";
 
-	public static final String ACCOUNT_TYPE_GOOGLE = "com.google";
-	public static final String[] SERVICES = { "service_ah" };
+	public static final String VERSION = "0.9.0";
 
-	private AccountManager mAccountManager;
-	
 	// Methods
 	// ----------------------------------------
 
@@ -29,42 +26,37 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 		super.onCreate(savedInstanceState);
 
 		// Remove the title bar and set app to full-screen mode.
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		/*
-		mAccountManager = AccountManager.get(this);
-		mAccountManager.addOnAccountsUpdatedListener(this, null, true);
-		*/
+		getActionBar().setTitle(null);
 
 		setContentView(R.layout.main);
+
+		// Set the app version number.
+		TextView version = (TextView) findViewById(R.id.text_version);
+		version.setText(String.format("v %s", VERSION));
 
 		Logger.info(TAG, "Activity created.");
 	}
 
 	@Override
-	public void onAccountsUpdated(Account[] accounts) {
-		/*
-		final ArrayList<Account> googleAccounts = new ArrayList<Account>(accounts.length);
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
 
-		for (int i = 0; i < accounts.length; i++) {
-			if (accounts[i].type.equals(ACCOUNT_TYPE_GOOGLE)) {
-				googleAccounts.add(accounts[i]);
-			}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_manage_players:
+				managePlayers();
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-
-		mAccountManager.getAccountsByTypeAndFeatures(ACCOUNT_TYPE_GOOGLE, SERVICES, new AccountManagerCallback<Account[]>() {
-			@Override
-			public void run(AccountManagerFuture<Account[]> future) {
-				for (int i = 0, l = googleAccounts.size(); i < l; i++) {
-					Account account = googleAccounts.get(i);
-					if (ContentResolver.getIsSyncable(account, PlayerProvider.AUTHORITY) == 0) {
-						ContentResolver.setIsSyncable(account, PlayerProvider.AUTHORITY, 1);
-					}
-				}
-			}
-		}, null);
-		*/
 	}
 
 	/**
@@ -78,7 +70,7 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 	}
 
 	/**
-	 * Opens the playing statistics.
+	 * Starts the statistics activity.
 	 * @param view
 	 */
 	public void openStatistics(View view) {
@@ -88,11 +80,11 @@ public class MainActivity extends BaseActivity implements OnAccountsUpdateListen
 	}
 
 	/**
-	 * Tests the REST service implementation.
-	 * @param view
+	 * Starts the manage players activity.
 	 */
-	public void testRest(View view) {
-		Intent intent = new Intent(this, RESTServiceActivity.class);
+	public void managePlayers() {
+		Logger.info(TAG, "Sending intent to start ManagePlayersActivity.");
+		Intent intent = new Intent(this, ManagePlayersActivity.class);
 		startActivity(intent);
 	}
 }

@@ -15,6 +15,7 @@
 	<string name="dialog_button_yes">Yes</string>
 	<string name="dialog_message_exit">Do you really want to exit?</string>
 	<string name="dialog_message_match_ended">%s won. Is this correct?</string>
+	<string name="dialog_message_delete">Do you really want to delete player %s?\nThis action cannot be undone.</string>
 
 	<string name="hint_player1">Player 1</string>
 	<string name="hint_player2">Player 2</string>
@@ -24,9 +25,10 @@
 	<string name="label_score_to_win">Score to win</string>
 	<string name="label_random_teams">Random teams</string>
 
+	<string name="menu_add_player">Add player</string>
 	<string name="menu_back">Back</string>
 	<string name="menu_cancel">Cancel</string>
-	<string name="menu_add_player">Add player</string>
+	<string name="menu_manage_players">Manage players</string>
 	<string name="menu_undo">Undo</string>
 
 	<string name="table_header_player">PLAYER</string>
@@ -38,6 +40,7 @@
 	<string name="table_header_win_loss_ratio">W:L</string>
 	<string name="table_header_rating">RATING</string>
 
+	<string name="text_player_name_anonymous">Anonymous</string>
 	<string name="text_home_team">Home team</string>
 	<string name="text_away_team">Away team</string>
 	<string name="text_home">HOME</string>
@@ -50,5 +53,6 @@
 	<string name="title_match">Match</string>
 	<string name="title_match_over">Match over</string>
 	<string name="title_statistics">Statistics</string>
+	<string name="title_manage_players">Manage players</string>
 
 </resources>

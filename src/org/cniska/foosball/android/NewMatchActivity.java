@@ -60,10 +60,8 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		getActionBar().setTitle(getString(R.string.title_new_match));
 		setHomeButtonEnabled(true);
-
+		getActionBar().setTitle(getString(R.string.title_new_match));
 		setContentView(R.layout.new_match);
 
 		// Collect the auto-complete views so that we can refer to them later.
@@ -72,7 +70,6 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 		}
 
 		getSupportLoaderManager().initLoader(0, null, this);
-
 		Logger.info(TAG, "Activity created.");
 	}
 

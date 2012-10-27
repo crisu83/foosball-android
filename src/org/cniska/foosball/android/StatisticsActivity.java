@@ -173,6 +173,9 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		}
 	}
 
+	/**
+	 * This class represents a single item in the list view.
+	 */
 	private class Data {
 		public long id;
 		public String name;
@@ -197,10 +200,8 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 
 	private PlayerAdapter mAdapter;
 	private ListView mListView;
-	private ArrayList<RawPlayer> mPlayers = new ArrayList<RawPlayer>();
-	private DataComparator mComparator = new DataComparator();
-
 	private ArrayList<Data> mData;
+	private DataComparator mComparator = new DataComparator();
 
 	// Methods
 	// ----------------------------------------
@@ -208,6 +209,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHomeButtonEnabled(true);
 		setTitle(getString(R.string.title_statistics));
 		setContentView(R.layout.statistics);
 		mListView = (ListView) findViewById(R.id.statistics_list);

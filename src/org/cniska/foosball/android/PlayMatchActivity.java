@@ -55,7 +55,7 @@ public class PlayMatchActivity extends BaseActivity {
             mMatch = savedInstanceState.getParcelable(STATE_MATCH);
         }
 
-		getActionBar().setTitle(getString(R.string.title_match));
+		setActionBarTitle(R.string.title_match);
 
 		setContentView(R.layout.play_match);
 

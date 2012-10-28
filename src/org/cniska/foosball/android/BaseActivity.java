@@ -68,12 +68,36 @@ public class BaseActivity extends FragmentActivity {
 	}
 
 	/**
-	 * Enables the home button.
+	 * Enables the home button if applicable.
 	 * @param enabled
 	 */
 	protected void setHomeButtonEnabled(boolean enabled) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			getActionBar().setHomeButtonEnabled(enabled);
+		}
+	}
+
+	/**
+	 * Sets the action bar title with fallback to activity title on older devices..
+	 * @param title Text.
+	 */
+	public void setActionBarTitle(CharSequence title) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setTitle(title);
+		} else {
+			super.setTitle(title);
+		}
+	}
+
+	/**
+	 * Sets the action bar title with fallback to activity title on older devices..
+	 * @param id Resource id.
+	 */
+	public void setActionBarTitle(int id) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setTitle(id);
+		} else {
+			super.setTitle(id);
 		}
 	}
 

@@ -26,6 +26,8 @@ public class DataProvider extends ContentProvider {
 	private static final String DATABASE_NAME = "foosball.db";
 	private static final int DATABASE_VERSION = 1;
 
+	public static final int LIMIT_PATH_POSITION = 2;
+
 	// URI codes.
 	private static final int MATCHES			= 0;
 	private static final int MATCH_ID			= 1;
@@ -35,6 +37,7 @@ public class DataProvider extends ContentProvider {
 	private static final int PLAYER_RATING		= 5;
 	private static final int STATS 				= 6;
 	private static final int RATINGS			= 7;
+	private static final int RATINGS_LIMIT		= 8;
 
 	private static UriMatcher sUriMatcher;
 	private static Map<String, String> sMatchesProjectionMap;
@@ -53,6 +56,7 @@ public class DataProvider extends ContentProvider {
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_RATING);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH, RATINGS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH + "/limit/#", RATINGS_LIMIT);
 
 		// Create the projection map for the match table.
 		sMatchesProjectionMap = new HashMap<String, String>();
@@ -175,6 +179,7 @@ public class DataProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		String limit = null;
 
 		switch (sUriMatcher.match(uri)) {
 			// Query for multiple matches.
@@ -215,7 +220,7 @@ public class DataProvider extends ContentProvider {
 				qb.setProjectionMap(sStatsProjectionMap);
 				qb.appendWhere(DataContract.Stats.PLAYER_ID + "="
 						+ uri.getPathSegments().get(DataContract.Players.ID_PATH_POSITION));
-				return queryDb(uri, projection, selection, selectionArgs, sortOrder, qb);
+				break;
 
 			// Query for a single player's current rating.
 			case PLAYER_RATING:
@@ -226,11 +231,24 @@ public class DataProvider extends ContentProvider {
 				sortOrder = sortOrder != null ? sortOrder : DataContract.Ratings.DEFAULT_SORT_ORDER;
 				break;
 
+			case RATINGS:
+				qb.setTables(DataContract.Ratings.TABLE_NAME);
+				qb.setProjectionMap(sRatingsProjectionMap);
+				sortOrder = sortOrder != null ? sortOrder : DataContract.Ratings.DEFAULT_SORT_ORDER;
+				break;
+
+			case RATINGS_LIMIT:
+				qb.setTables(DataContract.Ratings.TABLE_NAME);
+				qb.setProjectionMap(sRatingsProjectionMap);
+				limit = uri.getPathSegments().get(LIMIT_PATH_POSITION);
+				sortOrder = sortOrder != null ? sortOrder : DataContract.Ratings.DEFAULT_SORT_ORDER;
+				break;
+
 			default:
 				throwUnknownUriException(uri);
 		}
 
-		return queryDb(uri, projection, selection, selectionArgs, sortOrder, qb);
+		return queryDb(uri, projection, selection, selectionArgs, sortOrder, qb, limit);
 	}
 
 	@Override
@@ -318,12 +336,13 @@ public class DataProvider extends ContentProvider {
 	 * @param selectionArgs
 	 * @param sortOrder
 	 * @param qb
+	 * @param limit
 	 * @return The cursor.
 	 */
 	private Cursor queryDb(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder,
-						   SQLiteQueryBuilder qb) {
+						   SQLiteQueryBuilder qb, String limit) {
 		SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-		Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+		Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;
 	}

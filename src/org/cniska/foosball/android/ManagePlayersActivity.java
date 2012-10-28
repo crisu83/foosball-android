@@ -109,7 +109,7 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		setHomeButtonEnabled(true);
-		getActionBar().setTitle(getString(R.string.title_manage_players));
+		setActionBarTitle(R.string.title_manage_players);
         setContentView(R.layout.manage_players);
         mListView = (ListView) findViewById(R.id.manage_players_list);
         getSupportLoaderManager().initLoader(0, null, this);

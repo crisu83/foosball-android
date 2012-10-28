@@ -1,7 +1,8 @@
 package org.cniska.foosball.android;
 
-import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,24 +17,15 @@ public class MainActivity extends BaseActivity {
 
 	public static final String TAG = "MainActivity";
 
-	public static final String VERSION = "0.9.3";
-
 	// Methods
 	// ----------------------------------------
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Remove the title bar and set app to full-screen mode.
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
-		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+		setTitle(null);
 		setContentView(R.layout.main);
-
-		// Set the app version number.
-		TextView version = (TextView) findViewById(R.id.text_version);
-		version.setText(String.format("v %s", VERSION));
+		renderAppVersion();
 	}
 
 	@Override
@@ -82,5 +74,18 @@ public class MainActivity extends BaseActivity {
 		Logger.info(TAG, "Sending intent to start ManagePlayersActivity.");
 		Intent intent = new Intent(this, ManagePlayersActivity.class);
 		startActivity(intent);
+	}
+
+	/**
+	 * Renders the app version name.
+	 */
+	private void renderAppVersion() {
+		try {
+			PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			TextView version = (TextView) findViewById(R.id.text_version);
+			version.setText(String.format("v %s", packageInfo.versionName));
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -210,7 +210,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHomeButtonEnabled(true);
-		setTitle(getString(R.string.title_statistics));
+		setActionBarTitle(R.string.title_statistics);
 		setContentView(R.layout.statistics);
 		mListView = (ListView) findViewById(R.id.statistics_list);
 		setHeaderClickListeners();

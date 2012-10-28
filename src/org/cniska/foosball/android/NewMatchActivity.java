@@ -61,7 +61,7 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHomeButtonEnabled(true);
-		getActionBar().setTitle(getString(R.string.title_new_match));
+		setActionBarTitle(R.string.title_new_match);
 		setContentView(R.layout.new_match);
 
 		// Collect the auto-complete views so that we can refer to them later.
@@ -234,13 +234,13 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 	 */
 	private boolean validateForm() {
 		// Make sure that player 1 is given.
-		if (mEditTexts[0].getText().toString().isEmpty()) {
+		if (TextUtils.isEmpty(mEditTexts[0].getText())) {
 			mEditTexts[0].setError("Player 1 is required");
 			return false;
 		}
 
 		// Make sure that player 2 is given.
-		if (mEditTexts[1].getText().toString().isEmpty()) {
+		if (TextUtils.isEmpty(mEditTexts[1].getText())) {
 			mEditTexts[1].setError("Player 2 is required");
 			return false;
 		}

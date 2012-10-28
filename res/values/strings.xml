@@ -60,4 +60,6 @@
 
 	<string name="toast_player_deleted">Player deleted.</string>
 
+	<string name="widget_rating_name">Foosball</string>
+
 </resources>

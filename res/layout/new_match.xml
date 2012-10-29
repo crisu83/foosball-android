@@ -103,10 +103,10 @@
 		</LinearLayout>
 
 		<TextView
-				android:id="@+id/text_match_options"
+				android:id="@+id/text_additional_options"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/text_match_options"
+				android:text="@string/text_additional_options"
 				style="?android:attr/listSeparatorTextViewStyle"/>
 
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -180,64 +180,6 @@
 					android:checked="true"
 					android:gravity="center_vertical"
 					android:orientation="horizontal"/>
-
-		</LinearLayout>
-
-		<TextView
-				android:id="@+id/text_player_options"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/text_player_options"
-				style="?android:attr/listSeparatorTextViewStyle"/>
-
-		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-					  android:layout_width="match_parent"
-					  android:layout_height="wrap_content"
-					  android:paddingTop="4dp"
-					  android:paddingBottom="4dp"
-					  android:orientation="horizontal">
-
-		<TextView
-				android:id="@+id/label_balance_teams"
-				android:layout_width="0dp"
-				android:layout_height="fill_parent"
-				android:layout_weight="50"
-				android:paddingLeft="8dp"
-				android:textSize="16sp"
-				android:text="@string/text_player_positions"
-				android:paddingTop="8dp"/>
-
-			<RadioGroup
-					android:id="@+id/radio_group_player_positions"
-					android:layout_width="0dp"
-					android:layout_height="fill_parent"
-					android:layout_weight="50"
-					android:layout_marginLeft="8dp"
-					android:gravity="center_vertical"
-					android:orientation="vertical">
-
-				<RadioButton
-						android:id="@+id/radio_player_positions_current"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:checked="true"
-						android:text="@string/radio_player_positions_current"/>
-
-				<!-- todo: implement -->
-				<RadioButton
-						android:id="@+id/radio_player_positions_balance"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:visibility="gone"
-						android:text="@string/radio_player_positions_balance"/>
-
-				<RadioButton
-						android:id="@+id/radio_player_positions_random"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:text="@string/radio_player_positions_random"/>
-
-			</RadioGroup>
 
 		</LinearLayout>
 

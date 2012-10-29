@@ -33,7 +33,7 @@ public class DataProvider extends ContentProvider {
 	private static final int MATCH_ID			= 1;
 	private static final int PLAYERS			= 2;
 	private static final int PLAYER_ID			= 3;
-	private static final int PLAYER_STATS 		= 4;
+	private static final int PLAYER_ID_STATS 	= 4;
 	private static final int PLAYER_ID_RATING	= 5;
 	private static final int RATINGS			= 6;
 	private static final int STATS 				= 7;
@@ -51,7 +51,7 @@ public class DataProvider extends ContentProvider {
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Matches.CONTENT_PATH + "/#", MATCH_ID);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH, PLAYERS);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#", PLAYER_ID);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/stats", PLAYER_STATS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/stats", PLAYER_ID_STATS);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_ID_RATING);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH, RATINGS);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
@@ -79,6 +79,8 @@ public class DataProvider extends ContentProvider {
 		sStatsProjectionMap.put(DataContract.Stats.GOALS_AGAINST, DataContract.Stats.GOALS_AGAINST);
 		sStatsProjectionMap.put(DataContract.Stats.SCORE, DataContract.Stats.GOALS_AGAINST);
 		sStatsProjectionMap.put(DataContract.Stats.TEAM, DataContract.Stats.TEAM);
+		sStatsProjectionMap.put(DataContract.Players.NAME, DataContract.Players.NAME);
+		sStatsProjectionMap.put(DataContract.Ratings.RATING, DataContract.Ratings.RATING);
 
 		// Create the projection map for the rating table.
 		sRatingsProjectionMap = new HashMap<String, String>();
@@ -86,7 +88,6 @@ public class DataProvider extends ContentProvider {
 		sRatingsProjectionMap.put(DataContract.Ratings.CREATED, DataContract.Ratings.CREATED);
 		sRatingsProjectionMap.put(DataContract.Ratings.PLAYER_ID, DataContract.Ratings.PLAYER_ID);
 		sRatingsProjectionMap.put(DataContract.Ratings.RATING, DataContract.Ratings.RATING);
-
 		sRatingsProjectionMap.put(DataContract.Players.NAME, DataContract.Players.NAME);
 	}
 
@@ -217,7 +218,7 @@ public class DataProvider extends ContentProvider {
 				break;
 
 			// Query for a single player's stats.
-			case PLAYER_STATS:
+			case PLAYER_ID_STATS:
 				qb.setTables(DataContract.Stats.TABLE_NAME);
 				qb.setProjectionMap(sStatsProjectionMap);
 				qb.appendWhere(DataContract.Stats.PLAYER_ID + "="
@@ -234,12 +235,18 @@ public class DataProvider extends ContentProvider {
 				break;
 
 			case RATINGS:
+				// todo: change to use sub-query instead.
 				qb.setTables(DataContract.Ratings.TABLE_NAME + " AS r "
 						+ "INNER JOIN " + DataContract.Players.TABLE_NAME + " AS p "
-						+ "ON (p." + DataContract.Players._ID + "= r." + DataContract.Ratings.PLAYER_ID + ")");
+						+ "ON (p." + DataContract.Players._ID + "=r." + DataContract.Ratings.PLAYER_ID + ")");
 				qb.setProjectionMap(sRatingsProjectionMap);
 				groupBy = "r.player_id";
 				sortOrder = "r.rating DESC, r.created DESC";
+				limit = "10";
+				break;
+
+			case STATS:
+				// todo: implement.
 				break;
 
 			default:
@@ -256,7 +263,7 @@ public class DataProvider extends ContentProvider {
 			case MATCH_ID:		return DataContract.Matches.CONTENT_ITEM_TYPE;
 			case PLAYERS:		return DataContract.Players.CONTENT_TYPE;
 			case PLAYER_ID:		return DataContract.Players.CONTENT_ITEM_TYPE;
-			case PLAYER_STATS:	return DataContract.Stats.CONTENT_ITEM_TYPE;
+			case PLAYER_ID_STATS:	return DataContract.Stats.CONTENT_ITEM_TYPE;
 			case PLAYER_ID_RATING:	return DataContract.Ratings.CONTENT_ITEM_TYPE;
 			case STATS:			return DataContract.Stats.CONTENT_TYPE;
 			case RATINGS:		return DataContract.Ratings.CONTENT_TYPE;

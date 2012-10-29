@@ -87,6 +87,14 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 				submitForm();
 				return true;
 
+			case R.id.menu_balance_teams:
+				// todo: implement.
+				return true;
+
+			case R.id.menu_shuffle_teams:
+				shuffleTeams();
+				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -118,7 +126,7 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 					this, android.R.layout.simple_spinner_dropdown_item, playerNames);
 
 			// Bind auto-completion for the edit text views.
-			for (int i = 0; i < RawMatch.NUM_SUPPORTED_PLAYERS; i++) {
+			for (int i = 0; i < mEditTexts.length; i++) {
 				mEditTexts[i].setThreshold(AUTO_COMPLETE_THRESHOLD);
 				mEditTexts[i].setAdapter(adapter);
 			}
@@ -127,6 +135,15 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
+	}
+
+	private void shuffleTeams() {
+		ArrayList<String> playerNames = fetchPlayerNames();
+		if (isAllNamesEntered(playerNames)) {
+			Random random = new Random(System.currentTimeMillis());
+			Collections.shuffle(playerNames, random);
+			updatePlayerNames(playerNames);
+		}
 	}
 
 	/**
@@ -163,6 +180,7 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
             }
 
 			// Player setup can only be change if all four players are playing.
+			/*
 			if (!TextUtils.isEmpty(data[EDIT_TEXT_PLAYER_3]) && !TextUtils.isEmpty(data[EDIT_TEXT_PLAYER_4])) {
 				RadioGroup playerSetup = (RadioGroup) findViewById(R.id.radio_group_player_positions);
 				int checkedPlayerSetupRadioId = playerSetup.getCheckedRadioButtonId();
@@ -182,6 +200,7 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 						break;
 				}
 			}
+			*/
 
 			RadioGroup scoresToWin = (RadioGroup) findViewById(R.id.radio_group_score_to_win);
 			int checkedScoreToWinRadioId = scoresToWin.getCheckedRadioButtonId();
@@ -207,6 +226,24 @@ public class NewMatchActivity extends BaseActivity implements LoaderManager.Load
 			intent.putExtra(EXTRA_MATCH, match);
 			startActivity(intent);
 		}
+	}
+
+	private void updatePlayerNames(ArrayList<String> names) {
+		for (int i = 0; i < mEditTexts.length; i++) {
+			mEditTexts[i].setText(names.get(i));
+		}
+	}
+
+	private ArrayList<String> fetchPlayerNames() {
+		ArrayList<String> names = new ArrayList<String>(mEditTexts.length);
+		for (int i = 0; i < mEditTexts.length; i++) {
+			names.add(mEditTexts[i].getText().toString().trim());
+		}
+		return names;
+	}
+
+	private boolean isAllNamesEntered(ArrayList<String> names) {
+		return !TextUtils.isEmpty(names.get(EDIT_TEXT_PLAYER_3)) && !TextUtils.isEmpty(names.get(EDIT_TEXT_PLAYER_4));
 	}
 
 	/**

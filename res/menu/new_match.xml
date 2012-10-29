@@ -7,8 +7,10 @@
 		  android:title="@string/menu_start"
 		  android:showAsAction="ifRoom|withText"/>
 
-	<item android:id="@+id/menu_cancel"
-		  android:icon="@drawable/icon_cancel"
-		  android:title="@string/menu_cancel"/>
+	<item android:id="@+id/menu_balance_teams"
+		  android:title="@string/menu_balance_teams"/>
+
+	<item android:id="@+id/menu_shuffle_teams"
+		  android:title="@string/menu_shuffle_teams"/>
 
 </menu>

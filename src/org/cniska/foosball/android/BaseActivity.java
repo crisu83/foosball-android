@@ -73,7 +73,7 @@ public class BaseActivity extends FragmentActivity {
 	 */
 	protected void setHomeButtonEnabled(boolean enabled) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			getActionBar().setHomeButtonEnabled(enabled);
+			getActionBar().setDisplayHomeAsUpEnabled(enabled);
 		}
 	}
 

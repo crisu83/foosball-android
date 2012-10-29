@@ -228,6 +228,7 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+		// todo: change to use sub-query and do everything in a single query.
 		return new CursorLoader(getApplicationContext(), DataContract.Players.CONTENT_URI,
 				new String[] { DataContract.Players._ID, DataContract.Players.NAME },
 				null, null, null);

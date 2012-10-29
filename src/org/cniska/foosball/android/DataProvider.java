@@ -239,7 +239,7 @@ public class DataProvider extends ContentProvider {
 						+ "ON (p." + DataContract.Players._ID + "= r." + DataContract.Ratings.PLAYER_ID + ")");
 				qb.setProjectionMap(sRatingsProjectionMap);
 				groupBy = "r.player_id";
-				sortOrder = "r.created DESC, r.rating DESC";
+				sortOrder = "r.rating DESC, r.created DESC";
 				break;
 
 			default:

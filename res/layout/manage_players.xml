@@ -16,7 +16,7 @@
 				android:id="@+id/table_header_id"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_weight="5"
+				android:layout_weight="10"
 				android:padding="8dp"
 				android:textStyle="bold"
 				android:text="#"/>
@@ -25,10 +25,15 @@
 				android:id="@+id/table_header_name"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_weight="75"
+				android:layout_weight="80"
 				android:padding="8dp"
 				android:textStyle="bold"
 				android:text="@string/table_header_name"/>
+
+		<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="10"/>
 
 	</LinearLayout>
 

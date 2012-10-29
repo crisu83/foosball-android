@@ -52,7 +52,7 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
 			deleteButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					View parent = (View) view.getParent();
+					View parent = (View) view.getParent().getParent();
 					TextView idColumn = (TextView) parent.findViewById(R.id.column_id);
 					final String id = (String) idColumn.getText();
 

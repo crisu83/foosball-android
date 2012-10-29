@@ -213,6 +213,8 @@ public class StatisticsActivity extends BaseActivity implements LoaderManager.Lo
 		setActionBarTitle(R.string.title_statistics);
 		setContentView(R.layout.statistics);
 		mListView = (ListView) findViewById(R.id.statistics_list);
+		TextView emptyView = (TextView) findViewById(R.id.statistics_list_empty);
+		mListView.setEmptyView(emptyView);
 		setHeaderClickListeners();
 		getSupportLoaderManager().initLoader(0, null, this);
 	}

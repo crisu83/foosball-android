@@ -34,10 +34,9 @@ public class DataProvider extends ContentProvider {
 	private static final int PLAYERS			= 2;
 	private static final int PLAYER_ID			= 3;
 	private static final int PLAYER_STATS 		= 4;
-	private static final int PLAYER_RATING		= 5;
-	private static final int STATS 				= 6;
-	private static final int RATINGS			= 7;
-	private static final int RATINGS_LIMIT		= 8;
+	private static final int PLAYER_ID_RATING	= 5;
+	private static final int RATINGS			= 6;
+	private static final int STATS 				= 7;
 
 	private static UriMatcher sUriMatcher;
 	private static Map<String, String> sMatchesProjectionMap;
@@ -53,10 +52,9 @@ public class DataProvider extends ContentProvider {
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH, PLAYERS);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#", PLAYER_ID);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/stats", PLAYER_STATS);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_RATING);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Players.CONTENT_PATH + "/#/rating", PLAYER_ID_RATING);
 		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH, RATINGS);
-		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Ratings.CONTENT_PATH + "/limit/#", RATINGS_LIMIT);
+		sUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Stats.CONTENT_PATH, STATS);
 
 		// Create the projection map for the match table.
 		sMatchesProjectionMap = new HashMap<String, String>();
@@ -88,6 +86,8 @@ public class DataProvider extends ContentProvider {
 		sRatingsProjectionMap.put(DataContract.Ratings.CREATED, DataContract.Ratings.CREATED);
 		sRatingsProjectionMap.put(DataContract.Ratings.PLAYER_ID, DataContract.Ratings.PLAYER_ID);
 		sRatingsProjectionMap.put(DataContract.Ratings.RATING, DataContract.Ratings.RATING);
+
+		sRatingsProjectionMap.put(DataContract.Players.NAME, DataContract.Players.NAME);
 	}
 
 	// Member variables
@@ -179,6 +179,8 @@ public class DataProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		String groupBy = null;
+		String having = null;
 		String limit = null;
 
 		switch (sUriMatcher.match(uri)) {
@@ -223,7 +225,7 @@ public class DataProvider extends ContentProvider {
 				break;
 
 			// Query for a single player's current rating.
-			case PLAYER_RATING:
+			case PLAYER_ID_RATING:
 				qb.setTables(DataContract.Ratings.TABLE_NAME);
 				qb.setProjectionMap(sRatingsProjectionMap);
 				qb.appendWhere(DataContract.Ratings.PLAYER_ID + "="
@@ -232,23 +234,19 @@ public class DataProvider extends ContentProvider {
 				break;
 
 			case RATINGS:
-				qb.setTables(DataContract.Ratings.TABLE_NAME);
+				qb.setTables(DataContract.Ratings.TABLE_NAME + " AS r "
+						+ "INNER JOIN " + DataContract.Players.TABLE_NAME + " AS p "
+						+ "ON (p." + DataContract.Players._ID + "= r." + DataContract.Ratings.PLAYER_ID + ")");
 				qb.setProjectionMap(sRatingsProjectionMap);
-				sortOrder = sortOrder != null ? sortOrder : DataContract.Ratings.DEFAULT_SORT_ORDER;
-				break;
-
-			case RATINGS_LIMIT:
-				qb.setTables(DataContract.Ratings.TABLE_NAME);
-				qb.setProjectionMap(sRatingsProjectionMap);
-				limit = uri.getPathSegments().get(LIMIT_PATH_POSITION);
-				sortOrder = sortOrder != null ? sortOrder : DataContract.Ratings.DEFAULT_SORT_ORDER;
+				groupBy = "r.player_id";
+				sortOrder = "r.created DESC, r.rating DESC";
 				break;
 
 			default:
 				throwUnknownUriException(uri);
 		}
 
-		return queryDb(uri, projection, selection, selectionArgs, sortOrder, qb, limit);
+		return queryDb(qb, uri, projection, selection, selectionArgs, sortOrder, groupBy, having, limit);
 	}
 
 	@Override
@@ -259,7 +257,7 @@ public class DataProvider extends ContentProvider {
 			case PLAYERS:		return DataContract.Players.CONTENT_TYPE;
 			case PLAYER_ID:		return DataContract.Players.CONTENT_ITEM_TYPE;
 			case PLAYER_STATS:	return DataContract.Stats.CONTENT_ITEM_TYPE;
-			case PLAYER_RATING:	return DataContract.Ratings.CONTENT_ITEM_TYPE;
+			case PLAYER_ID_RATING:	return DataContract.Ratings.CONTENT_ITEM_TYPE;
 			case STATS:			return DataContract.Stats.CONTENT_TYPE;
 			case RATINGS:		return DataContract.Ratings.CONTENT_TYPE;
 			default:			throwUnknownUriException(uri);
@@ -339,10 +337,10 @@ public class DataProvider extends ContentProvider {
 	 * @param limit
 	 * @return The cursor.
 	 */
-	private Cursor queryDb(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder,
-						   SQLiteQueryBuilder qb, String limit) {
+	private Cursor queryDb(SQLiteQueryBuilder qb, Uri uri, String[] projection, String selection,
+						   String[] selectionArgs, String sortOrder, String groupBy, String having, String limit) {
 		SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-		Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit);
+		Cursor cursor = qb.query(db, projection, selection, selectionArgs, groupBy, having, sortOrder, limit);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;
 	}

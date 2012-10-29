@@ -51,7 +51,7 @@ public class MatchSummaryActivity extends BaseActivity {
 			mDataSaved = savedInstanceState.getBoolean(STATE_DATA_SAVED);
 		}
 
-		setActionBarTitle(getString(R.string.text_team_won, mMatch.getWinningTeam() == RawMatch.TEAM_HOME
+		setTitle(getString(R.string.text_team_won, mMatch.getWinningTeam() == RawMatch.TEAM_HOME
 				? getString(R.string.text_home_team)
 				: getString(R.string.text_away_team)));
 

@@ -2,23 +2,26 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			  android:orientation="horizontal"
-			  android:layout_width="fill_parent"
+			  android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:padding="8dp">
+			  android:paddingTop="4dp"
+			  android:paddingRight="8dp"
+			  android:paddingBottom="4dp"
+			  android:paddingLeft="8dp">
 
 	<TextView
 			android:id="@+id/column_name"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_weight="30"
+			android:layout_weight="50"
 			android:padding="8dp"/>
 
 	<TextView
 			android:id="@+id/column_rating"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_weight="20"
-			android:gravity="center"
+			android:layout_weight="50"
+			android:gravity="right"
 			android:padding="8dp"/>
 
 </LinearLayout>

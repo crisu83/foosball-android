@@ -112,6 +112,8 @@ public class ManagePlayersActivity extends BaseActivity implements LoaderManager
 		setActionBarTitle(R.string.title_manage_players);
         setContentView(R.layout.manage_players);
         mListView = (ListView) findViewById(R.id.manage_players_list);
+		TextView emptyView = (TextView) findViewById(R.id.manage_players_list_empty);
+		mListView.setEmptyView(emptyView);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 

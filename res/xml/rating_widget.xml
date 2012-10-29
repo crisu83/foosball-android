@@ -3,7 +3,8 @@
 <appwidget-provider
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:initialLayout="@layout/rating_widget"
-		android:minWidth="220dp"
+		android:autoAdvanceViewId="@+id/rating_widget_list"
+		android:minWidth="146dp"
 		android:minHeight="146dp"
 		android:updatePeriodMillis="180000"> <!-- 30 mins -->
 
